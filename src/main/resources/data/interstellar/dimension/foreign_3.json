@@ -1,0 +1,11 @@
+{
+  "type": "interstellar:foreign_3",
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "interstellar:foreign_3"
+    },
+    "settings": "interstellar:foreign_3"
+  }
+}

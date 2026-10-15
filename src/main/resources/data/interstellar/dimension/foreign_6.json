@@ -1,0 +1,42 @@
+{
+  "type": "interstellar:foreign_6",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "interstellar:foreign_6",
+      "features": true,
+      "lakes": false,
+      "layers": [
+        {
+          "block": "minecraft:bedrock",
+          "height": 1
+        },
+        {
+          "block": "minecraft:stone",
+          "height": 9
+        },
+        {
+          "block": "minecraft:red_sandstone",
+          "height": 12
+        },
+        {
+          "block": "minecraft:end_stone",
+          "height": 9
+        },
+        {
+          "block": "minecraft:orange_terracotta",
+          "height": 10
+        },
+        {
+          "block": "minecraft:end_stone",
+          "height": 7
+        },
+        {
+          "block": "minecraft:red_sand",
+          "height": 1
+        }
+      ],
+      "structure_overrides": []
+    }
+  }
+}

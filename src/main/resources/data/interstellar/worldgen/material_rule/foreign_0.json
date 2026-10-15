@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:sequence",
+  "sequence": [
+    "minecraft:bedrock_floor",
+    {
+      "type": "minecraft:condition",
+      "if_true": "minecraft:on_floor",
+      "then_run": {
+        "type": "minecraft:sequence",
+        "sequence": [
+          {
+            "type": "minecraft:condition",
+            "if_true": {
+              "type": "minecraft:noise_threshold",
+              "noise": "minecraft:surface",
+              "min_threshold": -0.26175505447722514,
+              "max_threshold": -0.011755054477225135
+            },
+            "then_run": {
+              "type": "minecraft:block",
+              "result_state": "minecraft:budding_amethyst"
+            }
+          },
+          {
+            "type": "minecraft:block",
+            "result_state": "minecraft:amethyst_block"
+          }
+        ]
+      }
+    },
+    {
+      "type": "minecraft:condition",
+      "if_true": "minecraft:under_floor",
+      "then_run": {
+        "type": "minecraft:block",
+        "result_state": "minecraft:calcite"
+      }
+    }
+  ]
+}

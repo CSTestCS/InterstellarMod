@@ -1,0 +1,111 @@
+{
+  "attributes": {
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "monster": [
+            {
+              "type": "interstellar:alien",
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              },
+              "weight": 120
+            },
+            {
+              "type": "minecraft:phantom",
+              "count": 2,
+              "weight": 25
+            },
+            {
+              "type": "minecraft:slime",
+              "count": 2,
+              "weight": 25
+            }
+          ],
+          "creature": [
+            {
+              "type": "minecraft:mooshroom",
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              },
+              "weight": 8
+            },
+            {
+              "type": "minecraft:frog",
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              },
+              "weight": 8
+            },
+            {
+              "type": "minecraft:llama",
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              },
+              "weight": 8
+            }
+          ],
+          "ambient": [],
+          "axolotls": [],
+          "misc": [],
+          "underground_water_creature": [],
+          "water_ambient": [],
+          "water_creature": []
+        }
+      }
+    },
+    "minecraft:visual/sky_color": "#23c013",
+    "minecraft:visual/fog_color": "#636c8e"
+  },
+  "carvers": [
+    "minecraft:cave",
+    "minecraft:canyon"
+  ],
+  "downfall": 0.31,
+  "effects": {
+    "water_color": "#311d8c",
+    "foliage_color": "#66e49e",
+    "grass_color": "#66e49e"
+  },
+  "features": [
+    [],
+    [],
+    [
+      "minecraft:delta"
+    ],
+    [],
+    [],
+    [],
+    [
+      "minecraft:ore_coal_upper",
+      "minecraft:ore_iron_upper",
+      "minecraft:ore_iron_middle",
+      "minecraft:ore_gold",
+      "minecraft:ore_redstone",
+      "minecraft:ore_diamond",
+      "minecraft:ore_lapis",
+      "minecraft:ore_copper",
+      "minecraft:ore_emerald"
+    ],
+    [],
+    [],
+    [
+      "minecraft:basalt_pillar",
+      "minecraft:large_basalt_columns",
+      "minecraft:patch_fire"
+    ],
+    []
+  ],
+  "has_precipitation": false,
+  "temperature": 1.38
+}

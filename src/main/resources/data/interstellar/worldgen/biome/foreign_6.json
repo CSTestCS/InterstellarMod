@@ -1,0 +1,95 @@
+{
+  "attributes": {
+    "minecraft:gameplay/natural_mob_spawns": {
+      "modifier": "overlay",
+      "argument": {
+        "spawn_costs": {},
+        "spawns_by_category": {
+          "monster": [
+            {
+              "type": "interstellar:alien",
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              },
+              "weight": 120
+            },
+            {
+              "type": "minecraft:creeper",
+              "count": 2,
+              "weight": 25
+            },
+            {
+              "type": "minecraft:slime",
+              "count": 2,
+              "weight": 25
+            }
+          ],
+          "creature": [
+            {
+              "type": "minecraft:chicken",
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              },
+              "weight": 8
+            },
+            {
+              "type": "minecraft:pig",
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              },
+              "weight": 8
+            },
+            {
+              "type": "minecraft:mooshroom",
+              "count": {
+                "type": "minecraft:uniform",
+                "min_inclusive": 1,
+                "max_inclusive": 4
+              },
+              "weight": 8
+            }
+          ],
+          "ambient": [],
+          "axolotls": [],
+          "misc": [],
+          "underground_water_creature": [],
+          "water_ambient": [],
+          "water_creature": []
+        }
+      }
+    },
+    "minecraft:visual/sky_color": "#b7cb79",
+    "minecraft:visual/fog_color": "#b041d0"
+  },
+  "carvers": [],
+  "downfall": 0.38,
+  "effects": {
+    "water_color": "#0d99ba",
+    "foliage_color": "#2cd054",
+    "grass_color": "#2cd054"
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "minecraft:patch_cactus_desert",
+      "minecraft:patch_dead_bush"
+    ],
+    []
+  ],
+  "has_precipitation": false,
+  "temperature": 0.74
+}

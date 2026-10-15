@@ -1,0 +1,13 @@
+{
+  "type": "interstellar:space",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "interstellar:space",
+      "features": false,
+      "lakes": false,
+      "layers": [],
+      "structure_overrides": []
+    }
+  }
+}
