@@ -58,6 +58,24 @@ public final class PlanetLayout {
         return 4 + Math.floorMod(h >>> 7, 9);
     }
 
+    /** Position of the n-th main planet on the spiral. */
+    public static int[] spiralPosition(int slot) {
+        double ang = slot * 2.399963; // golden angle
+        double rad = SPACING * (1.5 + Math.sqrt(slot) * 1.6);
+        return new int[] { (int) Math.round(Math.cos(ang) * rad), PLANE_Y, (int) Math.round(Math.sin(ang) * rad) };
+    }
+
+    /** Position of the n-th (1-based) moon of a host planet. */
+    public static int[] moonPosition(Planet host, int n) {
+        double ang = n * 2.399963;
+        int r = host.size() / 2 + ATMOSPHERE_GAP * 2 + 6 + n * 3;
+        return new int[] { host.x() + (int) Math.round(Math.cos(ang) * r), PLANE_Y + (n % 2 == 0 ? 4 : -4), host.z() + (int) Math.round(Math.sin(ang) * r) };
+    }
+
+    public static boolean isMoonName(String dim) {
+        return dim.toLowerCase(Locale.ROOT).contains("moon");
+    }
+
     public static List<Planet> layout(Map<String, Integer> sizes) {
         List<String> dims = new ArrayList<>(sizes.keySet());
         // Vanilla first, then everything else alphabetically for stability.
@@ -73,16 +91,12 @@ public final class PlanetLayout {
             if (moon) {
                 Planet host = firstInNamespace.get(ns);
                 int n = moonsOf.merge(host.dimension(), 1, Integer::sum);
-                double ang = n * 2.399963; // golden angle
-                int r = host.size() / 2 + ATMOSPHERE_GAP * 2 + 6 + n * 3;
-                out.add(new Planet(d, size, host.x() + (int) Math.round(Math.cos(ang) * r), PLANE_Y + (n % 2 == 0 ? 4 : -4),
-                        host.z() + (int) Math.round(Math.sin(ang) * r), true));
+                int[] m = moonPosition(host, n);
+                out.add(new Planet(d, size, m[0], m[1], m[2], true));
                 continue;
             }
-            // Spiral: slot 0 at the origin's ring, every planet SPACING*sqrt(slot) out.
-            double ang = slot * 2.399963;
-            double rad = SPACING * (1.5 + Math.sqrt(slot) * 1.6);
-            Planet p = new Planet(d, size, (int) Math.round(Math.cos(ang) * rad), PLANE_Y, (int) Math.round(Math.sin(ang) * rad), false);
+            int[] sp = spiralPosition(slot);
+            Planet p = new Planet(d, size, sp[0], sp[1], sp[2], false);
             out.add(p);
             firstInNamespace.putIfAbsent(ns, p);
             slot++;
