@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.cstestcs.interstellar.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ModelMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}
