@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 public final class RenderInfo {
     public static final ContextKey<RenderInfo> KEY = new ContextKey<>(Interstellar.id("render_info"));
 
-    public @Nullable ClientRaces.Race race;
+    public ClientRaces.@Nullable Race race;
     public int skinVariant, headVariant;
     public BodyInstances.@Nullable Instance body;
     /** The renderer's own model instance; every other HumanoidModel drawn with this state is a layer (armour...). */

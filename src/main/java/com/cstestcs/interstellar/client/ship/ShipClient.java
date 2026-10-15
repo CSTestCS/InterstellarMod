@@ -90,9 +90,9 @@ public final class ShipClient {
         }
         event.setCanceled(true);
         if (SpaceTravel.isSpace(ship.level())) {
-            mc.player.displayClientMessage(Component.translatable("message.interstellar.space.no_dismount"), true);
-        } else if (ship.pilot() != mc.player && !(mc.screen instanceof DismountConfirmScreen)) {
-            mc.setScreen(new DismountConfirmScreen());
+            mc.player.sendOverlayMessage(Component.translatable("message.interstellar.space.no_dismount"));
+        } else if (ship.pilot() != mc.player && !(mc.gui.screen() instanceof DismountConfirmScreen)) {
+            mc.gui.setScreen(new DismountConfirmScreen());
         }
     }
 }

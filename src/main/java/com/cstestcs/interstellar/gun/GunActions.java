@@ -58,7 +58,7 @@ public final class GunActions {
             }
         }
         if (loaded == 0 && !player.getAbilities().instabuild) {
-            player.displayClientMessage(Component.translatable("message.interstellar.gun.no_magazine", GunItem.pretty(stats.magazineKind())), true);
+            player.sendOverlayMessage(Component.translatable("message.interstellar.gun.no_magazine", GunItem.pretty(stats.magazineKind())));
             return;
         }
         if (player.getAbilities().instabuild) loaded = missing;
@@ -137,7 +137,7 @@ public final class GunActions {
         Inventory inv = player.getInventory();
         for (GunDataManager.Cost c : cost) {
             if (inv.countItem(c.item()) < c.count()) {
-                player.displayClientMessage(Component.translatable("message.interstellar.gunsmith.missing", c.count(), new ItemStack(c.item()).getHoverName()), true);
+                player.sendOverlayMessage(Component.translatable("message.interstellar.gunsmith.missing", c.count(), new ItemStack(c.item()).getHoverName()));
                 return false;
             }
         }

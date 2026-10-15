@@ -20,9 +20,9 @@ import org.jspecify.annotations.Nullable;
 public final class PlanetBuilder {
     private PlanetBuilder() {}
 
-    private static final Block[] MODDED_PALETTE = { Blocks.TERRACOTTA, Blocks.RED_TERRACOTTA, Blocks.ORANGE_TERRACOTTA, Blocks.YELLOW_TERRACOTTA,
-            Blocks.LIME_TERRACOTTA, Blocks.CYAN_TERRACOTTA, Blocks.LIGHT_BLUE_TERRACOTTA, Blocks.PURPLE_TERRACOTTA, Blocks.MAGENTA_TERRACOTTA,
-            Blocks.BROWN_TERRACOTTA, Blocks.WHITE_TERRACOTTA, Blocks.GRAY_TERRACOTTA };
+    /** Dyed blocks are looked up by id (26.3 no longer exposes every colour as a Blocks constant). */
+    private static final String[] MODDED_PALETTE = { "terracotta", "red_terracotta", "orange_terracotta", "yellow_terracotta", "lime_terracotta",
+            "cyan_terracotta", "light_blue_terracotta", "purple_terracotta", "magenta_terracotta", "brown_terracotta", "white_terracotta", "gray_terracotta" };
 
     public static void build(ServerLevel space, PlanetLayout.Planet planet, @Nullable ServerLevel target) {
         int n = planet.size();
@@ -71,7 +71,7 @@ public final class PlanetBuilder {
                 double land = continent(x, y, z, n, seed);
                 if (land > 0.15) return (h & 7) == 0 ? Blocks.MOSS_BLOCK.defaultBlockState() : Blocks.GRASS_BLOCK.defaultBlockState();
                 if (land > 0.0) return Blocks.SAND.defaultBlockState();
-                return (h & 3) == 0 ? Blocks.LIGHT_BLUE_CONCRETE.defaultBlockState() : Blocks.BLUE_CONCRETE.defaultBlockState();
+                return block((h & 3) == 0 ? "minecraft:light_blue_concrete" : "minecraft:blue_concrete", Blocks.WATER).defaultBlockState();
             }
             case "minecraft:the_nether":
                 return Blocks.NETHERRACK.defaultBlockState();
@@ -85,11 +85,11 @@ public final class PlanetBuilder {
             String id = (h % 7) == 0 ? fw.theme().accentBlock : (h % 3) == 0 ? fw.theme().underBlock : fw.theme().topBlock;
             return block(id, Blocks.STONE).defaultBlockState();
         }
-        if (dim.contains("moon")) return ((h & 3) == 0 ? Blocks.GRAVEL : Blocks.LIGHT_GRAY_CONCRETE_POWDER).defaultBlockState();
+        if (dim.contains("moon")) return ((h & 3) == 0 ? Blocks.GRAVEL : block("minecraft:light_gray_concrete_powder", Blocks.GRAVEL)).defaultBlockState();
         // Unknown modded dimension: a stable two-colour scheme picked from its id.
         int base = Math.floorMod((int) (seed >>> 20), MODDED_PALETTE.length);
         int accent = Math.floorMod((int) (seed >>> 40), MODDED_PALETTE.length);
-        return MODDED_PALETTE[(h % 5) == 0 ? accent : base].defaultBlockState();
+        return block("minecraft:" + MODDED_PALETTE[(h % 5) == 0 ? accent : base], Blocks.TERRACOTTA).defaultBlockState();
     }
 
     private static double continent(int x, int y, int z, int n, long seed) {

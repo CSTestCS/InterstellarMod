@@ -39,7 +39,7 @@ public final class Interstellar {
         modBus.addListener(ModEntities::registerSpawnPlacements);
         modBus.addListener(ModPayloads::register);
 
-        container.registerConfig(ModConfig.Type.SERVER, InterstellarConfig.SERVER_SPEC);
+        container.registerConfig(ModConfig.Type.SYNCED, InterstellarConfig.SERVER_SPEC);
         container.registerConfig(ModConfig.Type.CLIENT, InterstellarConfig.CLIENT_SPEC);
 
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent e) -> InterstellarCommands.register(e.getDispatcher()));

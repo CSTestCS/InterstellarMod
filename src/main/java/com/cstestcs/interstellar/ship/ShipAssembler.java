@@ -30,7 +30,7 @@ public final class ShipAssembler {
             for (ShipScanner.Problem p : result.problems()) {
                 msg.append("\n - ").append(Component.translatable("message.interstellar.ship.problem." + p.name().toLowerCase(Locale.ROOT), limit));
             }
-            player.displayClientMessage(msg, false);
+            player.sendSystemMessage(msg);
             return false;
         }
         BlockState panelState = level.getBlockState(panel);
@@ -64,8 +64,8 @@ public final class ShipAssembler {
             if (rider == player) continue;
             if (rider.startRiding(ship, true) && seat > 0) ship.restoreSeat(rider, seat);
         }
-        player.displayClientMessage(Component.translatable(landing ? "message.interstellar.ship.landing" : "message.interstellar.ship.launch",
-                result.blocks().size()), true);
+        player.sendOverlayMessage(Component.translatable(landing ? "message.interstellar.ship.landing" : "message.interstellar.ship.launch",
+                result.blocks().size()));
         return true;
     }
 }

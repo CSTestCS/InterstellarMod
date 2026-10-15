@@ -61,7 +61,7 @@ public final class PlanetManager extends SavedData {
         return server.overworld().getDataStorage().computeIfAbsent(TYPE);
     }
 
-    public @Nullable PlanetLayout.Planet planetFor(ResourceKey<Level> dim) {
+    public PlanetLayout.@Nullable Planet planetFor(ResourceKey<Level> dim) {
         Stored s = planets.get(dim.identifier().toString());
         return s == null ? null : s.planet();
     }
@@ -73,7 +73,7 @@ public final class PlanetManager extends SavedData {
     }
 
     /** The planet whose atmosphere contains the point, if any. */
-    public @Nullable PlanetLayout.Planet planetAt(double x, double y, double z) {
+    public PlanetLayout.@Nullable Planet planetAt(double x, double y, double z) {
         for (Stored s : planets.values()) {
             PlanetLayout.Planet p = s.planet();
             if (p.insideAtmosphere(x, y, z)) return p;

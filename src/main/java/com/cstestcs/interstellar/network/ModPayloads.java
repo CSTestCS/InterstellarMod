@@ -21,7 +21,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class ModPayloads {
     private ModPayloads() {}
 
-    private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> type(String name) {
+    private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> typeOf(String name) {
         return new CustomPacketPayload.Type<>(Interstellar.id(name));
     }
 
@@ -29,7 +29,7 @@ public final class ModPayloads {
 
     /** Pilot input each time it changes: interact held (boost) and attack held (fire). */
     public record ShipInput(boolean boost, boolean fire) implements CustomPacketPayload {
-        public static final Type<ShipInput> TYPE = type("ship_input");
+        public static final Type<ShipInput> TYPE = typeOf("ship_input");
         public static final StreamCodec<ByteBuf, ShipInput> CODEC = StreamCodec.composite(
                 ByteBufCodecs.BOOL, ShipInput::boost, ByteBufCodecs.BOOL, ShipInput::fire, ShipInput::new);
 
@@ -41,7 +41,7 @@ public final class ModPayloads {
 
     /** The player accepted the "you will be removed from the spacecraft" prompt. */
     public record ConfirmDismount() implements CustomPacketPayload {
-        public static final Type<ConfirmDismount> TYPE = type("confirm_dismount");
+        public static final Type<ConfirmDismount> TYPE = typeOf("confirm_dismount");
         public static final StreamCodec<ByteBuf, ConfirmDismount> CODEC = StreamCodec.unit(new ConfirmDismount());
 
         @Override
@@ -51,7 +51,7 @@ public final class ModPayloads {
     }
 
     public record ReloadGun() implements CustomPacketPayload {
-        public static final Type<ReloadGun> TYPE = type("reload_gun");
+        public static final Type<ReloadGun> TYPE = typeOf("reload_gun");
         public static final StreamCodec<ByteBuf, ReloadGun> CODEC = StreamCodec.unit(new ReloadGun());
 
         @Override
@@ -63,7 +63,7 @@ public final class ModPayloads {
     /** Gunsmith table button press: action id plus up to two string arguments. */
     public record GunsmithAction(int action, String a, String b) implements CustomPacketPayload {
         public static final int NEW_FRAME = 0, INSTALL_PART = 1, REMOVE_PART = 2, CRAFT_MAGAZINE = 3, APPLY_TRIM = 4;
-        public static final Type<GunsmithAction> TYPE = type("gunsmith_action");
+        public static final Type<GunsmithAction> TYPE = typeOf("gunsmith_action");
         public static final StreamCodec<ByteBuf, GunsmithAction> CODEC = StreamCodec.composite(
                 ByteBufCodecs.VAR_INT, GunsmithAction::action, ByteBufCodecs.STRING_UTF8, GunsmithAction::a, ByteBufCodecs.STRING_UTF8, GunsmithAction::b,
                 GunsmithAction::new);
@@ -79,7 +79,7 @@ public final class ModPayloads {
      * themselves. The server assigns bodies from the union of every client's list.
      */
     public record InstalledBodies(List<String> names, List<String> genders, String ownChoice) implements CustomPacketPayload {
-        public static final Type<InstalledBodies> TYPE = type("installed_bodies");
+        public static final Type<InstalledBodies> TYPE = typeOf("installed_bodies");
         public static final StreamCodec<ByteBuf, InstalledBodies> CODEC = StreamCodec.composite(
                 ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(256)), InstalledBodies::names,
                 ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list(256)), InstalledBodies::genders,
@@ -95,7 +95,7 @@ public final class ModPayloads {
 
     /** One chunk of the zipped races folder (the host's races are sent to every client so they can render them). */
     public record RaceAssets(int index, int total, int hash, byte[] data) implements CustomPacketPayload {
-        public static final Type<RaceAssets> TYPE = type("race_assets");
+        public static final Type<RaceAssets> TYPE = typeOf("race_assets");
         public static final StreamCodec<ByteBuf, RaceAssets> CODEC = StreamCodec.composite(
                 ByteBufCodecs.VAR_INT, RaceAssets::index, ByteBufCodecs.VAR_INT, RaceAssets::total, ByteBufCodecs.INT, RaceAssets::hash,
                 ByteBufCodecs.BYTE_ARRAY, RaceAssets::data, RaceAssets::new);
@@ -108,7 +108,7 @@ public final class ModPayloads {
 
     /** All gun archetype/part/material JSON (so tooltips and the gunsmith screen match the server's datapacks). */
     public record GunData(String archetypes, String parts, String materials, String magazines) implements CustomPacketPayload {
-        public static final Type<GunData> TYPE = type("gun_data");
+        public static final Type<GunData> TYPE = typeOf("gun_data");
         public static final StreamCodec<ByteBuf, GunData> CODEC = StreamCodec.composite(
                 ByteBufCodecs.stringUtf8(1 << 22), GunData::archetypes, ByteBufCodecs.stringUtf8(1 << 22), GunData::parts,
                 ByteBufCodecs.stringUtf8(1 << 22), GunData::materials, ByteBufCodecs.stringUtf8(1 << 20), GunData::magazines, GunData::new);

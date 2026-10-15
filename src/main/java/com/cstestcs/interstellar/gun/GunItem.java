@@ -50,7 +50,7 @@ public class GunItem extends Item {
         return stack;
     }
 
-    public static @Nullable GunRegistry.Stats stats(ItemStack stack) {
+    public static GunRegistry.@Nullable Stats stats(ItemStack stack) {
         GunBuild build = stack.get(ModComponents.GUN_BUILD.get());
         return build == null ? null : GunDataManager.registry().compute(build);
     }
@@ -66,7 +66,7 @@ public class GunItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         GunRegistry.Stats stats = stats(stack);
         if (stats == null || !stats.complete()) {
-            if (!level.isClientSide()) player.displayClientMessage(Component.translatable("message.interstellar.gun.incomplete"), true);
+            if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.interstellar.gun.incomplete"));
             return InteractionResult.FAIL;
         }
         GunCodecs.GunState state = state(stack);

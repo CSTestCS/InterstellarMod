@@ -48,7 +48,7 @@ public final class BodyServer {
             for (ServerLevel level : player.level().getServer().getAllLevels()) {
                 for (Entity e : level.getAllEntities()) {
                     if (e instanceof LivingEntity living && !(living instanceof Player) && living.getData(ModAttachments.BODY).isEmpty()
-                            && living.getType().is(RaceEvents.BIPEDS)) {
+                            && living.getType().builtInRegistryHolder().is(RaceEvents.BIPEDS)) {
                         assignIfMissing(living, RaceEvents.raceOf(living));
                     }
                 }

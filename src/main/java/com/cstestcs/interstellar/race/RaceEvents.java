@@ -70,7 +70,7 @@ public final class RaceEvents {
     @SubscribeEvent
     static void onJoin(EntityJoinLevelEvent event) {
         if (!(event.getLevel() instanceof ServerLevel level) || !(event.getEntity() instanceof LivingEntity living)) return;
-        if (!(living instanceof Player) && !living.getType().is(BIPEDS)) return;
+        if (!(living instanceof Player) && !living.getType().builtInRegistryHolder().is(BIPEDS)) return;
         RaceData data = living.getData(ModAttachments.RACE);
         if (!data.rolled() && InterstellarConfig.SERVER.racesEnabled.get()) {
             data = roll(level, living);
@@ -253,7 +253,7 @@ public final class RaceEvents {
         event.setCancellationResult(InteractionResult.SUCCESS);
         ServerLevel level = (ServerLevel) mob.level();
         if (data.owner().map(o -> o.equals(player.getUUID())).orElse(false)) {
-            player.displayClientMessage(Component.translatable("message.interstellar.race.already_recruited", mob.getDisplayName()), true);
+            player.sendOverlayMessage(Component.translatable("message.interstellar.race.already_recruited", mob.getDisplayName()));
             return;
         }
         if (!player.getAbilities().instabuild) stack.shrink(1);
@@ -263,11 +263,11 @@ public final class RaceEvents {
             mob.setTarget(null);
             mob.setPersistenceRequired();
             level.sendParticles(ParticleTypes.HEART, mob.getX(), mob.getEyeY(), mob.getZ(), 7, 0.4, 0.4, 0.4, 0.05);
-            player.displayClientMessage(Component.translatable("message.interstellar.race.recruited", mob.getDisplayName()), true);
+            player.sendOverlayMessage(Component.translatable("message.interstellar.race.recruited", mob.getDisplayName()));
         } else {
             mob.setData(ModAttachments.RACE, data.withAffection(affection));
             level.sendParticles(ParticleTypes.HAPPY_VILLAGER, mob.getX(), mob.getEyeY(), mob.getZ(), 4, 0.3, 0.3, 0.3, 0.02);
-            player.displayClientMessage(Component.translatable("message.interstellar.race.affection", mob.getDisplayName(), Math.round(affection)), true);
+            player.sendOverlayMessage(Component.translatable("message.interstellar.race.affection", mob.getDisplayName(), Math.round(affection)));
         }
     }
 

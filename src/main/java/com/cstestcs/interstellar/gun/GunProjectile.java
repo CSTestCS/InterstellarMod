@@ -31,7 +31,7 @@ import org.jspecify.annotations.Nullable;
 public class GunProjectile extends Projectile {
     private static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(GunProjectile.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> SIZE = SynchedEntityData.defineId(GunProjectile.class, EntityDataSerializers.FLOAT);
-    private @Nullable GunRegistry.Stats stats;
+    private GunRegistry.@Nullable Stats stats;
     private int life = 100;
     private boolean homing;
     private float explosion;

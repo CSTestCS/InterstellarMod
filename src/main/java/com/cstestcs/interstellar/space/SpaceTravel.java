@@ -100,6 +100,6 @@ public final class SpaceTravel {
     }
 
     private static void announce(SpacecraftEntity ship, Component msg) {
-        for (Entity e : ship.getPassengers()) if (e instanceof Player p) p.displayClientMessage(msg, true);
+        for (Entity e : ship.getPassengers()) if (e instanceof Player p) p.sendOverlayMessage(msg);
     }
 }

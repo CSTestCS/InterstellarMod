@@ -79,11 +79,6 @@ public class AlienEntity extends Monster {
         return level.getBlockState(below).isValidSpawn(level, below, type) && level.getBlockState(pos).isAir();
     }
 
-    @Override
-    protected boolean shouldDespawnInPeaceful() {
-        return true;
-    }
-
     /** Aliens drop alloy plus the material of their world's theme. */
     @Override
     protected void dropCustomDeathLoot(ServerLevel level, DamageSource source, boolean recentlyHit) {

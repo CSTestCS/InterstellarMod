@@ -14,7 +14,7 @@ public final class GunHud {
 
     public static void render(GuiGraphicsExtractor g, DeltaTracker delta) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.options.hideGui) return;
+        if (mc.player == null) return;
         ItemStack stack = mc.player.getMainHandItem();
         if (!(stack.getItem() instanceof GunItem)) return;
         GunRegistry.Stats stats = GunItem.stats(stack);

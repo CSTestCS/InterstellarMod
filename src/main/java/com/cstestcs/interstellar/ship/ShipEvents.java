@@ -38,7 +38,7 @@ public final class ShipEvents {
         if (!ship.allowDismount(rider)) {
             event.setCanceled(true);
             if (ship.inSpace() && rider instanceof ServerPlayer p) {
-                p.displayClientMessage(Component.translatable("message.interstellar.space.no_dismount"), true);
+                p.sendOverlayMessage(Component.translatable("message.interstellar.space.no_dismount"));
             }
         }
     }
@@ -50,7 +50,7 @@ public final class ShipEvents {
         ServerLevel level = (ServerLevel) player.level();
         if (level.getGameRules().get(GameRules.KEEP_INVENTORY)) return;
         SpaceInventories.get(level.getServer()).store(player);
-        player.displayClientMessage(Component.translatable("message.interstellar.space.inventory_saved"), false);
+        player.sendSystemMessage(Component.translatable("message.interstellar.space.inventory_saved"));
     }
 
     /** Interacting with a seated mob while holding a lead takes it out of its seat and onto the lead. */

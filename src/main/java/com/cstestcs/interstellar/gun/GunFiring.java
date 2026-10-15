@@ -98,7 +98,7 @@ public final class GunFiring {
         DamageSource source = shooter instanceof Player p ? level.damageSources().playerAttack(p) : level.damageSources().mobAttack(shooter);
         boolean hurt = target.hurtServer(level, source, damage);
         if (!hurt || !(target instanceof LivingEntity living)) return;
-        living.invulnerableTime = 0; // automatic weapons would otherwise lose most of their damage
+        living.setInvulnerableTime(0); // automatic weapons would otherwise lose most of their damage
         int power = 1 + (int) stats.get(GunData.Stat.EFFECT_POWER);
         List<String> fx = stats.effects();
         if (fx.contains("ignite")) living.igniteForSeconds(2f + power);

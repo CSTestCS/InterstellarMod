@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -39,7 +38,7 @@ public final class ModBlocks {
     public static final DeferredBlock<GunsmithTableBlock> GUNSMITH_TABLE = BLOCKS.registerBlock("gunsmith_table", GunsmithTableBlock::new, p -> metal(p).noOcclusion());
     /** Invisible glowing shell around every planet in space. */
     public static final DeferredBlock<AtmosphereBlock> ATMOSPHERE = BLOCKS.registerBlock("atmosphere", AtmosphereBlock::new,
-            p -> p.noCollision().noOcclusion().noLootTable().strength(-1.0f, 3600000.0f).lightLevel(s -> 12).pushReaction(PushReaction.BLOCK)
+            p -> p.noCollision().noOcclusion().noLootTable().strength(-1.0f, 3600000.0f).lightLevel(s -> 12)
                     .replaceable().mapColor(MapColor.NONE));
 
     /** Block tags deciding which ship part a block counts as (packs may add other mods' blocks). */

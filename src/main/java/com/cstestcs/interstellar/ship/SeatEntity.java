@@ -17,6 +17,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * Invisible helper that lets players and mobs sit on a {@link PassengerSeatBlock} while the ship is blocks.
@@ -69,7 +70,7 @@ public class SeatEntity extends Entity {
     }
 
     @Override
-    public InteractionResult interact(Player player, InteractionHand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
         // Interacting with a lead takes seated mobs out of the seat and onto the lead.
         if (!level().isClientSide() && player.getItemInHand(hand).is(Items.LEAD)) {
             for (Entity e : getPassengers()) {

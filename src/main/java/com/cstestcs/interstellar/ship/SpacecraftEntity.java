@@ -215,7 +215,7 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
             for (Entity e : getPassengers()) {
                 if (e instanceof Player p) {
                     seatOf.put(p.getUUID(), 0);
-                    p.displayClientMessage(Component.translatable("message.interstellar.ship.new_pilot"), true);
+                    p.sendOverlayMessage(Component.translatable("message.interstellar.ship.new_pilot"));
                     break;
                 }
             }
@@ -264,7 +264,7 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
     }
 
     @Override
-    public InteractionResult interact(Player player, InteractionHand hand) {
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
         if (player.isSecondaryUseActive() || player.getVehicle() == this) return InteractionResult.PASS;
         if (!level().isClientSide()) {
             // Holding a lead: unload seated mobs onto the lead.
@@ -410,7 +410,7 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
     /** Sneak while flying: stop, snap to the grid and become blocks again (gear stays retracted, mid-air). */
     public void halt(ServerLevel level, Player pilot) {
         if (!disassemble(level, false)) {
-            pilot.displayClientMessage(Component.translatable("message.interstellar.ship.obstructed"), true);
+            pilot.sendOverlayMessage(Component.translatable("message.interstellar.ship.obstructed"));
         }
     }
 
@@ -420,7 +420,7 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
             // Obstructed: keep hovering and let the pilot try somewhere else.
             setMode(MODE_FLYING);
             Player pilot = pilot();
-            if (pilot != null) pilot.displayClientMessage(Component.translatable("message.interstellar.ship.obstructed"), true);
+            if (pilot != null) pilot.sendOverlayMessage(Component.translatable("message.interstellar.ship.obstructed"));
         }
     }
 
