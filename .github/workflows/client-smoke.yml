@@ -11,6 +11,10 @@ on:
 jobs:
   smoke:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sdl: ['x11-egl', 'offscreen']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -22,12 +26,13 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb mesa-utils libgl1-mesa-dri libglx-mesa0 libegl-mesa0 > /dev/null
       - name: Run client
         run: |
-          export LIBGL_ALWAYS_SOFTWARE=1 SDL_VIDEODRIVER=x11
+          export LIBGL_ALWAYS_SOFTWARE=1
+          if [ "${{ matrix.sdl }}" = "offscreen" ]; then export SDL_VIDEODRIVER=offscreen; else export SDL_VIDEODRIVER=x11 SDL_VIDEO_X11_FORCE_EGL=1; fi
           Xvfb :99 -screen 0 1280x720x24 +extension GLX +render -noreset &
           sleep 3
           export DISPLAY=:99
           glxinfo -B | head -20 || true
-          timeout 420 ./gradlew runClient --console=plain > client.log 2>&1 || true
+          timeout 360 ./gradlew runClient --console=plain > client.log 2>&1 || true
           echo "===== interesting lines"
           grep -nE "interstellar|Interstellar|ERROR|WARN|Exception|Caused by|[Mm]ixin|FATAL|Failed|crash|Crash|Reload|Created|Backend" client.log | grep -vE "DEBUG" | head -300
           echo "===== tail"
