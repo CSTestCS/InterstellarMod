@@ -184,7 +184,10 @@ disables custom bodies instead of crashing.
   interpretation; FBX round trip; body normalisation; vanilla-driven posing; Mixamo retargeting; armour mapping;
   ship scanning; planet layout; gun stats, rolls and the shipped gun data.
 * ✅ Default bodies were rendered offline to check proportions and UVs (`docs/default-bodies-preview.png`).
-* ⚠️ Minecraft/NeoForge code: written against NeoForge 26.3 sources and tests, but not yet compiled or run.
-  The most likely spots for API adjustments are rendering (`client/`), item-model property signatures
-  (`GunItemModels`), `SavedDataType` constructors, and GUI extraction methods.
+* ✅ The whole mod compiles against NeoForge 26.3 on GitHub Actions (`.github/workflows/build.yml`), and the
+  unit tests run there too.
+* ✅ A dedicated server boots with the mod: it creates the space dimension and the 12 foreign worlds, loads the
+  54 races and their assets, and loads 22 gun archetypes, 83 parts and 23 materials, with no errors.
+* ⚠️ Client-side rendering has not been tested in game yet: race heads and tails, custom bodies and armour
+  deformation (`ModelMixin`), the spacecraft renderer and the gunsmith GUI.
 * ⚠️ Gun display transforms and placeholder textures will need tuning in game.
