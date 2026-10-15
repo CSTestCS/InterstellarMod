@@ -1,0 +1,42 @@
+{
+  "alien": true,
+  "tier": 4,
+  "fire_mode": "charge",
+  "ammo": "energy",
+  "magazine": "void_cell",
+  "stats": {
+    "damage": 22,
+    "fire_rate": 80,
+    "magazine": 6,
+    "reload_time": 2.8,
+    "spread": 0.2,
+    "range": 160,
+    "velocity": 8,
+    "charge_time": 1.2,
+    "armor_pierce": 0.8
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "barrel",
+    "sight"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "void",
+    "sonic"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 24
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 4
+    }
+  ]
+}

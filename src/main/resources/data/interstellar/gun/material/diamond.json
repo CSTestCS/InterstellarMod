@@ -1,0 +1,14 @@
+{
+  "item": "minecraft:diamond",
+  "color": "#4ee1d6",
+  "tier": 3,
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.15
+    }
+  },
+  "effects": [],
+  "alien": false,
+  "themes": []
+}

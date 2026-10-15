@@ -1,0 +1,43 @@
+{
+  "slot": "barrel",
+  "tier": 4,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "hand_cannon",
+    "smg",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "shotgun",
+    "lmg",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.25
+    },
+    "armor_pierce": {
+      "add": 0.2,
+      "mul": 1
+    },
+    "fire_rate": {
+      "add": 0,
+      "mul": 0.9
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:netherite_ingot",
+      "count": 1
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 2
+    }
+  ]
+}

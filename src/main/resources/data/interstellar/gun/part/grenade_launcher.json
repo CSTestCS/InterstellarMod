@@ -1,0 +1,24 @@
+{
+  "slot": "underbarrel",
+  "tier": 4,
+  "alien": false,
+  "archetypes": [
+    "assault_rifle",
+    "battle_rifle",
+    "lmg",
+    "shotgun"
+  ],
+  "effects": [
+    "grenade"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:tnt",
+      "count": 4
+    },
+    {
+      "item": "minecraft:netherite_ingot",
+      "count": 1
+    }
+  ]
+}

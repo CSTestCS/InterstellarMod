@@ -1,0 +1,52 @@
+{
+  "alien": false,
+  "tier": 4,
+  "fire_mode": "auto",
+  "ammo": "ballistic",
+  "magazine": "belt",
+  "stats": {
+    "damage": 5.5,
+    "fire_rate": 750,
+    "magazine": 100,
+    "reload_time": 5.0,
+    "spread": 4.5,
+    "recoil": 1.4,
+    "range": 72
+  },
+  "slots": [
+    "receiver",
+    "barrel",
+    "stock",
+    "grip",
+    "magazine",
+    "sight",
+    "muzzle",
+    "underbarrel"
+  ],
+  "required": [
+    "receiver",
+    "barrel",
+    "stock"
+  ],
+  "themes": [
+    "human"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 6
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 4
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "count": 1
+    },
+    {
+      "item": "minecraft:netherite_ingot",
+      "count": 1
+    }
+  ]
+}

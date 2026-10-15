@@ -1,0 +1,47 @@
+{
+  "slot": "barrel",
+  "tier": 2,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "hand_cannon",
+    "smg",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "shotgun",
+    "lmg",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "range": {
+      "add": 0,
+      "mul": 1.4
+    },
+    "spread": {
+      "add": 0,
+      "mul": 0.75
+    },
+    "damage": {
+      "add": 0.5,
+      "mul": 1
+    },
+    "velocity": {
+      "add": 0,
+      "mul": 1.2
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 2
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 1
+    }
+  ]
+}

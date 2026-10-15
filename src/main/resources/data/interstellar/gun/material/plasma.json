@@ -1,0 +1,19 @@
+{
+  "item": "interstellar:plasma_core",
+  "color": "#39c6ff",
+  "tier": 4,
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.2
+    }
+  },
+  "effects": [
+    "ignite"
+  ],
+  "alien": true,
+  "themes": [
+    "plasma",
+    "solar"
+  ]
+}

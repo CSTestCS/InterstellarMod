@@ -1,0 +1,43 @@
+{
+  "alien": true,
+  "tier": 5,
+  "fire_mode": "semi",
+  "ammo": "explosive",
+  "magazine": "fuel_rod",
+  "stats": {
+    "damage": 26,
+    "fire_rate": 50,
+    "magazine": 5,
+    "reload_time": 3.5,
+    "spread": 1,
+    "range": 128,
+    "velocity": 1.4,
+    "effect_power": 3
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "barrel",
+    "sight"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "toxic",
+    "plasma",
+    "bio",
+    "nether"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 28
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 5
+    }
+  ]
+}

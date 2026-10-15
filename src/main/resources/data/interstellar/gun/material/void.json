@@ -1,0 +1,18 @@
+{
+  "item": "interstellar:void_shard",
+  "color": "#2c0f4a",
+  "tier": 5,
+  "modifiers": {
+    "armor_pierce": {
+      "add": 0.4,
+      "mul": 1
+    }
+  },
+  "effects": [
+    "levitate"
+  ],
+  "alien": true,
+  "themes": [
+    "void"
+  ]
+}

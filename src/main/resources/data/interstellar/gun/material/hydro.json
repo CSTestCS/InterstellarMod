@@ -1,0 +1,18 @@
+{
+  "item": "interstellar:hydro_pearl",
+  "color": "#1f6fd1",
+  "tier": 3,
+  "modifiers": {
+    "range": {
+      "add": 0,
+      "mul": 1.15
+    }
+  },
+  "effects": [
+    "knockback"
+  ],
+  "alien": true,
+  "themes": [
+    "hydro"
+  ]
+}

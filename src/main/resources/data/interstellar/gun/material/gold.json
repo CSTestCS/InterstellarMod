@@ -1,0 +1,18 @@
+{
+  "item": "minecraft:gold_ingot",
+  "color": "#fad64a",
+  "tier": 2,
+  "modifiers": {
+    "reload_time": {
+      "add": 0,
+      "mul": 0.8
+    },
+    "recoil": {
+      "add": 0,
+      "mul": 1.1
+    }
+  },
+  "effects": [],
+  "alien": false,
+  "themes": []
+}

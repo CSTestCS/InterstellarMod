@@ -1,0 +1,13 @@
+{
+  "item": "interstellar:cryo_crystal",
+  "color": "#a6e4ff",
+  "tier": 4,
+  "modifiers": {},
+  "effects": [
+    "freeze"
+  ],
+  "alien": true,
+  "themes": [
+    "cryo"
+  ]
+}

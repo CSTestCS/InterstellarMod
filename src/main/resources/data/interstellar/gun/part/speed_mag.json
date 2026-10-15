@@ -1,0 +1,39 @@
+{
+  "slot": "magazine",
+  "tier": 2,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "hand_cannon",
+    "smg",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "shotgun",
+    "lmg",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "reload_time": {
+      "add": 0,
+      "mul": 0.65
+    },
+    "magazine": {
+      "add": 0,
+      "mul": 0.85
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:gold_ingot",
+      "count": 6
+    },
+    {
+      "item": "minecraft:redstone",
+      "count": 4
+    }
+  ]
+}

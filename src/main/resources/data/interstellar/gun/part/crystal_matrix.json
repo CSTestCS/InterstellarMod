@@ -1,0 +1,26 @@
+{
+  "slot": "magazine",
+  "tier": 3,
+  "alien": true,
+  "archetypes": [
+    "needler",
+    "shard_launcher",
+    "bio_spitter"
+  ],
+  "modifiers": {
+    "magazine": {
+      "add": 0,
+      "mul": 1.8
+    }
+  },
+  "themes": [
+    "crystal",
+    "bio"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:crystal_lattice",
+      "count": 3
+    }
+  ]
+}

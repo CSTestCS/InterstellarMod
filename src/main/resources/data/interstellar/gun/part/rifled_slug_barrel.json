@@ -1,0 +1,32 @@
+{
+  "slot": "barrel",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "shotgun"
+  ],
+  "modifiers": {
+    "pellets": {
+      "add": -7,
+      "mul": 1
+    },
+    "damage": {
+      "add": 0,
+      "mul": 5
+    },
+    "spread": {
+      "add": 0,
+      "mul": 0.2
+    },
+    "range": {
+      "add": 0,
+      "mul": 3
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:diamond",
+      "count": 3
+    }
+  ]
+}

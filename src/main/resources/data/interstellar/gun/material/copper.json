@@ -1,0 +1,18 @@
+{
+  "item": "minecraft:copper_ingot",
+  "color": "#c15a36",
+  "tier": 1,
+  "modifiers": {
+    "reload_time": {
+      "add": 0,
+      "mul": 0.95
+    },
+    "damage": {
+      "add": 0,
+      "mul": 0.95
+    }
+  },
+  "effects": [],
+  "alien": false,
+  "themes": []
+}

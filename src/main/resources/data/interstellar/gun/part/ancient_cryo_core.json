@@ -1,0 +1,47 @@
+{
+  "slot": "core",
+  "tier": 5,
+  "alien": true,
+  "archetypes": [
+    "plasma_pistol",
+    "plasma_rifle",
+    "needler",
+    "fusion_rifle",
+    "beam_rifle",
+    "fuel_rod_cannon",
+    "shard_launcher",
+    "void_lance",
+    "sonic_disruptor",
+    "bio_spitter"
+  ],
+  "modifiers": {
+    "fire_rate": {
+      "add": 0,
+      "mul": 0.9
+    },
+    "damage": {
+      "add": 0,
+      "mul": 1.3
+    }
+  },
+  "effects": [
+    "freeze"
+  ],
+  "themes": [
+    "cryo"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:cryo_crystal",
+      "count": 8
+    },
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 8
+    },
+    {
+      "item": "minecraft:nether_star",
+      "count": 1
+    }
+  ]
+}

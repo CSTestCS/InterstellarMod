@@ -1,0 +1,37 @@
+{
+  "slot": "barrel",
+  "tier": 4,
+  "alien": true,
+  "archetypes": [
+    "plasma_pistol",
+    "plasma_rifle",
+    "needler",
+    "fusion_rifle",
+    "beam_rifle",
+    "fuel_rod_cannon",
+    "shard_launcher",
+    "void_lance",
+    "sonic_disruptor",
+    "bio_spitter"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.4
+    },
+    "reload_time": {
+      "add": 0,
+      "mul": 1.2
+    }
+  },
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 6
+    },
+    {
+      "item": "interstellar:plasma_core",
+      "count": 2
+    }
+  ]
+}

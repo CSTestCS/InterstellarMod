@@ -1,0 +1,41 @@
+{
+  "slot": "receiver",
+  "tier": 4,
+  "alien": false,
+  "archetypes": [
+    "battle_rifle",
+    "dmr",
+    "sniper_rifle",
+    "hand_cannon",
+    "lmg",
+    "shotgun"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.3
+    },
+    "fire_rate": {
+      "add": 0,
+      "mul": 0.8
+    },
+    "recoil": {
+      "add": 0,
+      "mul": 1.3
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:netherite_ingot",
+      "count": 1
+    },
+    {
+      "item": "minecraft:iron_block",
+      "count": 4
+    },
+    {
+      "item": "minecraft:observer",
+      "count": 2
+    }
+  ]
+}

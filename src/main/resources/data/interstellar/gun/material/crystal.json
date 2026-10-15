@@ -1,0 +1,18 @@
+{
+  "item": "interstellar:crystal_lattice",
+  "color": "#e98cff",
+  "tier": 4,
+  "modifiers": {
+    "headshot": {
+      "add": 0.5,
+      "mul": 1
+    }
+  },
+  "effects": [
+    "shatter"
+  ],
+  "alien": true,
+  "themes": [
+    "crystal"
+  ]
+}

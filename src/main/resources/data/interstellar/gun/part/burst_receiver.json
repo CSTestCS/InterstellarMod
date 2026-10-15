@@ -1,0 +1,36 @@
+{
+  "slot": "receiver",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "assault_rifle",
+    "smg",
+    "pistol",
+    "scout_rifle"
+  ],
+  "modifiers": {
+    "burst": {
+      "add": 2,
+      "mul": 1
+    },
+    "spread": {
+      "add": 0,
+      "mul": 0.8
+    }
+  },
+  "fire_mode": "burst",
+  "cost": [
+    {
+      "item": "minecraft:diamond",
+      "count": 3
+    },
+    {
+      "item": "minecraft:repeater",
+      "count": 3
+    },
+    {
+      "item": "minecraft:observer",
+      "count": 2
+    }
+  ]
+}

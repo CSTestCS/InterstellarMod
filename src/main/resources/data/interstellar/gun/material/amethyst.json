@@ -1,0 +1,16 @@
+{
+  "item": "minecraft:amethyst_shard",
+  "color": "#9a5cc6",
+  "tier": 2,
+  "modifiers": {
+    "headshot": {
+      "add": 0.3,
+      "mul": 1
+    }
+  },
+  "effects": [
+    "shatter"
+  ],
+  "alien": false,
+  "themes": []
+}

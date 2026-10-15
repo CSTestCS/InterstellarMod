@@ -1,0 +1,43 @@
+{
+  "slot": "receiver",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "hand_cannon",
+    "smg",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "shotgun",
+    "lmg",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "spread": {
+      "add": 0,
+      "mul": 0.7
+    },
+    "damage": {
+      "add": 0,
+      "mul": 1.1
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:diamond",
+      "count": 4
+    },
+    {
+      "item": "minecraft:iron_block",
+      "count": 2
+    },
+    {
+      "item": "minecraft:comparator",
+      "count": 2
+    }
+  ]
+}

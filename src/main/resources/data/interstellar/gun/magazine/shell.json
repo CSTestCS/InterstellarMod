@@ -1,0 +1,16 @@
+{
+  "cost": [
+    {
+      "item": "minecraft:paper",
+      "count": 2
+    },
+    {
+      "item": "minecraft:gunpowder",
+      "count": 3
+    },
+    {
+      "item": "minecraft:iron_nugget",
+      "count": 6
+    }
+  ]
+}

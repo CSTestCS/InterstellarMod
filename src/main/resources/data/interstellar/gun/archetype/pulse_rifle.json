@@ -1,0 +1,48 @@
+{
+  "alien": false,
+  "tier": 3,
+  "fire_mode": "burst",
+  "ammo": "ballistic",
+  "magazine": "rifle",
+  "stats": {
+    "damage": 5.5,
+    "fire_rate": 540,
+    "magazine": 40,
+    "burst": 4,
+    "reload_time": 2.1,
+    "spread": 1.5,
+    "range": 72
+  },
+  "slots": [
+    "receiver",
+    "barrel",
+    "stock",
+    "grip",
+    "magazine",
+    "sight",
+    "muzzle",
+    "underbarrel"
+  ],
+  "required": [
+    "receiver",
+    "barrel",
+    "stock"
+  ],
+  "themes": [
+    "human"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 5
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 3
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "count": 1
+    }
+  ]
+}

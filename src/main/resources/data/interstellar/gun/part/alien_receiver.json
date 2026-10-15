@@ -1,0 +1,27 @@
+{
+  "slot": "receiver",
+  "tier": 2,
+  "alien": true,
+  "archetypes": [
+    "plasma_pistol",
+    "plasma_rifle",
+    "needler",
+    "fusion_rifle",
+    "beam_rifle",
+    "fuel_rod_cannon",
+    "shard_launcher",
+    "void_lance",
+    "sonic_disruptor",
+    "bio_spitter"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 6
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 2
+    }
+  ]
+}

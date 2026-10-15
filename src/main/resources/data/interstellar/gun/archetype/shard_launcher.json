@@ -1,0 +1,42 @@
+{
+  "alien": true,
+  "tier": 3,
+  "fire_mode": "auto",
+  "ammo": "needle",
+  "magazine": "crystal_cartridge",
+  "stats": {
+    "damage": 4,
+    "fire_rate": 420,
+    "magazine": 30,
+    "reload_time": 2.0,
+    "spread": 2,
+    "range": 64,
+    "velocity": 2.0,
+    "effect_power": 2
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "barrel",
+    "magazine"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "crystal",
+    "cryo",
+    "hydro"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 20
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 3
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "slot": "stock",
+  "tier": 2,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "hand_cannon",
+    "smg",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "shotgun",
+    "lmg",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "recoil": {
+      "add": 0,
+      "mul": 0.65
+    },
+    "spread": {
+      "add": 0,
+      "mul": 0.9
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 1
+    },
+    {
+      "item": "minecraft:leather",
+      "count": 4
+    }
+  ]
+}

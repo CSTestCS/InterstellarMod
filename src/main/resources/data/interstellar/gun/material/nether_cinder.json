@@ -1,0 +1,18 @@
+{
+  "item": "interstellar:nether_cinder",
+  "color": "#d4401c",
+  "tier": 3,
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.1
+    }
+  },
+  "effects": [
+    "ignite"
+  ],
+  "alien": true,
+  "themes": [
+    "nether"
+  ]
+}

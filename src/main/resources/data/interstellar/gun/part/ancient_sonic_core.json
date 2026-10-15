@@ -1,0 +1,47 @@
+{
+  "slot": "core",
+  "tier": 5,
+  "alien": true,
+  "archetypes": [
+    "plasma_pistol",
+    "plasma_rifle",
+    "needler",
+    "fusion_rifle",
+    "beam_rifle",
+    "fuel_rod_cannon",
+    "shard_launcher",
+    "void_lance",
+    "sonic_disruptor",
+    "bio_spitter"
+  ],
+  "modifiers": {
+    "armor_pierce": {
+      "add": 0.5,
+      "mul": 1
+    },
+    "damage": {
+      "add": 0,
+      "mul": 1.3
+    }
+  },
+  "effects": [
+    "pierce"
+  ],
+  "themes": [
+    "sonic"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:sonic_resonator",
+      "count": 8
+    },
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 8
+    },
+    {
+      "item": "minecraft:nether_star",
+      "count": 1
+    }
+  ]
+}

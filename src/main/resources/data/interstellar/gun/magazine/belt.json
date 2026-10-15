@@ -1,0 +1,12 @@
+{
+  "cost": [
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 6
+    },
+    {
+      "item": "minecraft:gunpowder",
+      "count": 10
+    }
+  ]
+}

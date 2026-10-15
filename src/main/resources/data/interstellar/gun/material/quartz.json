@@ -1,0 +1,14 @@
+{
+  "item": "minecraft:quartz",
+  "color": "#e3d4c4",
+  "tier": 2,
+  "modifiers": {
+    "spread": {
+      "add": 0,
+      "mul": 0.9
+    }
+  },
+  "effects": [],
+  "alien": false,
+  "themes": []
+}

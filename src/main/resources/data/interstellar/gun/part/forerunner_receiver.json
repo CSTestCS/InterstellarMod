@@ -1,0 +1,46 @@
+{
+  "slot": "receiver",
+  "tier": 5,
+  "alien": true,
+  "archetypes": [
+    "plasma_pistol",
+    "plasma_rifle",
+    "needler",
+    "fusion_rifle",
+    "beam_rifle",
+    "fuel_rod_cannon",
+    "shard_launcher",
+    "void_lance",
+    "sonic_disruptor",
+    "bio_spitter"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.35
+    },
+    "reload_time": {
+      "add": 0,
+      "mul": 0.75
+    }
+  },
+  "themes": [
+    "tech",
+    "void",
+    "crystal"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 12
+    },
+    {
+      "item": "minecraft:nether_star",
+      "count": 1
+    },
+    {
+      "item": "interstellar:tech_chip",
+      "count": 4
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "alien": true,
+  "tier": 2,
+  "fire_mode": "auto",
+  "ammo": "plasma",
+  "magazine": "bio_sac",
+  "stats": {
+    "damage": 3,
+    "fire_rate": 360,
+    "magazine": 40,
+    "reload_time": 1.6,
+    "spread": 5,
+    "range": 28,
+    "velocity": 1.2,
+    "effect_power": 2
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "magazine"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "bio",
+    "toxic"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 16
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 2
+    }
+  ]
+}

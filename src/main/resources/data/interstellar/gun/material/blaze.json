@@ -1,0 +1,11 @@
+{
+  "item": "minecraft:blaze_rod",
+  "color": "#f2a51a",
+  "tier": 3,
+  "modifiers": {},
+  "effects": [
+    "ignite"
+  ],
+  "alien": false,
+  "themes": []
+}

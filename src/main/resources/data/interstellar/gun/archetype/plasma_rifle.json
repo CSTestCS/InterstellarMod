@@ -1,0 +1,45 @@
+{
+  "alien": true,
+  "tier": 2,
+  "fire_mode": "auto",
+  "ammo": "plasma",
+  "magazine": "energy_cell",
+  "stats": {
+    "damage": 5,
+    "fire_rate": 600,
+    "magazine": 60,
+    "reload_time": 1.5,
+    "spread": 3,
+    "range": 56,
+    "velocity": 2.4,
+    "effect_power": 1
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "barrel",
+    "grip",
+    "muzzle"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "plasma",
+    "nether",
+    "solar",
+    "tech",
+    "bio"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 16
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 2
+    }
+  ]
+}

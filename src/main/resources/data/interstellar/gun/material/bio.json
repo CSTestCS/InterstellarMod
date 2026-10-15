@@ -1,0 +1,19 @@
+{
+  "item": "interstellar:bio_gel",
+  "color": "#6fd12b",
+  "tier": 3,
+  "modifiers": {
+    "effect_power": {
+      "add": 1,
+      "mul": 1
+    }
+  },
+  "effects": [
+    "poison"
+  ],
+  "alien": true,
+  "themes": [
+    "bio",
+    "toxic"
+  ]
+}

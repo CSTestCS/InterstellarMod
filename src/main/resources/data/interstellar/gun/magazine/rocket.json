@@ -1,0 +1,12 @@
+{
+  "cost": [
+    {
+      "item": "minecraft:tnt",
+      "count": 2
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 3
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "item": "minecraft:obsidian",
+  "color": "#2a1d3d",
+  "tier": 3,
+  "modifiers": {
+    "recoil": {
+      "add": 0,
+      "mul": 0.8
+    },
+    "fire_rate": {
+      "add": 0,
+      "mul": 0.95
+    }
+  },
+  "effects": [],
+  "alien": false,
+  "themes": []
+}

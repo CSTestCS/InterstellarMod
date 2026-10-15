@@ -1,0 +1,18 @@
+{
+  "item": "interstellar:alien_alloy",
+  "color": "#7d8ea8",
+  "tier": 3,
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.1
+    },
+    "reload_time": {
+      "add": 0,
+      "mul": 0.9
+    }
+  },
+  "effects": [],
+  "alien": true,
+  "themes": []
+}

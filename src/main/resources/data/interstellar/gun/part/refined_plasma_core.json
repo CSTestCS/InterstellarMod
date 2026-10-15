@@ -1,0 +1,39 @@
+{
+  "slot": "core",
+  "tier": 4,
+  "alien": true,
+  "archetypes": [
+    "plasma_pistol",
+    "plasma_rifle",
+    "needler",
+    "fusion_rifle",
+    "beam_rifle",
+    "fuel_rod_cannon",
+    "shard_launcher",
+    "void_lance",
+    "sonic_disruptor",
+    "bio_spitter"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.265
+    }
+  },
+  "effects": [
+    "ignite"
+  ],
+  "themes": [
+    "plasma"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:plasma_core",
+      "count": 6
+    },
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 6
+    }
+  ]
+}

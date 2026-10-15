@@ -1,0 +1,34 @@
+{
+  "slot": "muzzle",
+  "tier": 2,
+  "alien": true,
+  "archetypes": [
+    "plasma_pistol",
+    "plasma_rifle",
+    "needler",
+    "fusion_rifle",
+    "beam_rifle",
+    "fuel_rod_cannon",
+    "shard_launcher",
+    "void_lance",
+    "sonic_disruptor",
+    "bio_spitter"
+  ],
+  "modifiers": {
+    "fire_rate": {
+      "add": 0,
+      "mul": 1.2
+    }
+  },
+  "themes": [
+    "plasma",
+    "nether",
+    "solar"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:plasma_core",
+      "count": 1
+    }
+  ]
+}

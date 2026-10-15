@@ -1,0 +1,31 @@
+{
+  "slot": "sight",
+  "tier": 4,
+  "alien": false,
+  "archetypes": [
+    "sniper_rifle",
+    "dmr",
+    "scout_rifle",
+    "beam_rifle"
+  ],
+  "modifiers": {
+    "zoom": {
+      "add": 6,
+      "mul": 1
+    },
+    "spread": {
+      "add": 0,
+      "mul": 0.6
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:spyglass",
+      "count": 2
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 2
+    }
+  ]
+}

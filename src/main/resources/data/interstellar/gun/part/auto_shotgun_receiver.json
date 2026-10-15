@@ -1,0 +1,29 @@
+{
+  "slot": "receiver",
+  "tier": 4,
+  "alien": false,
+  "archetypes": [
+    "shotgun"
+  ],
+  "modifiers": {
+    "fire_rate": {
+      "add": 0,
+      "mul": 2.5
+    },
+    "damage": {
+      "add": 0,
+      "mul": 0.85
+    }
+  },
+  "fire_mode": "auto",
+  "cost": [
+    {
+      "item": "minecraft:netherite_ingot",
+      "count": 1
+    },
+    {
+      "item": "minecraft:repeater",
+      "count": 6
+    }
+  ]
+}
