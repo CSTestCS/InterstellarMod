@@ -112,6 +112,9 @@ configurations {
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    // The core package's tests run without Minecraft; give them the two libraries core uses.
+    testImplementation 'org.joml:joml:1.10.8'
+    testImplementation 'com.google.code.gson:gson:2.11.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
