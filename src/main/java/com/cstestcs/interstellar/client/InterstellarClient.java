@@ -31,6 +31,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -74,7 +75,8 @@ public final class InterstellarClient {
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingIn e) -> BodyLibrary.reportToServer());
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> ClientRaces.clear());
         ShipClient.register();
-        BodyLibrary.reload();
+        // Minecraft.getInstance() is still null while mods are constructed; load bodies once the client exists.
+        modBus.addListener((FMLClientSetupEvent e) -> BodyLibrary.reload());
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
