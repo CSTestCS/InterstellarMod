@@ -110,7 +110,7 @@ public final class GunFiring {
         if (fx.contains("wither")) effect(living, MobEffects.WITHER, 30 * power, 0);
         if (fx.contains("levitate")) effect(living, MobEffects.LEVITATION, 10 * power, 0);
         if (fx.contains("blind")) effect(living, MobEffects.BLINDNESS, 20 * power, 0);
-        if (fx.contains("knockback")) living.knockback(0.6 * power, shooter.getX() - living.getX(), shooter.getZ() - living.getZ());
+        if (fx.contains("knockback")) living.push(living.position().subtract(shooter.position()).normalize().scale(0.4 * power));
         if (fx.contains("shatter") && living.getRandom().nextInt(5) == 0) {
             target.hurtServer(level, source, damage * 0.5f);
             level.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 8, 0.2, 0.2, 0.2, 0.2);

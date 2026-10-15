@@ -52,7 +52,7 @@ public final class GunActions {
                 // Split one magazine off the stack so only that one is drained.
                 ItemStack one = s.split(1);
                 one.set(ModComponents.MAGAZINE.get(), new GunCodecs.Magazine(mag.kind(), mag.ammo() - take, mag.capacity()));
-                if (!inv.add(one)) player.drop(one, false);
+                if (!inv.add(one)) player.spawnAtLocation(player.level(), one);
             } else {
                 s.set(ModComponents.MAGAZINE.get(), new GunCodecs.Magazine(mag.kind(), mag.ammo() - take, mag.capacity()));
             }
@@ -107,7 +107,7 @@ public final class GunActions {
                 List<GunDataManager.Cost> cost = GunDataManager.cost("magazine", action.a());
                 if (cost.isEmpty() || !pay(player, cost)) return;
                 ItemStack mag = MagazineItem.create(action.a(), capacity(action.a()), capacity(action.a()));
-                if (!player.getInventory().add(mag)) player.drop(mag, false);
+                if (!player.getInventory().add(mag)) player.spawnAtLocation(player.level(), mag);
             }
             case ModPayloads.GunsmithAction.APPLY_TRIM -> {
                 GunBuild build = gun.get(ModComponents.GUN_BUILD.get());

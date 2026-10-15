@@ -89,7 +89,7 @@ public final class SpaceTravel {
             for (Entity rider : riders) {
                 Entity r = rider.teleport(new TeleportTransition(target, pos, Vec3.ZERO, rider.getYRot(), rider.getXRot(), TeleportTransition.DO_NOTHING));
                 if (r == null) continue;
-                r.startRiding(newShip, true);
+                r.startRiding(newShip, true, true);
                 Integer seat = seats.get(rider.getUUID());
                 if (seat != null) newShip.restoreSeat(r, seat);
             }

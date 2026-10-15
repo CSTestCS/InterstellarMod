@@ -189,7 +189,7 @@ public final class InterstellarCommands {
         }
         if (build == null || !build.archetype().equals(id)) build = new GunBuild(id, java.util.Map.of(), null, java.util.Map.of());
         ItemStack gun = GunItem.create(build, true);
-        if (!p.getInventory().add(gun)) p.drop(gun, false);
+        if (!p.getInventory().add(gun)) p.spawnAtLocation(p.level(), gun);
         return 1;
     }
 }

@@ -497,7 +497,7 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
             AABB area = new AABB(seatPos, seatPos).inflate(radius * Math.max(shipScale(), 0.25));
             for (Mob mob : level.getEntitiesOfClass(Mob.class, area, m -> !m.isPassenger() && SeatEntity.wantsToSit(m))) {
                 if (mob.isLeashed()) mob.dropLeash();
-                mob.startRiding(this, true);
+                mob.startRiding(this, true, true);
                 seatOf.put(mob.getUUID(), i);
                 break;
             }

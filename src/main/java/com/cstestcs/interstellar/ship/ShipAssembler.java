@@ -57,12 +57,12 @@ public final class ShipAssembler {
                 landing ? SpacecraftEntity.MODE_LANDING : SpacecraftEntity.MODE_FLYING);
         level.addFreshEntity(ship);
         if (player.isPassenger()) player.stopRiding();
-        player.startRiding(ship, true);
+        player.startRiding(ship, true, true);
         for (int i = 0; i < seated.size(); i++) {
             Entity rider = seated.get(i);
             int seat = structure.seats.indexOf(seatPositions.get(i));
             if (rider == player) continue;
-            if (rider.startRiding(ship, true) && seat > 0) ship.restoreSeat(rider, seat);
+            if (rider.startRiding(ship, true, true) && seat > 0) ship.restoreSeat(rider, seat);
         }
         player.sendOverlayMessage(Component.translatable(landing ? "message.interstellar.ship.landing" : "message.interstellar.ship.launch",
                 result.blocks().size()));

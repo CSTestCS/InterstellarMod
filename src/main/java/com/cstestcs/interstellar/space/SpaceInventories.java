@@ -57,7 +57,7 @@ public final class SpaceInventories extends SavedData {
         if (list == null) return 0;
         setDirty();
         for (ItemStack s : list) {
-            if (!player.getInventory().add(s.copy())) player.drop(s.copy(), false);
+            if (!player.getInventory().add(s.copy())) player.spawnAtLocation(player.level(), s.copy());
         }
         return list.size();
     }

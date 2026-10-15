@@ -55,9 +55,9 @@ public class SpacecraftRenderer extends EntityRenderer<SpacecraftEntity, Spacecr
         poseStack.pushPose();
         // Matches SpacecraftEntity.toWorld (Vec3 yRot(base), xRot(-pitch), yRot(-yaw), scale), applied right to left.
         poseStack.scale(state.scale, state.scale, state.scale);
-        poseStack.mulPose(Axis.YP.rotationDegrees(-state.yaw));
-        poseStack.mulPose(Axis.XP.rotationDegrees(state.pitch)); // Vec3.xRot(a) == JOML rotateX(-a)
-        poseStack.mulPose(Axis.YP.rotationDegrees(state.structure.baseYaw));
+        poseStack.rotateDegrees(Axis.YP, -state.yaw);
+        poseStack.rotateDegrees(Axis.XP, state.pitch); // Vec3.xRot(a) == JOML rotateX(-a)
+        poseStack.rotateDegrees(Axis.YP, state.structure.baseYaw);
         for (ShipStructure.Entry e : state.structure.entries) {
             poseStack.pushPose();
             poseStack.translate(e.pos().getX() - 0.5, e.pos().getY(), e.pos().getZ() - 0.5);

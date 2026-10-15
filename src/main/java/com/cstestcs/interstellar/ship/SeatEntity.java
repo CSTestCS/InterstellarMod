@@ -34,7 +34,7 @@ public class SeatEntity extends Entity {
         seat.setPos(pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5);
         level.addFreshEntity(seat);
         if (rider.isPassenger()) rider.stopRiding();
-        return rider.startRiding(seat, true);
+        return rider.startRiding(seat, true, true);
     }
 
     /** Mobs that follow a player (leashed) or were recruited sit down in nearby empty seats. */
