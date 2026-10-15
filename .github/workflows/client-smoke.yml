@@ -45,7 +45,12 @@ jobs:
       - name: Run client in the test world
         run: |
           export LIBGL_ALWAYS_SOFTWARE=1 SDL_VIDEODRIVER=offscreen
-          timeout 540 ./gradlew runClient -PquickPlay=smoke --console=plain > client.log 2>&1 || true
+          ( sleep 200; for n in 1 2; do pid=$(pgrep -f devlaunch.Main | head -1); [ -n "$pid" ] && jstack -l $pid > jstack$n.txt; sleep 60; done ) &
+          timeout 400 ./gradlew runClient -PquickPlay=smoke --console=plain > client.log 2>&1 || true
+          for n in 1 2; do
+            echo "===== thread dump $n: render/server/worker threads"
+            python3 -c "import re,sys;t=open(sys.argv[1]).read().split(chr(10)+chr(10));print(chr(10).join(b[:6000] for b in t if re.search(r'Render thread|Server thread|interstellar|Worker-Main|modloading', b)))" jstack$n.txt 2>/dev/null | head -250 || true
+          done
           echo "===== interesting lines"
           grep -nE "interstellar|Interstellar|ERROR|Exception|Caused by|[Mm]ixin|FATAL|crash|Crash|Preparing|logged in|joined|Loaded [0-9]+ (races|custom)" client.log | grep -vE "DEBUG|flite|Narrator|OpenAL|SoundSystem" | cut -c1-400 | head -200
           echo "===== tail"
