@@ -188,6 +188,9 @@ disables custom bodies instead of crashing.
   unit tests run there too.
 * ✅ A dedicated server boots with the mod: it creates the space dimension and the 12 foreign worlds, loads the
   54 races and their assets, and loads 22 gun archetypes, 83 parts and 23 materials, with no errors.
-* ⚠️ Client-side rendering has not been tested in game yet: race heads and tails, custom bodies and armour
-  deformation (`ModelMixin`), the spacecraft renderer and the gunsmith GUI.
+* ✅ The client starts with the mod (tested on CI with software rendering): bodies load, resources and textures load,
+  and an integrated server loads the mod's data. The first release crashed at startup (custom bodies were loaded
+  before the client existed); that is fixed.
+* ⚠️ Rendering inside a world (race heads and tails, custom bodies and armour deformation via `ModelMixin`,
+  spacecraft, gunsmith GUI) has not been seen in game yet.
 * ⚠️ Gun display transforms and placeholder textures will need tuning in game.
