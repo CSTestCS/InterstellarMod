@@ -19,21 +19,28 @@ jobs:
           distribution: 'temurin'
       - uses: gradle/actions/setup-gradle@v4
       - name: Install software OpenGL
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq libgl1-mesa-dri libglx-mesa0 libegl-mesa0 > /dev/null
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libgl1-mesa-dri libglx-mesa0 libegl-mesa0 libegl1 libgl1 > /dev/null
       - name: Create a test world with mobs at spawn
         run: |
-          mkdir -p run && echo "eula=true" > run/eula.txt
-          printf "level-type=minecraft\\:normal\nonline-mode=false\nspawn-protection=0\n" > run/server.properties
-          ( sleep 150
+          # Test-only functions, written here and never committed: summon mobs at spawn, then save and stop.
+          F=src/main/resources/data/interstellar/function; T=src/main/resources/data/minecraft/tags/function
+          mkdir -p $F $T
+          {
             echo "time set 14000"
-            echo "gamerule advance_time false"
-            for m in zombie villager skeleton pillager piglin alien; do
-              id=minecraft:$m; [ $m = alien ] && id=interstellar:alien
+            for id in minecraft:zombie minecraft:villager minecraft:skeleton minecraft:pillager minecraft:piglin interstellar:alien; do
               echo "summon $id ~2 ~ ~3 {PersistenceRequired:1b,NoAI:1b}"
               echo "summon $id ~-2 ~ ~3 {PersistenceRequired:1b,NoAI:1b}"
             done
-            echo "save-all flush"; sleep 15; echo "stop" ) | timeout 400 ./gradlew runServer --console=plain > server.log 2>&1 || true
-          grep -nE "Summoned|Unknown|ERROR|Exception|Done \\(" server.log | head -40
+            echo "say smoke: mobs summoned"
+            echo "schedule function interstellar:smoke_stop 100t"
+          } > $F/smoke_setup.mcfunction
+          printf 'say smoke: stopping\nsave-all flush\nstop\n' > $F/smoke_stop.mcfunction
+          echo '{"values":["interstellar:smoke_setup"]}' > $T/load.json
+          mkdir -p run && echo "eula=true" > run/eula.txt
+          printf "level-type=minecraft\\:normal\nonline-mode=false\nspawn-protection=0\nfunction-permission-level=4\n" > run/server.properties
+          timeout 400 ./gradlew runServer --console=plain > server.log 2>&1 || true
+          grep -nE "smoke:|Summoned|Unknown|Incorrect|ERROR|Exception|Done \\(" server.log | cut -c1-300 | head -40
+          rm -rf $F/smoke_setup.mcfunction $F/smoke_stop.mcfunction $T
           mkdir -p run/saves && cp -r run/world run/saves/smoke && rm -rf run/world
       - name: Run client in the test world
         run: |
