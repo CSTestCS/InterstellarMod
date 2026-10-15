@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "interstellar:landing_gear",
+    "interstellar:control_panel",
+    "interstellar:ship_generator",
+    "interstellar:life_support",
+    "interstellar:ship_thruster",
+    "interstellar:ship_cannon",
+    "interstellar:passenger_seat",
+    "interstellar:hull_plating",
+    "interstellar:gunsmith_table"
+  ]
+}

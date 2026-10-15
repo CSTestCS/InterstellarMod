@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SNS",
+    "IAI",
+    "III"
+  ],
+  "key": {
+    "S": "minecraft:smithing_table",
+    "N": "minecraft:netherite_ingot",
+    "I": "minecraft:iron_block",
+    "A": "minecraft:anvil"
+  },
+  "result": {
+    "id": "interstellar:gunsmith_table",
+    "count": 1
+  }
+}

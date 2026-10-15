@@ -35,6 +35,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * {@code /interstellar ...} - operator commands (permission level 2, i.e. cheats):
  * <pre>
+ *   /race choose &lt;race&gt;            (everyone; only races with PlayerSelectable: true)
  *   race list | reload | info &lt;entity&gt; | set &lt;entities&gt; &lt;race&gt;
  *   body set &lt;entities&gt; &lt;name|none&gt;
  *   spaceinventory restore &lt;player&gt; | count &lt;player&gt;
@@ -47,6 +48,21 @@ public final class InterstellarCommands {
     private InterstellarCommands() {}
 
     public static void register(CommandDispatcher<CommandSourceStack> d) {
+        // Any player may pick one of the races marked "PlayerSelectable: true".
+        d.register(Commands.literal("race").then(Commands.literal("choose").then(Commands.argument("race", StringArgumentType.word())
+                .suggests((c, b) -> SharedSuggestionProvider.suggest(RaceManager.registry().all().stream()
+                        .filter(RaceDefinition::playerSelectable).map(RaceDefinition::id), b))
+                .executes(c -> {
+                    ServerPlayer p = c.getSource().getPlayerOrException();
+                    RaceDefinition race = RaceManager.get(StringArgumentType.getString(c, "race"));
+                    if (race == null || !race.playerSelectable()) {
+                        c.getSource().sendFailure(Component.translatable("command.interstellar.race.unknown"));
+                        return 0;
+                    }
+                    RaceEvents.setRace(p, race);
+                    c.getSource().sendSuccess(() -> Component.translatable("command.interstellar.race.set", 1, race.displayName()), false);
+                    return 1;
+                }))));
         d.register(Commands.literal("interstellar").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("race")
                         .then(Commands.literal("list").executes(InterstellarCommands::raceList))

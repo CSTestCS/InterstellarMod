@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "interstellar:block/ship_thruster_front",
+    "side": "interstellar:block/ship_side",
+    "top": "interstellar:block/ship_top"
+  }
+}

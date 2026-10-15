@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "III",
+    "TDT",
+    "III"
+  ],
+  "key": {
+    "I": "minecraft:iron_block",
+    "T": "minecraft:tnt",
+    "D": "minecraft:dispenser"
+  },
+  "result": {
+    "id": "interstellar:ship_cannon",
+    "count": 1
+  }
+}

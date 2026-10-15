@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "III",
+    " P ",
+    "B B"
+  ],
+  "key": {
+    "I": "minecraft:iron_block",
+    "P": "minecraft:piston",
+    "B": "minecraft:iron_bars"
+  },
+  "result": {
+    "id": "interstellar:landing_gear",
+    "count": 2
+  }
+}

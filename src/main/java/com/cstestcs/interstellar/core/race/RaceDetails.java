@@ -43,7 +43,7 @@ public final class RaceDetails {
         DAMAGE_MULTIPLIER("DamageMultiplier", "Attack damage multiplier."),
         TRAITS("Traits", "fire_immune, water_breathing, night_vision, slow_fall, no_fall_damage, glowing, regeneration."),
         NAMES("Names", "Comma separated name pool. Mobs of this race get a random name from it."),
-        PLAYER_SELECTABLE("PlayerSelectable", "true = players may choose this race with /interstellar race choose."),
+        PLAYER_SELECTABLE("PlayerSelectable", "true = players may pick this race themselves with /race choose <race>."),
         WEAPON_TIER("WeaponTier", "0-5. Quality of rolled guns for aliens of this race."),
         WEAPON_THEME("WeaponTheme", "Gun material/theme used when rolling weapons, e.g. human, nether, void, crystal, plasma.");
 

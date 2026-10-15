@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "interstellar:block/gunsmith_table"
+    },
+    "facing=east": {
+      "model": "interstellar:block/gunsmith_table",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "interstellar:block/gunsmith_table",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "interstellar:block/gunsmith_table",
+      "y": 270
+    }
+  }
+}

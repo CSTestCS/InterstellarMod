@@ -1,0 +1,28 @@
+{
+  "values": [
+    "minecraft:player",
+    "minecraft:mannequin",
+    "minecraft:villager",
+    "minecraft:wandering_trader",
+    "minecraft:zombie",
+    "minecraft:husk",
+    "minecraft:drowned",
+    "minecraft:zombie_villager",
+    "minecraft:giant",
+    "minecraft:skeleton",
+    "minecraft:stray",
+    "minecraft:bogged",
+    "minecraft:parched",
+    "minecraft:wither_skeleton",
+    "minecraft:piglin",
+    "minecraft:piglin_brute",
+    "minecraft:zombified_piglin",
+    "minecraft:pillager",
+    "minecraft:vindicator",
+    "minecraft:evoker",
+    "minecraft:illusioner",
+    "minecraft:witch",
+    "minecraft:enderman",
+    "interstellar:alien"
+  ]
+}

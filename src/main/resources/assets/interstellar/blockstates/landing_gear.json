@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "extended=true": {
+      "model": "interstellar:block/landing_gear_extended"
+    },
+    "extended=false": {
+      "model": "interstellar:block/landing_gear_retracted"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "interstellar:block/ship_thruster"
+    },
+    "facing=east": {
+      "model": "interstellar:block/ship_thruster",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "interstellar:block/ship_thruster",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "interstellar:block/ship_thruster",
+      "y": 270
+    }
+  }
+}

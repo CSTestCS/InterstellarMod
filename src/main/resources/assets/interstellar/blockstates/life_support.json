@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "interstellar:block/life_support"
+    },
+    "facing=east": {
+      "model": "interstellar:block/life_support",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "interstellar:block/life_support",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "interstellar:block/life_support",
+      "y": 270
+    }
+  }
+}

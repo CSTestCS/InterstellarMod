@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GRG",
+    "CXC",
+    "III"
+  ],
+  "key": {
+    "G": "minecraft:glass_pane",
+    "R": "minecraft:redstone",
+    "C": "minecraft:comparator",
+    "X": "minecraft:compass",
+    "I": "minecraft:iron_ingot"
+  },
+  "result": {
+    "id": "interstellar:control_panel",
+    "count": 1
+  }
+}

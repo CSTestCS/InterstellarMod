@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "IGI",
+    "KHK",
+    "IGI"
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "G": "minecraft:glass",
+    "K": "minecraft:kelp",
+    "H": "minecraft:heart_of_the_sea"
+  },
+  "result": {
+    "id": "interstellar:life_support",
+    "count": 1
+  }
+}

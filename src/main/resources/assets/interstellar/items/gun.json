@@ -1,0 +1,1621 @@
+{
+  "model": {
+    "type": "minecraft:composite",
+    "models": [
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_info",
+        "field": "archetype",
+        "cases": [
+          {
+            "when": "assault_rifle",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/assault_rifle",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "battle_rifle",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/battle_rifle",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "beam_rifle",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/beam_rifle",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "bio_spitter",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/bio_spitter",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "dmr",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/dmr",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "fuel_rod_cannon",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/fuel_rod_cannon",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "fusion_rifle",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/fusion_rifle",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "hand_cannon",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/hand_cannon",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "lmg",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/lmg",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "needler",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/needler",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "pistol",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/pistol",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "plasma_pistol",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/plasma_pistol",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "plasma_rifle",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/plasma_rifle",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "pulse_rifle",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/pulse_rifle",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "rocket_launcher",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/rocket_launcher",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "scout_rifle",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/scout_rifle",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "shard_launcher",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/shard_launcher",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "shotgun",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/shotgun",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "smg",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/smg",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "sniper_rifle",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/sniper_rifle",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "sonic_disruptor",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/sonic_disruptor",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "void_lance",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/frame/void_lance",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:model",
+          "model": "interstellar:item/gun/base"
+        }
+      },
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_part",
+        "slot": "receiver",
+        "cases": [
+          {
+            "when": "alien_receiver",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/alien_receiver",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "auto_shotgun_receiver",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/auto_shotgun_receiver",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "burst_receiver",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/burst_receiver",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "forerunner_receiver",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/forerunner_receiver",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "heavy_receiver",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/heavy_receiver",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "match_receiver",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/match_receiver",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "rapid_receiver",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/rapid_receiver",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          },
+          {
+            "when": "standard_receiver",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/standard_receiver",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "receiver"
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:empty"
+        }
+      },
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_part",
+        "slot": "barrel",
+        "cases": [
+          {
+            "when": "fluted_barrel",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/fluted_barrel",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "barrel"
+                }
+              ]
+            }
+          },
+          {
+            "when": "focusing_lens",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/focusing_lens",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "barrel"
+                }
+              ]
+            }
+          },
+          {
+            "when": "heavy_barrel",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/heavy_barrel",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "barrel"
+                }
+              ]
+            }
+          },
+          {
+            "when": "long_barrel",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/long_barrel",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "barrel"
+                }
+              ]
+            }
+          },
+          {
+            "when": "overcharged_emitter",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/overcharged_emitter",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "barrel"
+                }
+              ]
+            }
+          },
+          {
+            "when": "rifled_slug_barrel",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/rifled_slug_barrel",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "barrel"
+                }
+              ]
+            }
+          },
+          {
+            "when": "short_barrel",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/short_barrel",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "barrel"
+                }
+              ]
+            }
+          },
+          {
+            "when": "standard_barrel",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/standard_barrel",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "barrel"
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:empty"
+        }
+      },
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_part",
+        "slot": "stock",
+        "cases": [
+          {
+            "when": "light_stock",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/light_stock",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "stock"
+                }
+              ]
+            }
+          },
+          {
+            "when": "precision_stock",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/precision_stock",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "stock"
+                }
+              ]
+            }
+          },
+          {
+            "when": "tactical_stock",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/tactical_stock",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "stock"
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:empty"
+        }
+      },
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_part",
+        "slot": "grip",
+        "cases": [
+          {
+            "when": "alien_grip",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/alien_grip",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "grip"
+                }
+              ]
+            }
+          },
+          {
+            "when": "angled_grip",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/angled_grip",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "grip"
+                }
+              ]
+            }
+          },
+          {
+            "when": "vertical_grip",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/vertical_grip",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "grip"
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:empty"
+        }
+      },
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_part",
+        "slot": "magazine",
+        "cases": [
+          {
+            "when": "crystal_matrix",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/crystal_matrix",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "magazine"
+                }
+              ]
+            }
+          },
+          {
+            "when": "drum_mag",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/drum_mag",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "magazine"
+                }
+              ]
+            }
+          },
+          {
+            "when": "extended_mag",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/extended_mag",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "magazine"
+                }
+              ]
+            }
+          },
+          {
+            "when": "speed_mag",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/speed_mag",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "magazine"
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:empty"
+        }
+      },
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_part",
+        "slot": "sight",
+        "cases": [
+          {
+            "when": "acog_scope",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/acog_scope",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "sight"
+                }
+              ]
+            }
+          },
+          {
+            "when": "holo_scope",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/holo_scope",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "sight"
+                }
+              ]
+            }
+          },
+          {
+            "when": "iron_sights",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/iron_sights",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "sight"
+                }
+              ]
+            }
+          },
+          {
+            "when": "red_dot",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/red_dot",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "sight"
+                }
+              ]
+            }
+          },
+          {
+            "when": "sniper_scope",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/sniper_scope",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "sight"
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:empty"
+        }
+      },
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_part",
+        "slot": "muzzle",
+        "cases": [
+          {
+            "when": "compensator",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/compensator",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "muzzle"
+                }
+              ]
+            }
+          },
+          {
+            "when": "flash_hider",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/flash_hider",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "muzzle"
+                }
+              ]
+            }
+          },
+          {
+            "when": "incendiary_choke",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/incendiary_choke",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "muzzle"
+                }
+              ]
+            }
+          },
+          {
+            "when": "plasma_vent",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/plasma_vent",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "muzzle"
+                }
+              ]
+            }
+          },
+          {
+            "when": "suppressor",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/suppressor",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "muzzle"
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:empty"
+        }
+      },
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_part",
+        "slot": "underbarrel",
+        "cases": [
+          {
+            "when": "bayonet",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/bayonet",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "underbarrel"
+                }
+              ]
+            }
+          },
+          {
+            "when": "grenade_launcher",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/grenade_launcher",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "underbarrel"
+                }
+              ]
+            }
+          },
+          {
+            "when": "laser_sight",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/laser_sight",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "underbarrel"
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:empty"
+        }
+      },
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_part",
+        "slot": "core",
+        "cases": [
+          {
+            "when": "ancient_bio_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_bio_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "ancient_cryo_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_cryo_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "ancient_crystal_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_crystal_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "ancient_hydro_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_hydro_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "ancient_nether_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_nether_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "ancient_plasma_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_plasma_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "ancient_solar_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_solar_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "ancient_sonic_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_sonic_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "ancient_tech_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_tech_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "ancient_toxic_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_toxic_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "ancient_void_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/ancient_void_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_bio_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_bio_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_cryo_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_cryo_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_crystal_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_crystal_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_hydro_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_hydro_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_nether_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_nether_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_plasma_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_plasma_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_solar_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_solar_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_sonic_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_sonic_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_tech_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_tech_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_toxic_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_toxic_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "refined_void_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/refined_void_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_bio_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_bio_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_cryo_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_cryo_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_crystal_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_crystal_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_hydro_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_hydro_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_nether_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_nether_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_plasma_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_plasma_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_solar_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_solar_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_sonic_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_sonic_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_tech_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_tech_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_toxic_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_toxic_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "stable_void_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/stable_void_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_bio_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_bio_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_cryo_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_cryo_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_crystal_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_crystal_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_hydro_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_hydro_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_nether_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_nether_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_plasma_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_plasma_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_solar_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_solar_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_sonic_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_sonic_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_tech_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_tech_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_toxic_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_toxic_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          },
+          {
+            "when": "unstable_void_core",
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/part/unstable_void_core",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "slot": "core"
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:empty"
+        }
+      },
+      {
+        "type": "minecraft:select",
+        "property": "interstellar:gun_info",
+        "field": "trim",
+        "cases": [
+          {
+            "when": [
+              "sentry",
+              "dune",
+              "coast",
+              "wild",
+              "ward",
+              "eye",
+              "vex",
+              "tide",
+              "snout",
+              "rib",
+              "spire",
+              "wayfinder",
+              "shaper",
+              "silence",
+              "raiser",
+              "host",
+              "flow",
+              "bolt"
+            ],
+            "model": {
+              "type": "minecraft:model",
+              "model": "interstellar:item/gun/trim",
+              "tints": [
+                {
+                  "type": "interstellar:gun_material",
+                  "default": 16777215,
+                  "trim": true
+                }
+              ]
+            }
+          }
+        ],
+        "fallback": {
+          "type": "minecraft:empty"
+        }
+      }
+    ]
+  }
+}
