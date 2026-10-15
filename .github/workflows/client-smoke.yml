@@ -19,13 +19,17 @@ jobs:
           distribution: 'temurin'
       - uses: gradle/actions/setup-gradle@v4
       - name: Install virtual display
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb mesa-utils libgl1-mesa-dri > /dev/null
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq xvfb mesa-utils libgl1-mesa-dri libglx-mesa0 libegl-mesa0 > /dev/null
       - name: Run client
         run: |
-          export LIBGL_ALWAYS_SOFTWARE=1
-          timeout 420 xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClient --console=plain > client.log 2>&1 || true
+          export LIBGL_ALWAYS_SOFTWARE=1 SDL_VIDEODRIVER=x11
+          Xvfb :99 -screen 0 1280x720x24 +extension GLX +render -noreset &
+          sleep 3
+          export DISPLAY=:99
+          glxinfo -B | head -20 || true
+          timeout 420 ./gradlew runClient --console=plain > client.log 2>&1 || true
           echo "===== interesting lines"
-          grep -nE "interstellar|Interstellar|ERROR|Exception|Caused by|[Mm]ixin|FATAL|Failed|crash|Crash" client.log | grep -vE "DEBUG" | head -300
+          grep -nE "interstellar|Interstellar|ERROR|WARN|Exception|Caused by|[Mm]ixin|FATAL|Failed|crash|Crash|Reload|Created|Backend" client.log | grep -vE "DEBUG" | head -300
           echo "===== tail"
           tail -80 client.log
           echo "===== crash reports"
