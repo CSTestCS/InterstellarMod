@@ -104,7 +104,7 @@ public final class BodyInstances {
 
         // ---- vanilla angles (used directly without clips, and for arms while attacking or aiming)
         PoseSolver.Input in = vanillaInput(state);
-        boolean armsBusy = state instanceof HumanoidRenderState hs && (entity.swinging || hs.isUsingItem);
+        boolean armsBusy = state instanceof HumanoidRenderState hs && (entity.isSwinging() || hs.isUsingItem);
         boolean gun = entity.getMainHandItem().getItem() instanceof GunItem;
         in.vanillaRightArm = armsBusy || gun;
         in.vanillaLeftArm = armsBusy || gun;

@@ -60,19 +60,19 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
             Identifier skin = race.skin(info.skinVariant);
             if (bodyDrawn) {
                 var inst = info.body;
-                collector.submitCustomGeometry(poseStack, RenderTypes.entityCutoutNoCull(skin), (pose, vc) -> BodyDraw.mesh(pose, vc, inst, light, overlay, -1));
+                collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(skin), (pose, vc) -> BodyDraw.mesh(pose, vc, inst, light, overlay, -1));
                 if (!info.hasRaceHead()) {
                     poseStack.pushPose();
                     poseStack.mulPose(inst.headTransform());
-                    collector.submitModel(new RaceModels.Part(biped.head), Unit.INSTANCE, poseStack, RenderTypes.entityCutoutNoCull(skin), light, overlay, -1);
+                    collector.submitModel(new RaceModels.Part(biped.head), Unit.INSTANCE, poseStack, RenderTypes.entityCutout(skin), light, overlay, -1);
                     poseStack.popPose();
                 }
             } else {
-                collector.submitModel(biped, hs, poseStack, RenderTypes.entityCutoutNoCull(skin), light, overlay, -1);
+                collector.submitModel(biped, hs, poseStack, RenderTypes.entityCutout(skin), light, overlay, -1);
             }
             if (info.villagerLike && !info.outfit.isEmpty()) {
                 for (Identifier tex : info.outfit) {
-                    collector.submitModel(outfit, hs, poseStack, RenderTypes.entityCutoutNoCull(tex), light, overlay, -1);
+                    collector.submitModel(outfit, hs, poseStack, RenderTypes.entityCutout(tex), light, overlay, -1);
                 }
             }
         }
@@ -95,7 +95,7 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
                 float s = race.def.headScale();
                 if (s != 1f) poseStack.scale(s, s, s);
                 ModelPart head = race.head;
-                collector.submitModel(new RaceModels.Part(head), Unit.INSTANCE, poseStack, RenderTypes.entityCutoutNoCull(headSkin), light, overlay, -1);
+                collector.submitModel(new RaceModels.Part(head), Unit.INSTANCE, poseStack, RenderTypes.entityCutout(headSkin), light, overlay, -1);
                 poseStack.popPose();
             }
         }
@@ -116,7 +116,7 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
                     getParentModel().root().translateAndRotate(poseStack);
                 }
                 collector.submitModel(new RaceModels.Tail(race.tail), new RaceModels.Tail.State(info.ageInTicks, info.walkSpeed), poseStack,
-                        RenderTypes.entityCutoutNoCull(tex), light, overlay, -1);
+                        RenderTypes.entityCutout(tex), light, overlay, -1);
                 poseStack.popPose();
             }
         }

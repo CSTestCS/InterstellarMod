@@ -59,7 +59,7 @@ public final class RaceModels {
     /** Wraps a free-standing part (head model, tail) as a model; the state type is unused. */
     public static final class Part extends Model<Unit> {
         public Part(ModelPart root) {
-            super(root, RenderTypes::entityCutoutNoCull);
+            super(root, RenderTypes::entityCutout);
         }
     }
 
@@ -68,7 +68,7 @@ public final class RaceModels {
         public record State(float age, float walk) {}
 
         public Tail(ModelPart root) {
-            super(root, RenderTypes::entityCutoutNoCull);
+            super(root, RenderTypes::entityCutout);
         }
 
         @Override

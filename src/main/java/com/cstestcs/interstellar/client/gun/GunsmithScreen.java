@@ -35,9 +35,7 @@ public class GunsmithScreen extends AbstractContainerScreen<GunsmithMenu> {
     private final List<Button> dynamic = new ArrayList<>();
 
     public GunsmithScreen(GunsmithMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        this.imageWidth = 256;
-        this.imageHeight = 206;
+        super(menu, inv, title, 256, 206);
         this.inventoryLabelY = imageHeight - 94;
     }
 
