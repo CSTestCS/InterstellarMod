@@ -33,6 +33,7 @@ public final class ShipEvents {
         if (!event.isDismounting() || !(event.getEntityBeingMounted() instanceof SpacecraftEntity ship)) return;
         Entity rider = event.getEntityMounting();
         if (SpaceTravel.isTransferring() || ship.isRemoved() || !rider.isAlive() || rider.isRemoved()) return;
+        if (rider instanceof ServerPlayer sp && sp.hasDisconnected()) return;
         if (event.getLevel().isClientSide()) return; // the client handler decides what to show
         if (!ship.allowDismount(rider)) {
             event.setCanceled(true);

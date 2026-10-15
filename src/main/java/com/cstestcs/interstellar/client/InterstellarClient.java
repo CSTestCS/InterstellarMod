@@ -18,7 +18,6 @@ import com.cstestcs.interstellar.gun.GunItem;
 import com.cstestcs.interstellar.network.ModPayloads;
 import com.cstestcs.interstellar.registry.ModEntities;
 import com.cstestcs.interstellar.registry.ModMenus;
-import com.google.common.reflect.TypeToken;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -44,7 +43,11 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
+import net.neoforged.neoforge.client.renderstate.AvatarRenderStateModifier;
 import net.neoforged.neoforge.client.renderstate.RegisterRenderStateModifiersEvent;
+import net.minecraft.client.entity.ClientAvatarEntity;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.world.entity.Avatar;
 import net.neoforged.neoforge.common.NeoForge;
 
 /** Client entry point: renderers, layers, input, payload handlers. Never loaded on a dedicated server. */
@@ -96,9 +99,17 @@ public final class InterstellarClient {
         }
     }
 
+    /** Every living renderer (and its subclasses) plus players/mannequins, which use the avatar renderer path. */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private static void registerModifiers(RegisterRenderStateModifiersEvent event) {
-        event.registerEntityModifier(new TypeToken<LivingEntityRenderer<? extends LivingEntity, LivingEntityRenderState, ?>>() {},
-                RenderInfoExtractor::extract);
+        event.registerEntityModifier((Class) LivingEntityRenderer.class,
+                (java.util.function.BiConsumer<LivingEntity, LivingEntityRenderState>) RenderInfoExtractor::extract);
+        event.registerAvatarEntityModifier(new AvatarRenderStateModifier() {
+            @Override
+            public <T extends Avatar & ClientAvatarEntity> void accept(T avatar, AvatarRenderState state) {
+                RenderInfoExtractor.extract(avatar, state);
+            }
+        });
     }
 
     /** The renderer knows its model and texture; record them so the render hook can tell the entity's model from layers. */
