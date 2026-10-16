@@ -1,0 +1,47 @@
+# Temporary helper: prints the public API (javap) and selected decompiled sources of Minecraft classes, so the code
+# can be checked against the exact 26.3 signatures. Safe to delete.
+name: API probe
+
+on:
+  push:
+    paths:
+      - tools/api-probe.txt
+      - .github/workflows/api-probe.yml
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Create Minecraft artifacts
+        run: ./gradlew createMinecraftArtifacts --console=plain || ./gradlew compileJava --console=plain || true
+      - name: Get decompiler
+        run: curl -sSL -o /tmp/vf.jar https://repo1.maven.org/maven2/org/vineflower/vineflower/1.11.1/vineflower-1.11.1.jar
+      - name: Dump signatures
+        run: |
+          set +e
+          ls -la build/moddev/artifacts/ || true
+          ls -la /tmp/vf.jar
+          MC=$(find build/moddev/artifacts -name 'minecraft-patched-*.jar' ! -name '*sources*' | head -1)
+          SRC=$(find build/moddev/artifacts ~/.gradle -name '*minecraft*sources*.jar' 2>/dev/null | head -1)
+          echo "MC=$MC SRC=$SRC"
+          CP=$(find build/moddev/artifacts -name '*.jar' ! -name '*sources*' | tr '\n' ':')
+          CP="$CP$(find ~/.gradle/caches/modules-2 -name '*.jar' \( -path '*fml*' -o -path '*neoforged*' -o -path '*mojang*' \) | tr '\n' ':')"
+          while read -r kind arg; do
+            [ -z "$kind" ] && continue
+            echo "===== $arg"
+            case "$kind" in
+              class) javap -public -cp "$CP" "$arg" 2>&1 | grep -v '^Compiled from' | sed 's/^/API| /' ;;
+              list) unzip -l "$MC" "$arg*" | awk '{print $4}' | grep '\.class$' | grep -v '\$' | sed 's/^/API| /' ;;
+              src) rm -rf /tmp/cls /tmp/dec; mkdir -p /tmp/cls /tmp/dec
+                   (cd /tmp/cls && unzip -q -o "$GITHUB_WORKSPACE/$MC" "$arg.class" "$arg\$*.class" 2>/dev/null) || true
+                   java -jar /tmp/vf.jar -din=0 -rbr=1 -dgs=1 -log=ERROR /tmp/cls /tmp/dec >/dev/null 2>&1 || true
+                   find /tmp/dec -name '*.java' -exec cat {} \; | sed 's/^/SRC| /' ;;
+            esac
+          done < tools/api-probe.txt
