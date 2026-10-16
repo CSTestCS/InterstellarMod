@@ -41,7 +41,7 @@ public final class RaceDetails {
         HEALTH_MULTIPLIER("HealthMultiplier", "Max health multiplier."),
         SPEED_MULTIPLIER("SpeedMultiplier", "Movement speed multiplier."),
         DAMAGE_MULTIPLIER("DamageMultiplier", "Attack damage multiplier."),
-        TRAITS("Traits", "fire_immune, water_breathing, night_vision, slow_fall, no_fall_damage, glowing, regeneration."),
+        TRAITS("Traits", "fire_immune, water_breathing, night_vision, slow_fall, no_fall_damage, regeneration."),
         NAMES("Names", "Comma separated name pool. Mobs of this race get a random name from it."),
         PLAYER_SELECTABLE("PlayerSelectable", "true = players may pick this race themselves with /race choose <race>."),
         WEAPON_TIER("WeaponTier", "0-5. Quality of rolled guns for aliens of this race."),

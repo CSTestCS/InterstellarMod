@@ -154,6 +154,9 @@ public class GunProjectile extends Projectile {
 
     private void explode(ServerLevel level, Vec3 at) {
         if (explosion <= 0) return;
-        level.explode(this, at.x, at.y, at.z, explosion, Level.ExplosionInteraction.NONE);
+        // Players' shots break blocks like TNT; shots from mobs and alien ships follow the mobGriefing rule.
+        Level.ExplosionInteraction breaks = getOwner() instanceof net.minecraft.world.entity.player.Player
+                ? Level.ExplosionInteraction.TNT : Level.ExplosionInteraction.MOB;
+        level.explode(this, at.x, at.y, at.z, explosion, breaks);
     }
 }

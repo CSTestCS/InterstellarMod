@@ -55,7 +55,7 @@ Every file in `races/` belongs to a race named by its prefix:
 | `HeadScale` | Extra head scale. |
 | `Faction`, `Allies`, `Enemies` | Same-faction and allied mobs never fight. Enemies (`faction` or `race:<id>`) are attacked on sight. |
 | `HealthMultiplier`, `SpeedMultiplier`, `DamageMultiplier` | Stat multipliers. |
-| `Traits` | `fire_immune`, `water_breathing`, `night_vision`, `slow_fall`, `no_fall_damage`, `glowing`, `regeneration`. |
+| `Traits` | `fire_immune`, `water_breathing`, `night_vision`, `slow_fall`, `no_fall_damage`, `regeneration`. |
 | `Names` | Name pool for mobs. |
 | `PlayerSelectable` | Lets players pick it with `/race choose <race>`. |
 | `WeaponTier`, `WeaponTheme` | Quality and theme of rolled guns. |

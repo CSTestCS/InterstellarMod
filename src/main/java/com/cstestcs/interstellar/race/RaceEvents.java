@@ -148,6 +148,9 @@ public final class RaceEvents {
                 if (inst != null && inst.isInfiniteDuration() && inst.isAmbient()) living.removeEffect(effect);
             }
         }
+        // Glowing is no longer a trait: clear the permanent outline left by older race files and versions.
+        MobEffectInstance glow = living.getEffect(MobEffects.GLOWING);
+        if (glow != null && glow.isInfiniteDuration()) living.removeEffect(MobEffects.GLOWING);
         if (living instanceof PathfinderMob mob && !race.fallback()) applyDisposition(mob, race);
         if (living instanceof PathfinderMob mob) {
             // Any raced mob that ends up holding a gun knows how to use it.
@@ -161,7 +164,7 @@ public final class RaceEvents {
 
     private static java.util.Map<String, Holder<MobEffect>> traitEffects() {
         return java.util.Map.of("fire_immune", MobEffects.FIRE_RESISTANCE, "water_breathing", MobEffects.WATER_BREATHING,
-                "night_vision", MobEffects.NIGHT_VISION, "slow_fall", MobEffects.SLOW_FALLING, "glowing", MobEffects.GLOWING,
+                "night_vision", MobEffects.NIGHT_VISION, "slow_fall", MobEffects.SLOW_FALLING,
                 "regeneration", MobEffects.REGENERATION);
     }
 
