@@ -187,7 +187,11 @@ decorations from `#interstellar:planet_features`; and natural spawns of the spec
 and monsters from every mod. Packs can keep things off planets with `#interstellar:planet_excluded_blocks`,
 `#interstellar:planet_excluded_biomes` and `#interstellar:planet_excluded_entities`.
 
-Nothing is generated ahead of time. Planet cubes appear in space as you fly near them; a planet's dimension
+Nothing is generated ahead of time. Planets appear in space as its chunks generate (cubes, or irregular rocks with
+an atmosphere that follows their surface for end-like worlds and the End itself); explosions in space never damage
+them. Nether-like planets have an opening in their bedrock roof above X=0 Z=0, where ships arrive. A ship left in
+space with nobody able to fly it (players or alien crews) heads for the nearest planet and crash-lands there.
+Cannon ammunition is unlimited in space. A planet's dimension
 (`interstellar:planet_<x>_<z>`) is created, as in the snapshot, the first time a ship enters its atmosphere, and is
 loaded again after restarts. The galaxy is the same in every world, while each planet's terrain also depends on
 the world seed. `/interstellar planets nearest` names the nearest planet; `/interstellar planets visit` takes you
