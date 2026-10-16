@@ -21,6 +21,8 @@ Built on the official `MDK-26.3-ModDevGradle` template (NeoForge `26.3.0.76`, Ja
 | `races/` | host (server / singleplayer) | Race files. Synced to every client automatically. |
 | `custommodels/` | each client | Body models (`NAME.fbx` + optional `NAME.txt`). |
 | `customanimations/` | each client | Mixamo animation clips (`*.fbx`), optionally in a sub folder per body. |
+| `gunmodels/` | each client | Always-on resource pack with the default gun part, frame and trim models, to reshape them (F3+T reloads). |
+| `starships/` | host | Starship designs saved with `/interstellar ship save`, flown by alien crews in space. |
 
 ## 1. Races and subraces
 
@@ -63,6 +65,12 @@ family, piglins, illagers, witch, enderman, mannequin). Bipeds are listed in the
 `interstellar:bipeds`, so other mods' bipeds can be added with a datapack. Raced villagers that replace their body
 still wear their biome, profession and level clothes on the biped.
 
+Generated race files you never edited are refreshed automatically when Interstellar's defaults change (tracked in
+`races/.defaults`); edited files are left alone.
+
+The **Race Scanner** (spyglass, glass pane, iron and redstone) shows a creature's race name, favourite item and home
+dimension: use it on a mob, or in the air to scan yourself.
+
 ## 2. Custom bodies (client side)
 
 Drop a Mixamo-rigged `NAME.fbx` (FBX Binary) into `custommodels/`. It uses the standard 64x64 skin layout, keeps
@@ -73,9 +81,14 @@ the mob's own head (or its race's head), and is driven by:
   Retargeting uses world-space rotation deltas, so any T-posed Mixamo clip fits any T-posed humanoid rig.
 * otherwise the vanilla limb angles, so a body works with an empty animations folder.
 
-Armour and any other biped layer (vanilla, modded, custom-model armour) is bent onto the body: every vertex is
-mapped to the matching limb chain, scaled to the limb's measured thickness and skinned with the same bones as the
-mesh. That means it stretches to fit and bends at elbows and knees.
+Armour and any other biped layer (vanilla, modded, custom-model armour, mob overlay layers) is bent onto the body:
+each part is stretched over the measured length of the matching limb (shoulder to hand, hip to foot, neck to hips),
+its cross-section is scaled to the limb's measured thickness, and it is skinned with the same bones as the mesh, so
+it fits and bends at elbows and knees.
+
+Mobs whose textures do not use the player skin layout get bodies too: villagers (with their biome, profession and
+level outfits), wandering traders, witches, zombie villagers, illagers and the skeleton family. Their texture is
+re-laid into the player layout on the fly (robes become the jacket and the top of the trousers, the nose is kept).
 
 `NAME.txt` sets `DisplayName`, `Gender: male | female | any | null` and `Weight`. **Consistency:** each client
 reports its installed bodies, and the server picks a body per entity from the union of those reports and stores it
@@ -85,15 +98,24 @@ Five bodies are generated on first launch as real Mixamo-rigged FBX files: `clas
 (female), `minifig` and `storymode`. Preview: [`docs/default-bodies-preview.png`](docs/default-bodies-preview.png).
 
 Client config (`config/interstellar-client.toml`) can turn bodies, animations and armour bending on or off, disable
-specific bodies, choose your own body, and set a render distance.
+specific bodies and set a render distance.
 
-## 3. Spacecraft
+**Your own body:** players use the standard player model until they choose a body with `/race body <name>`
+(`/race body none` goes back). The choice is saved with the player and in your client config (`ownBody`), so it
+carries over to other worlds and servers.
+
+## 3. Spacecraft and land vehicles
 
 1. Place **Landing Gear** as the bottom layer and build on top of it.
 2. Include at least one **Ship Generator**, **Control Panel** and **Life Support**. Optional parts:
    **Passenger Seat**, **Ship Cannon**, **Thruster**, **Hull Plating**. Which block counts as which part is decided
-   by block tags (`interstellar:ship/*`).
-3. Right-click the control panel to take off. The ship becomes an entity and the camera switches to third person.
+   by block tags (`interstellar:ship/*`). Ship parts are late-game recipes (blocks of iron and diamond, netherite
+   scrap, a nether star for the generator, a conduit and a totem of undying for life support...).
+3. Right-click the control panel to take off. The ship becomes an entity and the camera switches to third person,
+   pulled back far enough to show the whole craft. Riders lean with the ship as it pitches.
+
+A **Passenger Seat** next to the control panel is the pilot's seat: the pilot sits there instead of standing behind
+the panel.
 
 | Input | Action |
 |---|---|
@@ -103,18 +125,38 @@ specific bodies, choose your own body, and set a render distance.
 | *Sneak* | Halt: snap to the grid and turn back into blocks, with orientations kept |
 | Shift-right-click the panel (as blocks) | Landing procedure: descend straight down; within 2 blocks of the ground, realign and extend the landing gear onto it |
 
-Seated mobs come along; leashed or recruited mobs brought near an empty seat sit down by themselves; interacting
-with a seated mob while holding a lead takes it out. A passenger sneaking in flight gets a confirmation prompt
-first. If the pilot dies, the next player passenger takes the controls. The block limit and speeds are in the
-server config.
+**Seats:** calm mobs sit down in a free seat as soon as they touch it, and idle mobs nearby walk over to one.
+Shift-right-click a seat (as a block, or the craft near it while flying) to fold it away: whoever sits there is
+thrown off and nobody sits there until a player right-clicks it open again. Seated mobs come along when the craft
+takes off. A passenger sneaking in flight gets a confirmation prompt first. If the pilot dies, the next player
+passenger takes the controls. The block limit and speeds are in the server config.
+
+**Cannons** are placed facing the way you look (sneak to face them back at you) and fire straight out of their
+barrel. Load one by right-clicking it: a gun from the Gunsmith Table fires that gun's projectiles with its stats;
+a bow or crossbow fires arrows; a trident fires tridents; arrows, fire charges, TNT, snowballs, eggs, wind charges,
+fireworks and splash potions are fired one per shot until used up. Shift-right-click with an empty hand takes the
+load out. The barrel is as thick as the firepower: a thin rod for arrows and snowballs, up to a full block for TNT
+and big guns. An empty cannon fires the ship's built-in shells.
+
+**Land vehicles** use **Wheels** instead of landing gear and need no life support. They are assembled and parked
+on **Vehicle Pads** (the pads are never part of the vehicle): every wheel must stand on a pad to start. Drive like
+a horse that cannot jump: forward/back keys, steer by looking, cannons fire with *attack*, one-block steps are
+climbed. When the driver gets out over vehicle pads, the vehicle turns back into blocks; anywhere else it stays a
+vehicle until someone drives it back.
 
 ## 4. Space
 
-Fly 400 blocks above a dimension's build limit (configurable) to enter **space**: an empty, end-like void. In space,
+Fly 400 blocks above a dimension's build limit (configurable) to enter **space**: an empty void under a starry
+night sky without sun or moon. In space,
 the ship and everyone aboard are scaled to 0.1 (configurable), and halting, landing and dismounting are disabled.
 Every dimension (vanilla, Interstellar's, and other mods') has a block-built planet: 1 block for the Nether and moons,
-up to 16³ for the Overworld. Each planet is wrapped in an invisible, glowing **atmosphere** shell. Touching it moves
+up to 16³ for the Overworld (moss continents with mossy cobblestone underneath, the Nether in magma). Each planet is
+wrapped in an invisible **atmosphere** shell that glows softly in the sky colour of its dimension. Touching it moves
 the ship to that dimension at X=0, Z=0, 200 blocks above the build limit, at normal scale.
+
+**Alien starships** fly through space near players: crews from the foreign worlds in the built-in designs and in
+every design saved with `/interstellar ship save <name>` (fly the ship, or look at its control panel). Their hull
+plating is replaced by their world's foremost metal or stone; they fire their cannons at players in range.
 
 Players who die in space have their inventory stored. Restore it with
 `/interstellar spaceinventory restore <player>` (operators only).
@@ -123,7 +165,8 @@ Players who die in space have their inventory stored. Restore it with
 
 Twelve procedurally defined worlds (`interstellar:foreign_0` … `foreign_11`), each with its own terrain template,
 blocks, fluid, sea level, sky, fog and water colours. They are reachable only as planets. Aliens spawn there
-instead of villagers, illagers and zombies.
+instead of villagers, illagers and zombies. Each world's base stone holds its alien resource as an ore (tinted to
+match that stone) plus iron, gold, copper and diamond ores.
 
 ## 6. Gunsmithing
 
@@ -138,7 +181,10 @@ There is a single **gun** item, a single **magazine** item, and 11 alien materia
   colour, stat changes and on-hit effects (ignite, freeze, poison, chain, pierce, shatter, levitate…).
 * Trims: an armour-trim template plus a trim material recolours the gun's trim layer.
 
-Each installed part changes the model; materials tint each part. Guns have no durability. Reload with **R**
+Each installed part changes the model, and each part shows the block of its material (gold block for gold parts,
+diamond block for diamond; alien materials have their own storage blocks). The default part models are copied to
+`config/interstellar/gunmodels/` as an always-on resource pack: reshape any part there and every material version
+of it follows. Guns point forward in either hand. Guns have no durability. Reload with **R**
 using a magazine of the gun's kind; refill magazines at the **Gunsmith Table**. Human weapons need late-game
 overworld materials (diamond, netherite, nether stars). Alien weapons need alien materials, so for those, aliens
 (30% gun drop chance, randomly rolled builds) are the easier source.
@@ -149,18 +195,21 @@ Regenerate the default data with `python3 tools/gen_gun_data.py`.
 
 One alien race per foreign world, plus Elite and Scout subraces. Each has a procedurally painted skin, a
 Blockbench-format head (antennae, eye clusters, tentacles…), a faction, a disposition, a favourite item and a weapon
-theme matching its world. They are ordinary race files in `races/`, so you can edit or replace them.
+theme matching its world. They are ordinary race files in `races/`, so you can edit or replace them. Aliens may
+wear any armour (vanilla or modded) whose repair material is found in their home world.
 
 ## Commands
 
 ```
 /race choose <race>                                   (players; PlayerSelectable races)
+/race body <name|none>                                (players; your own body, saved)
 /interstellar race list | reload | info <entity> | set <targets> <race>
 /interstellar body set <targets> <name|none>
 /interstellar spaceinventory restore|count <player>
 /interstellar planets list | rebuild
 /interstellar space <player>                          (teleport into space, for testing)
 /interstellar gun give <player> <archetype> [tier]
+/interstellar ship save <name> | list | spawn <design>
 ```
 
 ## Development
