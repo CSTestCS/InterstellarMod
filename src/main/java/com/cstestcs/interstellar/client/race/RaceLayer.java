@@ -50,6 +50,8 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
         RenderInfo info = state.getRenderData(RenderInfo.KEY);
         if (info == null) return;
         int overlay = LivingEntityRenderer.getOverlayCoords(state, 0f);
+        // Outline only when the entity really glows (the last submitModel argument is the outline colour).
+        int outline = state.outlineColor;
         if (info.drawsConvertedBody() && info.bodySkin != null) submitConvertedBody(poseStack, collector, light, overlay, info);
         if (info.race == null) return;
         ClientRaces.Race race = info.race;
@@ -66,15 +68,15 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
                 if (!info.hasRaceHead()) {
                     poseStack.pushPose();
                     poseStack.mulPose(inst.headTransform());
-                    collector.submitModel(new RaceModels.Part(biped.head), Unit.INSTANCE, poseStack, RenderTypes.entityCutout(skin), light, overlay, -1);
+                    collector.submitModel(new RaceModels.Part(biped.head), Unit.INSTANCE, poseStack, RenderTypes.entityCutout(skin), light, overlay, outline);
                     poseStack.popPose();
                 }
             } else {
-                collector.submitModel(biped, hs, poseStack, RenderTypes.entityCutout(skin), light, overlay, -1);
+                collector.submitModel(biped, hs, poseStack, RenderTypes.entityCutout(skin), light, overlay, outline);
             }
             if (info.villagerLike && !info.outfit.isEmpty()) {
                 for (Identifier tex : info.outfit) {
-                    collector.submitModel(outfit, hs, poseStack, RenderTypes.entityCutout(tex), light, overlay, -1);
+                    collector.submitModel(outfit, hs, poseStack, RenderTypes.entityCutout(tex), light, overlay, outline);
                 }
             }
         }
@@ -97,7 +99,7 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
                 float s = race.def.headScale();
                 if (s != 1f) poseStack.scale(s, s, s);
                 ModelPart head = race.head;
-                collector.submitModel(new RaceModels.Part(head), Unit.INSTANCE, poseStack, RenderTypes.entityCutout(headSkin), light, overlay, -1);
+                collector.submitModel(new RaceModels.Part(head), Unit.INSTANCE, poseStack, RenderTypes.entityCutout(headSkin), light, overlay, outline);
                 poseStack.popPose();
             }
         }
@@ -118,29 +120,20 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
                     getParentModel().root().translateAndRotate(poseStack);
                 }
                 collector.submitModel(new RaceModels.Tail(race.tail), new RaceModels.Tail.State(info.ageInTicks, info.walkSpeed), poseStack,
-                        RenderTypes.entityCutout(tex), light, overlay, -1);
+                        RenderTypes.entityCutout(tex), light, overlay, outline);
                 poseStack.popPose();
             }
         }
     }
 
     /**
-     * A villager/illager/skeleton with a custom body: the body mesh wears the converted skin, the biped head (with
-     * hat layer) sits on the head bone, plus the villager nose.
+     * A villager/illager/skeleton with a custom body: the body mesh wears the converted skin. The mob's own head is
+     * drawn on the head bone by {@code BodyRenderHook}, so it keeps its vanilla shape, nose and hats.
      */
     private void submitConvertedBody(PoseStack poseStack, SubmitNodeCollector collector, int light, int overlay, RenderInfo info) {
         Identifier skin = info.bodySkin;
         var inst = info.body;
         collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(skin), (pose, vc) -> BodyDraw.mesh(pose, vc, inst, light, overlay, -1));
-        if (info.hasRaceHead()) return; // the race head is drawn below
-        RaceModels.RaceBiped biped = biped(false, false);
-        poseStack.pushPose();
-        poseStack.mulPose(inst.headTransform());
-        collector.submitModel(new RaceModels.Part(biped.head), Unit.INSTANCE, poseStack, RenderTypes.entityCutout(skin), light, overlay, -1);
-        if (info.convertLayout != com.cstestcs.interstellar.core.image.SkinConverter.Layout.THIN_BIPED) {
-            collector.submitModel(new RaceModels.Part(RaceModels.nose()), Unit.INSTANCE, poseStack, RenderTypes.entityCutout(skin), light, overlay, -1);
-        }
-        poseStack.popPose();
     }
 
     /** Humanoid render states are used as they are; others (villagers) get the basics copied into a scratch state. */
