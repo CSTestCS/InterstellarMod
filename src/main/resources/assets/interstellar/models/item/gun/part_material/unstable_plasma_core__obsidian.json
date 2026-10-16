@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/unstable_plasma_core",
-  "textures": {
-    "metal": "minecraft:block/obsidian",
-    "particle": "minecraft:block/obsidian"
-  }
-}

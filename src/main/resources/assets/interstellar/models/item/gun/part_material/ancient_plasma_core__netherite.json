@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/ancient_plasma_core",
-  "textures": {
-    "metal": "minecraft:block/netherite_block",
-    "particle": "minecraft:block/netherite_block"
-  }
-}

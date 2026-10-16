@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/frame/rocket_launcher",
-  "textures": {
-    "metal": "minecraft:block/amethyst_block",
-    "particle": "minecraft:block/amethyst_block"
-  }
-}

@@ -185,7 +185,9 @@ There is a single **gun** item, a single **magazine** item, and 11 alien materia
 * Trims: an armour-trim template plus a trim material recolours the gun's trim layer.
 
 Each installed part changes the model, and each part shows the block of its material (gold block for gold parts,
-diamond block for diamond; alien materials have their own storage blocks). The default part models are copied to
+diamond block for diamond; alien materials have their own storage blocks). Parts are covered with the block's
+actual model as loaded, so whatever a resource pack or mod does to that block (retextures, emissive or metallic
+layers, overlays, render types) shows on the gun too. The default part models are copied to
 `config/interstellar/gunmodels/` as an always-on resource pack: reshape any part there and every material version
 of it follows. Guns point forward in either hand. Guns have no durability. Reload with **R**
 using a magazine of the gun's kind; refill magazines at the **Gunsmith Table**. Human weapons need late-game

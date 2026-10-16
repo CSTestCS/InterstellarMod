@@ -106,7 +106,7 @@ public class CannonBlock extends Block implements EntityBlock {
         if (!(level.getBlockEntity(pos) instanceof CannonBlockEntity cannon)) return;
         ItemStack load = cannon.weapon();
         if (load.isEmpty()) {
-            level.levelEvent(net.minecraft.world.level.block.LevelEvent.SOUND_DISPENSER_FAIL, pos, 0);
+            level.levelEvent(1001, pos, 0); // dispenser "click": nothing loaded
             return;
         }
         Direction facing = state.getValue(FACING);

@@ -137,6 +137,10 @@ public final class GunItemModels {
         event.register(Interstellar.id("gun_material"), MaterialProperty.TYPE);
     }
 
+    public static void registerItemModels(net.neoforged.neoforge.client.event.RegisterItemModelsEvent event) {
+        event.register(Interstellar.id("block_textured"), BlockTexturedItemModel.Unbaked.MAP_CODEC);
+    }
+
     public static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(Interstellar.id("gun_material"), MaterialTint.MAP_CODEC);
     }

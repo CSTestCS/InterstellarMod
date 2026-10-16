@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/frame/sniper_rifle",
-  "textures": {
-    "metal": "interstellar:block/plasma_core_block",
-    "particle": "interstellar:block/plasma_core_block"
-  }
-}

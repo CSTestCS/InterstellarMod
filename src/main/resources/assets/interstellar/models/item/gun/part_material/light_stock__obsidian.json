@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/light_stock",
-  "textures": {
-    "metal": "minecraft:block/obsidian",
-    "particle": "minecraft:block/obsidian"
-  }
-}

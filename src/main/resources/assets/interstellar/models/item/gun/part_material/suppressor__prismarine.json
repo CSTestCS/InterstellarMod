@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/suppressor",
-  "textures": {
-    "metal": "minecraft:block/prismarine",
-    "particle": "minecraft:block/prismarine"
-  }
-}

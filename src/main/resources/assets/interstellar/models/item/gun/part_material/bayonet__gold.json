@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/bayonet",
-  "textures": {
-    "metal": "minecraft:block/gold_block",
-    "particle": "minecraft:block/gold_block"
-  }
-}

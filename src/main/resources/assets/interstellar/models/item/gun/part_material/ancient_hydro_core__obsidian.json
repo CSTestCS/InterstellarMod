@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/ancient_hydro_core",
-  "textures": {
-    "metal": "minecraft:block/obsidian",
-    "particle": "minecraft:block/obsidian"
-  }
-}

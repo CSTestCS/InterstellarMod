@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/angled_grip",
-  "textures": {
-    "metal": "interstellar:block/plasma_core_block",
-    "particle": "interstellar:block/plasma_core_block"
-  }
-}

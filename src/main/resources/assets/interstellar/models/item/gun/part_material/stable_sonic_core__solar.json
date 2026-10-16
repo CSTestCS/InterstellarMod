@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/stable_sonic_core",
-  "textures": {
-    "metal": "interstellar:block/solar_cell_block",
-    "particle": "interstellar:block/solar_cell_block"
-  }
-}

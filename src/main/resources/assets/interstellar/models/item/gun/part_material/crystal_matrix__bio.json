@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/crystal_matrix",
-  "textures": {
-    "metal": "interstellar:block/bio_gel_block",
-    "particle": "interstellar:block/bio_gel_block"
-  }
-}

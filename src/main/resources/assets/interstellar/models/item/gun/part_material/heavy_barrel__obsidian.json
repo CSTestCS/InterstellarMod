@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/heavy_barrel",
-  "textures": {
-    "metal": "minecraft:block/obsidian",
-    "particle": "minecraft:block/obsidian"
-  }
-}

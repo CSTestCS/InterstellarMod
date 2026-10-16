@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/stable_hydro_core",
-  "textures": {
-    "metal": "minecraft:block/gold_block",
-    "particle": "minecraft:block/gold_block"
-  }
-}

@@ -69,6 +69,7 @@ public final class InterstellarClient {
         modBus.addListener((RegisterGuiLayersEvent e) -> e.registerAboveAll(Interstellar.id("gun_hud"), GunHud::render));
         modBus.addListener(GunItemModels::registerSelectProperties);
         modBus.addListener(GunItemModels::registerTints);
+        modBus.addListener(GunItemModels::registerItemModels);
         modBus.addListener(com.cstestcs.interstellar.client.space.SpaceClient::registerSky);
         modBus.addListener(OreTint::register);
         modBus.addListener(com.cstestcs.interstellar.client.gun.GunModelPack::onAddPackFinders);

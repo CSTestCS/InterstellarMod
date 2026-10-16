@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/auto_shotgun_receiver",
-  "textures": {
-    "metal": "minecraft:block/copper_block",
-    "particle": "minecraft:block/copper_block"
-  }
-}

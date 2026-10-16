@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/ancient_tech_core",
-  "textures": {
-    "metal": "interstellar:block/cryo_crystal_block",
-    "particle": "interstellar:block/cryo_crystal_block"
-  }
-}

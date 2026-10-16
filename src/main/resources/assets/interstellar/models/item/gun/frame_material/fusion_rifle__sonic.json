@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/frame/fusion_rifle",
-  "textures": {
-    "metal": "interstellar:block/sonic_resonator_block",
-    "particle": "interstellar:block/sonic_resonator_block"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/extended_mag",
-  "textures": {
-    "metal": "minecraft:block/amethyst_block",
-    "particle": "minecraft:block/amethyst_block"
-  }
-}

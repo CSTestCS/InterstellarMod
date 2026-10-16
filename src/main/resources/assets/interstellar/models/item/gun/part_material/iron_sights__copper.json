@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/iron_sights",
-  "textures": {
-    "metal": "minecraft:block/copper_block",
-    "particle": "minecraft:block/copper_block"
-  }
-}

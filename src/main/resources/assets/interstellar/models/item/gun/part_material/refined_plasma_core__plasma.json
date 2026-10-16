@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/refined_plasma_core",
-  "textures": {
-    "metal": "interstellar:block/plasma_core_block",
-    "particle": "interstellar:block/plasma_core_block"
-  }
-}

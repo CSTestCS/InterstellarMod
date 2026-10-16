@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/frame/fuel_rod_cannon",
-  "textures": {
-    "metal": "interstellar:block/tech_chip_block",
-    "particle": "interstellar:block/tech_chip_block"
-  }
-}

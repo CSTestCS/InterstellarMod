@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/compensator",
-  "textures": {
-    "metal": "minecraft:block/magma",
-    "particle": "minecraft:block/magma"
-  }
-}

@@ -11,6 +11,7 @@ Textures are procedural placeholders in a consistent sci-fi palette; replace any
 import json
 import math
 import os
+import shutil
 import random
 import struct
 import zlib
@@ -332,16 +333,17 @@ def items():
 
 
 # ---------------------------------------------------------------- guns
-# Gun parts show the block of the material they are made of.
-MATERIAL_BLOCK_TEXTURE = {
-    "iron": "minecraft:block/iron_block", "gold": "minecraft:block/gold_block", "diamond": "minecraft:block/diamond_block",
-    "emerald": "minecraft:block/emerald_block", "netherite": "minecraft:block/netherite_block", "copper": "minecraft:block/copper_block",
-    "amethyst": "minecraft:block/amethyst_block", "obsidian": "minecraft:block/obsidian", "quartz": "minecraft:block/quartz_block_side",
-    "prismarine": "minecraft:block/prismarine", "blaze": "minecraft:block/magma", "echo": "minecraft:block/sculk",
-    "alien_alloy": f"{NS}:block/alien_alloy_block", "plasma": f"{NS}:block/plasma_core_block", "nether_cinder": f"{NS}:block/nether_cinder_block",
-    "void": f"{NS}:block/void_shard_block", "crystal": f"{NS}:block/crystal_lattice_block", "bio": f"{NS}:block/bio_gel_block",
-    "cryo": f"{NS}:block/cryo_crystal_block", "solar": f"{NS}:block/solar_cell_block", "hydro": f"{NS}:block/hydro_pearl_block",
-    "tech": f"{NS}:block/tech_chip_block", "sonic": f"{NS}:block/sonic_resonator_block",
+# Gun parts are covered with the baked model of their material's block (gold block for gold...), so resource packs and
+# mods that change how the block looks change the gun too.
+MATERIAL_BLOCK = {
+    "iron": "minecraft:iron_block", "gold": "minecraft:gold_block", "diamond": "minecraft:diamond_block",
+    "emerald": "minecraft:emerald_block", "netherite": "minecraft:netherite_block", "copper": "minecraft:copper_block",
+    "amethyst": "minecraft:amethyst_block", "obsidian": "minecraft:obsidian", "quartz": "minecraft:quartz_block",
+    "prismarine": "minecraft:prismarine", "blaze": "minecraft:magma_block", "echo": "minecraft:sculk",
+    "alien_alloy": f"{NS}:alien_alloy_block", "plasma": f"{NS}:plasma_core_block", "nether_cinder": f"{NS}:nether_cinder_block",
+    "void": f"{NS}:void_shard_block", "crystal": f"{NS}:crystal_lattice_block", "bio": f"{NS}:bio_gel_block",
+    "cryo": f"{NS}:cryo_crystal_block", "solar": f"{NS}:solar_cell_block", "hydro": f"{NS}:hydro_pearl_block",
+    "tech": f"{NS}:tech_chip_block", "sonic": f"{NS}:sonic_resonator_block",
 }
 GUN_DISPLAY = {
     "thirdperson_righthand": {"rotation": [0, 90, 0], "translation": [0, 2.5, 1.5], "scale": [0.75, 0.75, 0.75]},
@@ -439,19 +441,13 @@ def guns():
     write_json(f"{A}/models/item/gun/trim.json", {"textures": {"metal": f"{NS}:item/gun/trim", "particle": f"{NS}:item/gun/trim"}, "display": GUN_DISPLAY,
                                                   "elements": [box([3.5, 9.9, 6.4], [9.5, 10.2, 9.6]), box([3.5, 7, 6.3], [9.5, 7.5, 6.5])]})
 
-    # Every part and frame also exists once per material, textured with that material's block. These children only
-    # name a texture; the shape comes from the parent part model (editable in config/interstellar/gunmodels).
     mat_dir = os.path.join(D, NS, "gun", "material")
     materials = sorted(f[:-5] for f in os.listdir(mat_dir))
     for mid in materials:
-        if mid not in MATERIAL_BLOCK_TEXTURE:
-            raise SystemExit(f"material {mid} has no block texture in MATERIAL_BLOCK_TEXTURE")
-    for kind, ids in (("part", list(parts)), ("frame", list(archs))):
-        for pid in ids:
-            for mid in materials:
-                t = MATERIAL_BLOCK_TEXTURE[mid]
-                write_json(f"{A}/models/item/gun/{kind}_material/{pid}__{mid}.json",
-                           {"parent": f"{NS}:item/gun/{kind}/{pid}", "textures": {"metal": t, "particle": t}})
+        if mid not in MATERIAL_BLOCK:
+            raise SystemExit(f"material {mid} has no block in MATERIAL_BLOCK")
+    for kind in ("part_material", "frame_material"):  # replaced by interstellar:block_textured item models
+        shutil.rmtree(f"{A}/models/item/gun/{kind}", ignore_errors=True)
     index = ["assets/interstellar/models/item/gun/base.json", "assets/interstellar/models/item/gun/trim.json"]
     index += [f"assets/interstellar/models/item/gun/part/{pid}.json" for pid in parts]
     index += [f"assets/interstellar/models/item/gun/frame/{aid}.json" for aid in archs]
@@ -461,7 +457,8 @@ def guns():
     def by_material(kind, pid, slot):
         """Model for a part made of a known material (block textured), tinted fallback for unknown materials."""
         return {"type": "minecraft:select", "property": f"{NS}:gun_material", "slot": slot,
-                "cases": [{"when": mid, "model": {"type": "minecraft:model", "model": f"{NS}:item/gun/{kind}_material/{pid}__{mid}"}} for mid in materials],
+                "cases": [{"when": mid, "model": {"type": f"{NS}:block_textured", "model": f"{NS}:item/gun/{kind}/{pid}", "block": MATERIAL_BLOCK[mid]}}
+                          for mid in materials],
                 "fallback": tinted(f"{NS}:item/gun/{kind}/{pid}", slot)}
 
     def tinted(model, slot=None, trim=False):

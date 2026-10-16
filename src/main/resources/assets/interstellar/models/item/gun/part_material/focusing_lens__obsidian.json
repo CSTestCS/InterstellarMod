@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/focusing_lens",
-  "textures": {
-    "metal": "minecraft:block/obsidian",
-    "particle": "minecraft:block/obsidian"
-  }
-}

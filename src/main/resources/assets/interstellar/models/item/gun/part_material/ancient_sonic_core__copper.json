@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/ancient_sonic_core",
-  "textures": {
-    "metal": "minecraft:block/copper_block",
-    "particle": "minecraft:block/copper_block"
-  }
-}

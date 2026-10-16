@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/incendiary_choke",
-  "textures": {
-    "metal": "interstellar:block/nether_cinder_block",
-    "particle": "interstellar:block/nether_cinder_block"
-  }
-}

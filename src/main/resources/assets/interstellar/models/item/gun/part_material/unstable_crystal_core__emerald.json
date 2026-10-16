@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/unstable_crystal_core",
-  "textures": {
-    "metal": "minecraft:block/emerald_block",
-    "particle": "minecraft:block/emerald_block"
-  }
-}

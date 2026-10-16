@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/plasma_vent",
-  "textures": {
-    "metal": "interstellar:block/sonic_resonator_block",
-    "particle": "interstellar:block/sonic_resonator_block"
-  }
-}

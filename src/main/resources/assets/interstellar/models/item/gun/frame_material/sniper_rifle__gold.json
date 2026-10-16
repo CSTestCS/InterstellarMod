@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/frame/sniper_rifle",
-  "textures": {
-    "metal": "minecraft:block/gold_block",
-    "particle": "minecraft:block/gold_block"
-  }
-}

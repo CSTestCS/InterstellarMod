@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/part/red_dot",
-  "textures": {
-    "metal": "minecraft:block/iron_block",
-    "particle": "minecraft:block/iron_block"
-  }
-}

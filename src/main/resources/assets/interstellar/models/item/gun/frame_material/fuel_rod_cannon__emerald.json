@@ -1,7 +1,0 @@
-{
-  "parent": "interstellar:item/gun/frame/fuel_rod_cannon",
-  "textures": {
-    "metal": "minecraft:block/emerald_block",
-    "particle": "minecraft:block/emerald_block"
-  }
-}
