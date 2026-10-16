@@ -10,6 +10,7 @@ import com.cstestcs.interstellar.registry.ModComponents;
 import com.cstestcs.interstellar.registry.ModEntities;
 import com.cstestcs.interstellar.registry.ModItems;
 import com.cstestcs.interstellar.registry.ModMenus;
+import com.cstestcs.interstellar.registry.ModWorldgen;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
@@ -36,6 +37,7 @@ public final class Interstellar {
         ModComponents.COMPONENTS.register(modBus);
         ModAttachments.ATTACHMENTS.register(modBus);
         ModMenus.MENUS.register(modBus);
+        ModWorldgen.CHUNK_GENERATORS.register(modBus);
         modBus.addListener(ModEntities::registerAttributes);
         modBus.addListener(ModEntities::registerSpawnPlacements);
         modBus.addListener(ModPayloads::register);

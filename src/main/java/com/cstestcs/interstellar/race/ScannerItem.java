@@ -47,7 +47,9 @@ public class ScannerItem extends Item {
         }
         msg.append("\n").append(line("race", Component.literal(race.displayName())));
         msg.append("\n").append(line("favorite", favorite(race.favoriteItem())));
-        msg.append("\n").append(line("home", home(race)));
+        Component home = target instanceof com.cstestcs.interstellar.alien.AlienEntity alien && !alien.homePlanet().isEmpty()
+                ? planetName(alien.homePlanet()) : home(race);
+        msg.append("\n").append(line("home", home));
         player.sendSystemMessage(msg);
     }
 
@@ -63,12 +65,17 @@ public class ScannerItem extends Item {
         return BuiltInRegistries.ITEM.getOptional(rl).map(i -> new ItemStack(i).getHoverName()).orElse(Component.literal(id));
     }
 
+    private static Component planetName(String dimension) {
+        return com.cstestcs.interstellar.core.space.PlanetGenome.parse(dimension)
+                .<Component>map(g -> Component.literal(g.name() + " (" + dimension + ")")).orElse(Component.literal(dimension));
+    }
+
     private static Component home(RaceDefinition race) {
         if (race.homeDimension().isAny() || race.homeDimension().includes().isEmpty()) return Component.translatable("message.interstellar.scanner.anywhere");
         java.util.List<String> names = new java.util.ArrayList<>();
         for (String dim : race.homeDimension().includes()) {
             var world = com.cstestcs.interstellar.core.space.ForeignWorlds.byDimension(dim);
-            names.add(world != null ? world.displayName() + " (" + dim + ")" : dim);
+            names.add(world != null ? world.displayName() + " (" + world.alienName() + " planets)" : dim);
         }
         return Component.literal(String.join(", ", names));
     }

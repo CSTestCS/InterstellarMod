@@ -111,6 +111,7 @@ public final class PlanetManager extends SavedData {
             for (ResourceKey<Level> key : keys) {
                 String id = key.identifier().toString();
                 if (key.equals(SpaceTravel.SPACE) || planets.containsKey(id) || excluded.contains(id)) continue;
+                if (com.cstestcs.interstellar.core.space.PlanetGenome.isPlanet(id)) continue; // procedural planets have their own place in space
                 boolean moon = PlanetLayout.isMoonName(id);
                 if ((pass == 0) == moon) continue;
                 ServerLevel level = server.getLevel(key);

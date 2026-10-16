@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates the datapack for the space dimension and the 20w14∞-style foreign worlds.
+"""Generates the datapack for space, the alien species' biomes and the planet dimension types.
 
 Usage (from the repository root):
   javac -d build/tools -cp <compiled core classes> tools/ExportForeignWorlds.java
@@ -7,7 +7,8 @@ Usage (from the repository root):
   python3 tools/gen_worlds.py <vanilla 26.3 data dir (.../data/minecraft)> build/worlds.json
 
 The vanilla data dir is a 26.3 data extraction (for example misode/mcmeta tag 26.3-data-json). World definitions
-come from ForeignWorlds.java, which also drives the alien races, so both always agree.
+come from ForeignWorlds.java (species, which also drives the alien races) and PlanetTypes.java (the dimension types
+procedural planets are created with at runtime, see PlanetDimensions), so Java and data always agree.
 """
 import copy
 import json
@@ -89,7 +90,14 @@ def material_rule(w, rng, floating):
 
 def main(vanilla, worlds_file):
     with open(worlds_file) as f:
-        worlds = json.load(f)
+        exported = json.load(f)
+    worlds = exported["worlds"]
+    # Species used to be dimensions of their own; procedural planets replaced them.
+    for kind in ("dimension", "dimension_type", "worldgen/noise_settings", "worldgen/material_rule"):
+        folder = os.path.join(OUT, kind)
+        for name in (os.listdir(folder) if os.path.isdir(folder) else []):
+            if name.startswith("foreign_"):
+                os.remove(os.path.join(folder, name))
     overworld_type = load(vanilla, "dimension_type", "overworld.json")
     end_type = load(vanilla, "dimension_type", "the_end.json")
 
@@ -97,22 +105,6 @@ def main(vanilla, worlds_file):
         rng = random.Random(w["seed"])
         wid = w["id"]
         terrain = w["terrain"]
-        # ---- dimension type: overworld rules with this world's colours
-        dt = copy.deepcopy(overworld_type)
-        attrs = dt["attributes"]
-        attrs["minecraft:visual/sky_color"] = w["sky"]
-        attrs["minecraft:visual/fog_color"] = w["fog"]
-        attrs["minecraft:visual/cloud_color"] = "#cc" + w["fog"][1:]
-        attrs.pop("minecraft:gameplay/nether_portal_spawns_piglin", None)
-        dt["has_skylight"] = w["skylight"]
-        dt["ambient_light"] = w["ambient"]
-        if terrain == "floating_islands":
-            dt["min_y"], dt["height"], dt["logical_height"] = 0, 256, 256
-        elif terrain == "caves":
-            dt["min_y"], dt["height"], dt["logical_height"] = -64, 192, 192
-            dt["has_ceiling"] = True
-        write(f"dimension_type/{wid}.json", dt)
-
         # ---- biome
         features = [[] for _ in range(11)]
         if terrain != "flat":
@@ -147,31 +139,6 @@ def main(vanilla, worlds_file):
         }
         write(f"worldgen/biome/{wid}.json", biome)
 
-        # ---- generator
-        if terrain == "flat":
-            layers = [{"block": "minecraft:bedrock", "height": 1}]
-            for _ in range(rng.randint(2, 5)):
-                layers.append({"block": rng.choice([w["default_block"], w["under"], w["accent"], "minecraft:stone"]), "height": rng.randint(1, 12)})
-            layers.append({"block": w["top"], "height": 1})
-            generator = {"type": "minecraft:flat", "settings": {"biome": f"interstellar:{wid}", "features": True, "lakes": False,
-                                                                 "layers": layers, "structure_overrides": []}}
-        else:
-            ns = load(vanilla, "worldgen", "noise_settings", TEMPLATES[terrain] + ".json")
-            ns["default_block"] = w["default_block"]
-            ns["default_fluid"] = w["fluid"]
-            if terrain != "floating_islands":
-                ns["sea_level"] = w["sea_level"]
-            ns["material_rule"] = f"interstellar:{wid}"
-            ns["disable_mob_generation"] = False
-            # Shift the density so worlds sharing a template still look different (more ocean / more land).
-            shift = round(rng.uniform(-0.25, 0.3), 3)
-            ns["noise_router"]["final_density"] = {"type": "minecraft:add", "left": ns["noise_router"]["final_density"], "right": shift}
-            write(f"worldgen/noise_settings/{wid}.json", ns)
-            write(f"worldgen/material_rule/{wid}.json", material_rule(w, rng, terrain == "floating_islands"))
-            generator = {"type": "minecraft:noise", "biome_source": {"type": "minecraft:fixed", "biome": f"interstellar:{wid}"},
-                         "settings": f"interstellar:{wid}"}
-        write(f"dimension/{wid}.json", {"type": f"interstellar:{wid}", "generator": generator})
-
     # ---- space: an empty void under a starry night sky without sun or moon
     st = copy.deepcopy(end_type)
     st["has_ender_dragon_fight"] = False
@@ -195,7 +162,41 @@ def main(vanilla, worlds_file):
         "has_precipitation": False, "temperature": 0.5})
     write("dimension/space.json", {"type": "interstellar:space", "generator": {"type": "minecraft:flat", "settings": {
         "biome": "interstellar:space", "features": False, "lakes": False, "layers": [], "structure_overrides": []}}})
-    print(f"generated {len(worlds)} foreign worlds + space")
+
+    # ---- planet dimension types (see PlanetTypes.java)
+    for t in exported["planet_types"]:
+        dt = copy.deepcopy(overworld_type)
+        attrs = dt["attributes"]
+        attrs["minecraft:visual/sky_color"] = t["sky"]
+        attrs["minecraft:visual/fog_color"] = t["fog"]
+        attrs["minecraft:visual/cloud_color"] = "#cc" + t["cloud"][1:]
+        attrs["minecraft:visual/star_brightness"] = round(t["stars"], 3)
+        attrs.pop("minecraft:gameplay/nether_portal_spawns_piglin", None)
+        dt["has_skylight"] = t["skylight"]
+        dt["ambient_light"] = round(t["ambient"], 3)
+        write(f"dimension_type/planet_type_{t['index']}.json", dt)
+
+    # ---- tags steering what planets are made of (packs and mods can add to them)
+    def tag(rel, values):
+        write(f"../{rel}", {"replace": False, "values": values})
+    tag("interstellar/tags/block/planet_excluded_blocks.json", [
+        "minecraft:tnt", "minecraft:barrier", "minecraft:light", "minecraft:structure_void", "minecraft:reinforced_deepslate",
+        "interstellar:atmosphere", "interstellar:control_panel", "interstellar:generator", "interstellar:life_support",
+        "interstellar:landing_gear", "interstellar:thruster", "interstellar:hull_plating", "interstellar:vehicle_pad", "interstellar:wheel",
+        {"id": "#c:storage_blocks", "required": False}])
+    tag("interstellar/tags/block/planet_ores.json", [])
+    tag("interstellar/tags/worldgen/biome/planet_excluded_biomes.json", ["interstellar:space", "minecraft:the_void"])
+    tag("interstellar/tags/entity_type/planet_excluded_entities.json", [
+        "minecraft:ender_dragon", "minecraft:wither", "minecraft:warden", "minecraft:elder_guardian", "minecraft:giant",
+        "minecraft:illusioner", "minecraft:creaking"])
+    features = ["oak", "birch", "fancy_oak", "spruce", "pine", "jungle_bush", "acacia", "cherry", "dark_oak", "mangrove", "azalea_tree",
+                "huge_brown_mushroom", "huge_red_mushroom", "crimson_fungus", "warped_fungus", "chorus_plant", "amethyst_geode", "ice_spike",
+                "blue_ice", "basalt_pillar", "large_basalt_columns", "dripstone_cluster", "large_dripstone", "glow_lichen", "moss_patch",
+                "cactus", "pumpkin", "melon", "sugar_cane", "fossil_coal", "fossil_diamonds", "monster_room", "desert_well", "end_island",
+                "iceberg_packed", "iceberg_blue", "delta", "patch_fire", "patch_soul_fire", "spore_blossom", "sculk_patch_deep_dark", "pile_hay"]
+    present = [f"minecraft:{f}" for f in features if os.path.exists(os.path.join(vanilla, "worldgen", "feature", f + ".json"))]
+    tag("interstellar/tags/worldgen/feature/planet_features.json", present)
+    print(f"generated {len(worlds)} species biomes, {len(exported['planet_types'])} planet types + space")
 
 
 if __name__ == "__main__":

@@ -31,4 +31,8 @@ public final class ModAttachments {
      */
     public static final Supplier<AttachmentType<String>> BODY_CHOICE = ATTACHMENTS.register("body_choice", () -> AttachmentType.builder(() -> "")
             .serialize(Codec.STRING.fieldOf("value")).copyOnDeath().build());
+
+    /** Set on space chunks once the procedural planets reaching into them have been built. */
+    public static final Supplier<AttachmentType<Boolean>> PLANETS_BUILT = ATTACHMENTS.register("planets_built", () -> AttachmentType.builder(() -> false)
+            .serialize(Codec.BOOL.fieldOf("value")).build());
 }

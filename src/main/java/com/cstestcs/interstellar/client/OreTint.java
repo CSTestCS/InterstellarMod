@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 
 /**
- * Alien ores take the colour of the stone they are set in: the base stone of the foreign world being rendered (grey
+ * Alien ores take the colour of the stone they are set in: the default block of the planet being rendered (grey
  * anywhere else). The ore's grey stone texture is tint layer 0; its specks are untinted.
  */
 public final class OreTint {
@@ -29,6 +29,12 @@ public final class OreTint {
         var level = Minecraft.getInstance().level;
         if (level == null) return STONE;
         return BY_DIMENSION.computeIfAbsent(level.dimension().identifier().toString(), dim -> {
+            var planet = com.cstestcs.interstellar.core.space.PlanetGenome.parse(dim);
+            if (planet.isPresent()) {
+                // A procedural planet: the same random default block the server built it from.
+                return 0xFF000000 | com.cstestcs.interstellar.space.planet.PlanetPools.defaultBlock(planet.get(), level.registryAccess())
+                        .getBlock().defaultMapColor().col;
+            }
             ForeignWorlds.World w = ForeignWorlds.byDimension(dim);
             if (w == null) return STONE;
             Block base = BuiltInRegistries.BLOCK.getOptional(Identifier.parse(w.defaultBlock())).orElse(null);

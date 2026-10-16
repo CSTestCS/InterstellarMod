@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:tnt",
+    "minecraft:barrier",
+    "minecraft:light",
+    "minecraft:structure_void",
+    "minecraft:reinforced_deepslate",
+    "interstellar:atmosphere",
+    "interstellar:control_panel",
+    "interstellar:generator",
+    "interstellar:life_support",
+    "interstellar:landing_gear",
+    "interstellar:thruster",
+    "interstellar:hull_plating",
+    "interstellar:vehicle_pad",
+    "interstellar:wheel",
+    {
+      "id": "#c:storage_blocks",
+      "required": false
+    }
+  ]
+}

@@ -145,6 +145,28 @@ public final class InterstellarCommands {
                             return n;
                         }))))
                 .then(Commands.literal("planets")
+                        .then(Commands.literal("nearest").executes(c -> {
+                            var g = nearestPlanet(c.getSource());
+                            c.getSource().sendSuccess(() -> Component.translatable("command.interstellar.planets.nearest", g.name(), g.dimensionId(),
+                                    g.x(), g.y(), g.z(), g.terrain().name().toLowerCase(java.util.Locale.ROOT),
+                                    com.cstestcs.interstellar.core.space.ForeignWorlds.all().get(g.species()).alienName()), false);
+                            return 1;
+                        }))
+                        .then(Commands.literal("visit").executes(c -> {
+                            ServerPlayer player = c.getSource().getPlayerOrException();
+                            var g = nearestPlanet(c.getSource());
+                            com.cstestcs.interstellar.space.planet.PlanetDimensions.request(c.getSource().getServer(), g, level -> {
+                                net.minecraft.world.level.ChunkPos cp = new net.minecraft.world.level.ChunkPos(0, 0);
+                                level.getChunk(cp.x(), cp.z());
+                                int y = level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, 0, 0);
+                                if (y <= level.getMinY()) y = level.getSeaLevel() + 1;
+                                player.teleport(new net.minecraft.world.level.portal.TeleportTransition(level, new net.minecraft.world.phys.Vec3(0.5, y + 1, 0.5),
+                                        net.minecraft.world.phys.Vec3.ZERO, player.getYRot(), player.getXRot(),
+                                        net.minecraft.world.level.portal.TeleportTransition.DO_NOTHING));
+                            });
+                            c.getSource().sendSuccess(() -> Component.translatable("command.interstellar.planets.visiting", g.name()), true);
+                            return 1;
+                        }))
                         .then(Commands.literal("list").executes(c -> {
                             PlanetManager pm = PlanetManager.get(c.getSource().getServer());
                             pm.ensurePlanets(c.getSource().getServer());
@@ -268,5 +290,19 @@ public final class InterstellarCommands {
         ItemStack gun = GunItem.create(build, true);
         if (!p.getInventory().add(gun)) p.spawnAtLocation(p.level(), gun);
         return 1;
+    }
+
+    /** The procedural planet nearest to the command's position in space (or to the same coordinates elsewhere). */
+    private static com.cstestcs.interstellar.core.space.PlanetGenome nearestPlanet(net.minecraft.commands.CommandSourceStack source) {
+        var pos = source.getPosition();
+        double r = com.cstestcs.interstellar.core.space.PlanetGenome.CELL;
+        while (true) {
+            var found = com.cstestcs.interstellar.core.space.PlanetGenome.near(pos.x, pos.z, r);
+            if (!found.isEmpty()) {
+                return found.stream().min(java.util.Comparator.comparingDouble(g -> (g.x() - pos.x) * (g.x() - pos.x) + (g.z() - pos.z) * (g.z() - pos.z)))
+                        .orElseThrow();
+            }
+            r *= 2;
+        }
     }
 }

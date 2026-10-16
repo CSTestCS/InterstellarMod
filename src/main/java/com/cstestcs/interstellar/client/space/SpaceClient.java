@@ -53,25 +53,55 @@ public final class SpaceClient {
 
     public static void submitGlow(SubmitCustomGeometryEvent event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || !SpaceTravel.isSpace(mc.level) || planets.isEmpty()) return;
+        if (mc.level == null || !SpaceTravel.isSpace(mc.level)) return;
         Vec3 cam = event.getLevelRenderState().cameraRenderState.pos;
         double maxDist = Math.max(128, mc.options.getEffectiveRenderDistance() * 16);
         PoseStack pose = event.getPoseStack();
         for (ModPayloads.PlanetInfo info : planets) {
-            PlanetLayout.Planet p = new PlanetLayout.Planet(info.dimension(), info.size(), info.x(), info.y(), info.z(), info.moon());
-            if (cam.distanceToSqr(p.x() + 0.5, p.y() + 0.5, p.z() + 0.5) > maxDist * maxDist) continue;
-            float r = ((info.color() >> 16) & 255) / 255f, g = ((info.color() >> 8) & 255) / 255f, b = (info.color() & 255) / 255f;
-            double x0 = p.minX() - cam.x, y0 = p.minY() - cam.y, z0 = p.minZ() - cam.z;
-            double x1 = x0 + p.size(), y1 = y0 + p.size(), z1 = z0 + p.size();
-            float scale = Math.max(0.6f, p.size() / 8f);
-            event.getSubmitNodeCollector().submitCustomGeometry(pose, RenderTypes.lightning(), (last, vc) -> {
-                Matrix4f m = last.pose();
-                for (float[] layer : GLOW) {
-                    float e = layer[0] * scale;
-                    box(vc, m, x0 - e, y0 - e, z0 - e, x1 + e, y1 + e, z1 + e, r, g, b, layer[1]);
-                }
-            });
+            glow(event, pose, cam, maxDist, new PlanetLayout.Planet(info.dimension(), info.size(), info.x(), info.y(), info.z(), info.moon()), info.color());
         }
+        // Procedural planets are computed here from their cells, exactly as the server builds them.
+        for (com.cstestcs.interstellar.core.space.PlanetGenome g : nearby(cam.x, cam.z, maxDist)) {
+            glow(event, pose, cam, maxDist, g.asPlanet(), visible(com.cstestcs.interstellar.core.space.PlanetTypes.get(g.dimensionType()).skyColor()));
+        }
+    }
+
+    private static double cachedX = Double.NaN, cachedZ, cachedRadius;
+    private static List<com.cstestcs.interstellar.core.space.PlanetGenome> cachedNear = List.of();
+
+    private static List<com.cstestcs.interstellar.core.space.PlanetGenome> nearby(double x, double z, double radius) {
+        int cell = com.cstestcs.interstellar.core.space.PlanetGenome.CELL;
+        if (Double.isNaN(cachedX) || Math.abs(x - cachedX) > cell / 2.0 || Math.abs(z - cachedZ) > cell / 2.0 || radius != cachedRadius) {
+            cachedNear = com.cstestcs.interstellar.core.space.PlanetGenome.near(x, z, radius + cell);
+            cachedX = x;
+            cachedZ = z;
+            cachedRadius = radius;
+        }
+        return cachedNear;
+    }
+
+    /** Dark sky colours would make an invisible glow: lift them. */
+    private static int visible(int c) {
+        int r = (c >> 16) & 255, g = (c >> 8) & 255, b = c & 255;
+        int m = Math.max(r, Math.max(g, b));
+        if (m >= 160) return c;
+        double k = 200.0 / Math.max(1, m);
+        return (int) Math.min(255, r * k + 20) << 16 | (int) Math.min(255, g * k + 20) << 8 | (int) Math.min(255, b * k + 20);
+    }
+
+    private static void glow(SubmitCustomGeometryEvent event, PoseStack pose, Vec3 cam, double maxDist, PlanetLayout.Planet p, int color) {
+        if (cam.distanceToSqr(p.x() + 0.5, p.y() + 0.5, p.z() + 0.5) > maxDist * maxDist) return;
+        float r = ((color >> 16) & 255) / 255f, g = ((color >> 8) & 255) / 255f, b = (color & 255) / 255f;
+        double x0 = p.minX() - cam.x, y0 = p.minY() - cam.y, z0 = p.minZ() - cam.z;
+        double x1 = x0 + p.size(), y1 = y0 + p.size(), z1 = z0 + p.size();
+        float scale = Math.max(0.6f, p.size() / 8f);
+        event.getSubmitNodeCollector().submitCustomGeometry(pose, RenderTypes.lightning(), (last, vc) -> {
+            Matrix4f m = last.pose();
+            for (float[] layer : GLOW) {
+                float e = layer[0] * scale;
+                box(vc, m, x0 - e, y0 - e, z0 - e, x1 + e, y1 + e, z1 + e, r, g, b, layer[1]);
+            }
+        });
     }
 
     private static void box(VertexConsumer vc, Matrix4f m, double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b,

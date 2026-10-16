@@ -48,6 +48,11 @@ public final class SpaceTravel {
         PlanetManager planets = PlanetManager.get(server);
         planets.ensurePlanets(server);
         PlanetLayout.Planet home = planets.planetFor(ship.level().dimension());
+        if (home == null) {
+            // Leaving a procedural planet: come out above its cube.
+            home = com.cstestcs.interstellar.core.space.PlanetGenome.parse(ship.level().dimension().identifier().toString())
+                    .map(com.cstestcs.interstellar.core.space.PlanetGenome::asPlanet).orElse(null);
+        }
         Vec3 target;
         if (home != null) {
             int[] a = home.atmosphere();
@@ -75,7 +80,27 @@ public final class SpaceTravel {
                 return;
             }
         }
+        // Procedural planets: their dimension is created the first time a ship arrives.
+        for (com.cstestcs.interstellar.core.space.PlanetGenome g : com.cstestcs.interstellar.core.space.PlanetGenome.near(ship.getX(), ship.getZ(),
+                box.getXsize() + 32)) {
+            int[] a = g.atmosphere();
+            if (!box.intersects(a[0], a[1], a[2], a[3], a[4], a[5])) continue;
+            if (!ARRIVING.add(ship.getUUID())) return; // already on its way
+            for (Entity e : ship.getPassengers()) {
+                if (e instanceof Player pl) pl.sendOverlayMessage(Component.translatable("message.interstellar.space.approaching", g.name()));
+            }
+            com.cstestcs.interstellar.space.planet.PlanetDimensions.request(server, g, target -> {
+                ARRIVING.remove(ship.getUUID());
+                if (ship.isRemoved() || !isSpace(ship.level())) return;
+                double y = target.getMaxY() + InterstellarConfig.SERVER.planetArrivalHeight.get();
+                announce(transfer(ship, target, new Vec3(0.5, y, 0.5), ship.getYRot()),
+                        Component.translatable("message.interstellar.space.arrived", g.name()));
+            });
+            return;
+        }
     }
+
+    private static final java.util.Set<UUID> ARRIVING = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     /** Teleports a ship and all its passengers, keeping their seats. Returns the ship in the new level. */
     public static SpacecraftEntity transfer(SpacecraftEntity ship, ServerLevel target, Vec3 pos, float yaw) {

@@ -7,9 +7,9 @@ import java.util.Locale;
 import java.util.SplittableRandom;
 
 /**
- * Deterministic definitions of the 20w14∞-style foreign worlds. Like the snapshot, every world is derived from a
- * hash: terrain template, blocks, fluid, colours and the alien race living there. They are only reachable as planets
- * in space. This class is the single source of truth for both the generated datapack and the alien races.
+ * The alien species of the galaxy. Each has a theme (blocks, fluid, resource), a home biome
+ * ({@code interstellar:foreign_N}) and an alien race. Procedural planets ({@link PlanetGenome}) are each settled by one
+ * species. This class is the single source of truth for the generated biomes and the alien races.
  */
 public final class ForeignWorlds {
     public static final int COUNT = 12;
@@ -63,6 +63,22 @@ public final class ForeignWorlds {
         };
     }
 
+    /** The alien resource of a species (its ore is {@code interstellar:<resource>_ore}). */
+    public static String resource(Theme t) {
+        return switch (t) {
+            case CRYSTAL -> "crystal_lattice";
+            case MAGMA -> "nether_cinder";
+            case VOID, BONE -> "void_shard";
+            case FUNGAL, HONEY -> "bio_gel";
+            case FROZEN -> "cryo_crystal";
+            case TOXIC -> "plasma_core";
+            case DUNE -> "solar_cell";
+            case REEF -> "hydro_pearl";
+            case RUST -> "tech_chip";
+            case ECHO -> "sonic_resonator";
+        };
+    }
+
     /** Which vanilla noise template the terrain is cloned from (20w14∞ also mixed generator types). */
     public enum Terrain { OVERWORLD, AMPLIFIED, LARGE_BIOMES, CAVES, FLOATING_ISLANDS, FLAT }
 
@@ -95,9 +111,13 @@ public final class ForeignWorlds {
         return WORLDS;
     }
 
+    /**
+     * The alien species of a dimension: a procedural planet's species, or the species whose id this is. Species ids
+     * ({@code interstellar:foreign_N}) name the species and their biome; they are no longer dimensions of their own.
+     */
     public static World byDimension(String dimensionId) {
         for (World w : WORLDS) if (w.dimensionId().equals(dimensionId)) return w;
-        return null;
+        return PlanetGenome.parse(dimensionId).map(g -> WORLDS.get(g.species())).orElse(null);
     }
 
     private static World make(int i) {

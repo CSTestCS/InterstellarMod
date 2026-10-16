@@ -70,9 +70,30 @@ public class AlienEntity extends Monster {
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, EntitySpawnReason reason,
             @Nullable SpawnGroupData data) {
         SpawnGroupData out = super.finalizeSpawn(level, difficulty, reason, data);
+        String dim = level.getLevel().dimension().identifier().toString();
+        if (com.cstestcs.interstellar.core.space.PlanetGenome.isPlanet(dim)) homePlanet = dim;
         setDropChance(EquipmentSlot.MAINHAND, InterstellarConfig.SERVER.alienWeaponDropChance.get().floatValue());
         AlienArmor.equip(this, homeDimension(), getRandom(), 0.25f + difficulty.getSpecialMultiplier() * 0.3f);
         return out;
+    }
+
+    /** The planet this alien was found on ("" if it spawned anywhere else). */
+    private String homePlanet = "";
+
+    public String homePlanet() {
+        return homePlanet;
+    }
+
+    @Override
+    protected void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput out) {
+        super.addAdditionalSaveData(out);
+        if (!homePlanet.isEmpty()) out.putString("home_planet", homePlanet);
+    }
+
+    @Override
+    protected void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput in) {
+        super.readAdditionalSaveData(in);
+        homePlanet = in.getStringOr("home_planet", "");
     }
 
     /** The dimension this alien's race comes from (its race's home), else where it was spawned. */

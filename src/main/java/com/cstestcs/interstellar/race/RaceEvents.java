@@ -118,7 +118,7 @@ public final class RaceEvents {
         Set<String> biomeTags = new HashSet<>();
         biome.tags().forEach(t -> biomeTags.add(t.location().toString()));
         String biomeId = biome.unwrapKey().map(k -> k.identifier().toString()).orElse("minecraft:plains");
-        return new SpawnContext(EntityType.getKey(living.getType()).toString(), typeTags, level.dimension().identifier().toString(), Set.of(),
+        return new SpawnContext(EntityType.getKey(living.getType()).toString(), typeTags, homeKey(level.dimension().identifier().toString()), Set.of(),
                 biomeId, biomeTags);
     }
 
@@ -209,6 +209,13 @@ public final class RaceEvents {
             mob.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(mob, LivingEntity.class, 10, true, false,
                     (target, level) -> race.isEnemyOf(raceOf(target))));
         }
+    }
+
+    /** A procedural planet counts as the home of the species settling it, so its aliens get that species' race. */
+    static String homeKey(String dimension) {
+        if (!com.cstestcs.interstellar.core.space.PlanetGenome.isPlanet(dimension)) return dimension;
+        var species = com.cstestcs.interstellar.core.space.ForeignWorlds.byDimension(dimension);
+        return species == null ? dimension : species.dimensionId();
     }
 
     public static RaceDefinition raceOf(LivingEntity e) {
