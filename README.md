@@ -1,7 +1,7 @@
 # Interstellar (NeoForge, Minecraft 26.3)
 
 Races and subraces, FBX custom bodies driven by Mixamo animations, buildable spacecraft, a space dimension of
-block-built planets, 20w14∞-style foreign worlds, modular gunsmithing and alien factions.
+block-built planets, an endless galaxy of 20w14∞-style procedural planets, modular gunsmithing and alien factions.
 
 Built on the official `MDK-26.3-ModDevGradle` template (NeoForge `26.3.0.76`, Java 25).
 
@@ -151,12 +151,14 @@ vehicle until someone drives it back.
 Fly 400 blocks above a dimension's build limit (configurable) to enter **space**: an empty void under a starry
 night sky without sun or moon. In space,
 the ship and everyone aboard are scaled to 0.1 (configurable), and halting, landing and dismounting are disabled.
-Every dimension (vanilla, Interstellar's, and other mods') has a block-built planet: 1 block for the Nether and moons,
-up to 16³ for the Overworld (moss continents with mossy cobblestone underneath, the Nether in magma). Each planet is
+Every real dimension (vanilla and other mods') has a block-built planet near the centre of space: 1 block for the
+Nether and moons, up to 16³ for the Overworld (moss continents with mossy cobblestone underneath, the Nether in magma). Each planet is
 wrapped in an invisible **atmosphere** shell that glows softly in the sky colour of its dimension. Touching it moves
 the ship to that dimension at X=0, Z=0, 200 blocks above the build limit, at normal scale.
 
-**Alien starships** fly through space near players: crews from the foreign worlds in the built-in designs and in
+Beyond them space never ends: see **Procedural planets** below.
+
+**Alien starships** fly through space near players: crews from the alien species in the built-in designs and in
 every design saved with `/interstellar ship save <name>` (fly the ship, or look at its control panel). Their hull
 plating is replaced by their world's foremost metal or stone, and every cannon is loaded with one of the crew
 race's weapons; they fire them at players in range.
@@ -164,12 +166,32 @@ race's weapons; they fire them at players in range.
 Players who die in space have their inventory stored. Restore it with
 `/interstellar spaceinventory restore <player>` (operators only).
 
-## 5. Foreign worlds (20w14∞)
+## 5. Procedural planets (20w14∞)
 
-Twelve procedurally defined worlds (`interstellar:foreign_0` … `foreign_11`), each with its own terrain template,
-blocks, fluid, sea level, sky, fog and water colours. They are reachable only as planets. Aliens spawn there
-instead of villagers, illagers and zombies. Each world's base stone holds its alien resource as an ore (tinted to
-match that stone) plus iron, gold, copper and diamond ores.
+Space is divided into cells of 160×160 blocks. Away from the centre (640 blocks, kept for the planets of real
+dimensions) seven cells in ten hold a planet, so wherever you fly there is always another one ahead. Like the
+dimensions of the 20w14∞ snapshot, each planet is derived from a single number (its cell) by a seeded random, in the
+same order the snapshot used:
+
+* a terrain family (surface: normal, amplified, large biomes, caves or floating islands; nether-like; end-like) and,
+  for surface worlds, a random sea level;
+* a **default block** picked from every full, solid block in the game (modded blocks included), and seas of water or
+  lava, or now and then of any block;
+* 2–15 random **biomes** from every biome in the game (modded biomes included), each at random climate points;
+* a sky style (colours, skylight, ambient light, stars) from a pool of 24 dimension types.
+
+Interstellar adds to that recipe: every planet is settled by one of the twelve **alien species**, whose resource
+ore (tinted like the planet's stone) is set in the planet's own default block, sometimes with other species' ores;
+veins of random vanilla and modded ores (`#c:ores`, `#minecraft:ores`, `#interstellar:planet_ores`); random
+decorations from `#interstellar:planet_features`; and natural spawns of the species' aliens and of random creatures
+and monsters from every mod. Packs can keep things off planets with `#interstellar:planet_excluded_blocks`,
+`#interstellar:planet_excluded_biomes` and `#interstellar:planet_excluded_entities`.
+
+Nothing is generated ahead of time. Planet cubes appear in space as you fly near them; a planet's dimension
+(`interstellar:planet_<x>_<z>`) is created, as in the snapshot, the first time a ship enters its atmosphere, and is
+loaded again after restarts. The galaxy is the same in every world, while each planet's terrain also depends on
+the world seed. `/interstellar planets nearest` names the nearest planet; `/interstellar planets visit` takes you
+there directly.
 
 ## 6. Gunsmithing
 
@@ -198,10 +220,11 @@ Regenerate the default data with `python3 tools/gen_gun_data.py`.
 
 ## 7. Aliens
 
-One alien race per foreign world, plus Elite and Scout subraces. Each has a procedurally painted skin, a
+One alien race per species, plus Elite and Scout subraces. Each has a procedurally painted skin, a
 Blockbench-format head (antennae, eye clusters, tentacles…), a faction, a disposition, a favourite item and a weapon
-theme matching its world. They are ordinary race files in `races/`, so you can edit or replace them. Aliens may
-wear any armour (vanilla or modded) whose repair material is found in their home world.
+theme matching its species. Aliens spawning on a planet belong to the species settling it, and the Race Scanner
+names the planet they come from. They are ordinary race files in `races/`, so you can edit or replace them. Aliens may
+wear any armour (vanilla or modded) whose repair material belongs to their species' world.
 
 ## Commands
 
@@ -211,7 +234,7 @@ wear any armour (vanilla or modded) whose repair material is found in their home
 /interstellar race list | reload | info <entity> | set <targets> <race>
 /interstellar body set <targets> <name|none>
 /interstellar spaceinventory restore|count <player>
-/interstellar planets list | rebuild
+/interstellar planets list | rebuild | nearest | visit
 /interstellar space <player>                          (teleport into space, for testing)
 /interstellar gun give <player> <archetype> [tier]
 /interstellar ship save <name> | list | spawn <design>
@@ -224,7 +247,7 @@ wear any armour (vanilla or modded) whose repair material is found in their home
 ./gradlew runClient
 python3 tools/gen_gun_data.py    # gun archetypes/parts/materials
 python3 tools/gen_assets.py      # textures, models, item definitions, lang, tags, recipes, loot
-python3 tools/gen_worlds.py <26.3 vanilla data dir> worlds.json   # space + foreign worlds (see script header)
+python3 tools/gen_worlds.py <26.3 vanilla data dir> worlds.json   # space, species biomes, planet types (see header)
 ```
 
 Layout: `core/` is plain Java (no Minecraft imports) and unit tested; `race/`, `body/`, `ship/`, `space/`, `gun/`,

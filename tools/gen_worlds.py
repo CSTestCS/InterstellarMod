@@ -181,8 +181,8 @@ def main(vanilla, worlds_file):
         write(f"../{rel}", {"replace": False, "values": values})
     tag("interstellar/tags/block/planet_excluded_blocks.json", [
         "minecraft:tnt", "minecraft:barrier", "minecraft:light", "minecraft:structure_void", "minecraft:reinforced_deepslate",
-        "interstellar:atmosphere", "interstellar:control_panel", "interstellar:generator", "interstellar:life_support",
-        "interstellar:landing_gear", "interstellar:thruster", "interstellar:hull_plating", "interstellar:vehicle_pad", "interstellar:wheel",
+        "interstellar:atmosphere", "interstellar:control_panel", "interstellar:ship_generator", "interstellar:life_support",
+        "interstellar:landing_gear", "interstellar:ship_thruster", "interstellar:hull_plating", "interstellar:vehicle_pad", "interstellar:wheel",
         {"id": "#c:storage_blocks", "required": False}])
     tag("interstellar/tags/block/planet_ores.json", [])
     tag("interstellar/tags/worldgen/biome/planet_excluded_biomes.json", ["interstellar:space", "minecraft:the_void"])

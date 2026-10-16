@@ -94,14 +94,15 @@ public final class PlanetPools {
 
     /**
      * The snapshot used every full, solid block that is not a point of interest. Blocks that fall, tick, hold a block
-     * entity or cannot be broken are left out too, so planets stay stable and minable.
+     * entity, let light through or cannot be broken are left out too, so planets stay stable, dark underground and
+     * minable.
      */
     static boolean usableAsDefaultBlock(BlockState s) {
         try {
             if (s.isAir() || s.hasBlockEntity() || s.isRandomlyTicking() || s.getBlock() instanceof FallingBlock) return false;
             if (s.is(EXCLUDED_BLOCKS) || !s.getFluidState().isEmpty()) return false;
             if (s.getDestroySpeed(EmptyBlockGetter.INSTANCE, BlockPos.ZERO) < 0) return false;
-            if (!s.isCollisionShapeFullBlock(EmptyBlockGetter.INSTANCE, BlockPos.ZERO)) return false;
+            if (!s.isCollisionShapeFullBlock(EmptyBlockGetter.INSTANCE, BlockPos.ZERO) || !s.canOcclude()) return false;
             return net.minecraft.world.entity.ai.village.poi.PoiTypes.forState(s).isEmpty();
         } catch (RuntimeException e) {
             return false; // a modded block that cannot answer without a world
