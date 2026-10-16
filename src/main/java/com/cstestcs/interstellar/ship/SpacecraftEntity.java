@@ -525,7 +525,7 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
     private void tickAlienPilot(ServerLevel level, boolean space) {
         float speed = entityData.get(SPEED);
         Mob alien = alienPilot();
-        Player target = level.getNearestPlayer(getX(), getY(), getZ(), 64 * Math.max(shipScale() * 10, 1), p -> !p.isSpectator() && !p.isCreative());
+        Player target = level.getNearestPlayer(getX(), getY(), getZ(), 64 * Math.max(shipScale() * 10, 1), p -> p instanceof Player pl && !pl.isSpectator() && !pl.isCreative());
         if (alien == null || level.getNearestPlayer(this, 200) == null) idleTicks++;
         else idleTicks = 0;
         if (idleTicks > 1200 || !space) {

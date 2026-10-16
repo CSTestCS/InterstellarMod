@@ -124,7 +124,7 @@ public class CannonBlock extends Block implements EntityBlock {
         if (!level.isClientSide()) {
             ItemStack out = cannon.weapon();
             cannon.setWeapon(ItemStack.EMPTY);
-            if (!player.getInventory().add(out)) player.drop(out, false);
+            if (!player.getInventory().add(out)) net.minecraft.world.Containers.dropItemStack(level, player.getX(), player.getY(), player.getZ(), out);
         }
         return InteractionResult.SUCCESS;
     }
