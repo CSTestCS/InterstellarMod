@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/grenade_launcher",
+  "textures": {
+    "metal": "interstellar:block/void_shard_block",
+    "particle": "interstellar:block/void_shard_block"
+  }
+}

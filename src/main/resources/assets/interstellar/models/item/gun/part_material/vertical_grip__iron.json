@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/vertical_grip",
+  "textures": {
+    "metal": "minecraft:block/iron_block",
+    "particle": "minecraft:block/iron_block"
+  }
+}

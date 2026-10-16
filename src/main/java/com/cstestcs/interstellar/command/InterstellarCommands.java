@@ -36,8 +36,10 @@ import net.minecraft.world.item.ItemStack;
  * {@code /interstellar ...} - operator commands (permission level 2, i.e. cheats):
  * <pre>
  *   /race choose &lt;race&gt;            (everyone; only races with PlayerSelectable: true)
+ *   /race body &lt;body|none&gt;          (everyone; saved with the player)
  *   race list | reload | info &lt;entity&gt; | set &lt;entities&gt; &lt;race&gt;
  *   body set &lt;entities&gt; &lt;name|none&gt;
+ *   ship save &lt;name&gt; | list | spawn &lt;design&gt;   (starship designs flown by alien crews)
  *   spaceinventory restore &lt;player&gt; | count &lt;player&gt;
  *   planets list | rebuild
  *   space &lt;player&gt;                 teleports a player into space (testing)
@@ -61,6 +63,21 @@ public final class InterstellarCommands {
                     }
                     RaceEvents.setRace(p, race);
                     c.getSource().sendSuccess(() -> Component.translatable("command.interstellar.race.set", 1, race.displayName()), false);
+                    return 1;
+                }))));
+        // Any player may pick the body they are drawn with; the choice is saved with the player and on their client.
+        d.register(Commands.literal("race").then(Commands.literal("body").then(Commands.argument("body", StringArgumentType.word())
+                .suggests((c, b) -> SharedSuggestionProvider.suggest(java.util.stream.Stream.concat(java.util.stream.Stream.of("none"),
+                        BodyServer.available().stream()), b))
+                .executes(c -> {
+                    ServerPlayer p = c.getSource().getPlayerOrException();
+                    String body = StringArgumentType.getString(c, "body");
+                    if (body.equals("vanilla") || body.equals("default")) body = "none";
+                    p.setData(ModAttachments.BODY_CHOICE, body);
+                    BodyServer.reassign(p, RaceEvents.raceOf(p));
+                    net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(p, new com.cstestcs.interstellar.network.ModPayloads.SaveOwnBody(body));
+                    String shown = body;
+                    c.getSource().sendSuccess(() -> Component.translatable("command.interstellar.body.own", shown), false);
                     return 1;
                 }))));
         d.register(Commands.literal("interstellar").requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
@@ -91,6 +108,29 @@ public final class InterstellarCommands {
                                     c.getSource().sendSuccess(() -> Component.translatable("command.interstellar.body.set", count, body), true);
                                     return n;
                                 })))))
+                .then(Commands.literal("ship")
+                        .then(Commands.literal("save").then(Commands.argument("name", StringArgumentType.word()).executes(InterstellarCommands::shipSave)))
+                        .then(Commands.literal("list").executes(c -> {
+                            String names = String.join(", ", com.cstestcs.interstellar.ship.StarshipLibrary.names());
+                            c.getSource().sendSuccess(() -> Component.translatable("command.interstellar.ship.list", names), false);
+                            return 1;
+                        }))
+                        .then(Commands.literal("spawn").then(Commands.argument("design", StringArgumentType.word())
+                                .suggests((c, b) -> SharedSuggestionProvider.suggest(com.cstestcs.interstellar.ship.StarshipLibrary.names(), b))
+                                .executes(c -> {
+                                    String design = StringArgumentType.getString(c, "design");
+                                    ServerLevel level = c.getSource().getLevel();
+                                    var worlds = com.cstestcs.interstellar.core.space.ForeignWorlds.all();
+                                    var world = worlds.get(level.getRandom().nextInt(worlds.size()));
+                                    var pos = c.getSource().getPosition().add(0, 6, 0);
+                                    var ship = com.cstestcs.interstellar.ship.AlienShips.spawn(level, pos, world, design, level.getRandom());
+                                    if (ship == null) {
+                                        c.getSource().sendFailure(Component.translatable("command.interstellar.ship.unknown", design));
+                                        return 0;
+                                    }
+                                    c.getSource().sendSuccess(() -> Component.translatable("command.interstellar.ship.spawned", design), true);
+                                    return 1;
+                                }))))
                 .then(Commands.literal("spaceinventory")
                         .then(Commands.literal("restore").then(Commands.argument("player", EntityArgument.player()).executes(c -> {
                             ServerPlayer p = EntityArgument.getPlayer(c, "player");
@@ -133,6 +173,43 @@ public final class InterstellarCommands {
                                 .suggests((c, b) -> SharedSuggestionProvider.suggest(GunDataManager.registry().archetypes().stream().map(GunData.Archetype::id), b))
                                 .executes(c -> giveGun(c, 3))
                                 .then(Commands.argument("tier", IntegerArgumentType.integer(0, 5)).executes(c -> giveGun(c, IntegerArgumentType.getInteger(c, "tier")))))))));
+    }
+
+    /** Saves the design of the ship the player flies, or of the craft whose control panel they look at. */
+    private static int shipSave(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
+        ServerPlayer p = c.getSource().getPlayerOrException();
+        String name = StringArgumentType.getString(c, "name");
+        com.cstestcs.interstellar.ship.ShipStructure structure = null;
+        if (p.getVehicle() instanceof com.cstestcs.interstellar.ship.SpacecraftEntity ship) {
+            structure = ship.structure();
+        } else if (p.pick(8, 1f, false) instanceof net.minecraft.world.phys.BlockHitResult hit) {
+            net.minecraft.core.BlockPos panel = hit.getBlockPos();
+            ServerLevel level = (ServerLevel) p.level();
+            if (level.getBlockState(panel).is(com.cstestcs.interstellar.registry.ModBlocks.Tags.CONTROL_PANELS)) {
+                var result = com.cstestcs.interstellar.core.ship.ShipScanner.scan(panel.getX(), panel.getY(), panel.getZ(),
+                        com.cstestcs.interstellar.InterstellarConfig.SERVER.shipBlockLimit.get(),
+                        (x, y, z) -> com.cstestcs.interstellar.registry.ModBlocks.kindOf(level.getBlockState(new net.minecraft.core.BlockPos(x, y, z))));
+                if (!result.ok()) {
+                    c.getSource().sendFailure(Component.translatable("command.interstellar.ship.invalid"));
+                    return 0;
+                }
+                structure = com.cstestcs.interstellar.ship.ShipStructure.copy(level, panel, result.blocks(),
+                        com.cstestcs.interstellar.ship.ShipStructure.forward(level.getBlockState(panel)).toYRot());
+            }
+        }
+        if (structure == null) {
+            c.getSource().sendFailure(Component.translatable("command.interstellar.ship.no_ship"));
+            return 0;
+        }
+        try {
+            com.cstestcs.interstellar.ship.StarshipLibrary.save(c.getSource().getServer(), name, structure);
+        } catch (java.io.IOException e) {
+            c.getSource().sendFailure(Component.literal(e.toString()));
+            return 0;
+        }
+        int size = structure.entries.size();
+        c.getSource().sendSuccess(() -> Component.translatable("command.interstellar.ship.saved", com.cstestcs.interstellar.ship.StarshipLibrary.cleanName(name), size), true);
+        return 1;
     }
 
     private static int raceList(CommandContext<CommandSourceStack> c) {

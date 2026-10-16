@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "interstellar:crystal_lattice_block"
+  ],
+  "result": {
+    "id": "interstellar:crystal_lattice",
+    "count": 9
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/grenade_launcher",
+  "textures": {
+    "metal": "minecraft:block/sculk",
+    "particle": "minecraft:block/sculk"
+  }
+}

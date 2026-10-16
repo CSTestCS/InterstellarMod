@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "MMM",
+    "MMM",
+    "MMM"
+  ],
+  "key": {
+    "M": "interstellar:solar_cell"
+  },
+  "result": {
+    "id": "interstellar:solar_cell_block",
+    "count": 1
+  }
+}

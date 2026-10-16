@@ -2,14 +2,17 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "II",
-    "II"
+    "IOI",
+    "OCO",
+    "IOI"
   ],
   "key": {
-    "I": "minecraft:iron_ingot"
+    "I": "minecraft:iron_block",
+    "O": "minecraft:obsidian",
+    "C": "minecraft:copper_block"
   },
   "result": {
     "id": "interstellar:hull_plating",
-    "count": 4
+    "count": 8
   }
 }

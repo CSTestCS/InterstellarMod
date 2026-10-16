@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/crystal_matrix",
+  "textures": {
+    "metal": "minecraft:block/obsidian",
+    "particle": "minecraft:block/obsidian"
+  }
+}

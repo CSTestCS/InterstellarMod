@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/holo_scope",
+  "textures": {
+    "metal": "minecraft:block/copper_block",
+    "particle": "minecraft:block/copper_block"
+  }
+}

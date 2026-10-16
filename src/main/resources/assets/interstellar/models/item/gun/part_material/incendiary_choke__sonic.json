@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/incendiary_choke",
+  "textures": {
+    "metal": "interstellar:block/sonic_resonator_block",
+    "particle": "interstellar:block/sonic_resonator_block"
+  }
+}

@@ -33,6 +33,16 @@ public final class ShipAssembler {
             player.sendSystemMessage(msg);
             return false;
         }
+        if (result.vehicle()) {
+            // Land vehicles are only assembled (and parked) on vehicle pads.
+            for (long[] b : result.blocks()) {
+                BlockPos p = new BlockPos((int) b[0], (int) b[1], (int) b[2]);
+                if (ModBlocks.kindOf(level.getBlockState(p)) == ShipScanner.Kind.WHEEL && !level.getBlockState(p.below()).is(ModBlocks.Tags.VEHICLE_PADS)) {
+                    player.sendSystemMessage(Component.translatable("message.interstellar.ship.problem.not_on_pads").withStyle(ChatFormatting.RED));
+                    return false;
+                }
+            }
+        }
         BlockState panelState = level.getBlockState(panel);
         float yaw = ShipStructure.forward(panelState).toYRot();
 
@@ -64,8 +74,8 @@ public final class ShipAssembler {
             if (rider == player) continue;
             if (rider.startRiding(ship, true, true) && seat > 0) ship.restoreSeat(rider, seat);
         }
-        player.sendOverlayMessage(Component.translatable(landing ? "message.interstellar.ship.landing" : "message.interstellar.ship.launch",
-                result.blocks().size()));
+        player.sendOverlayMessage(Component.translatable(result.vehicle() ? "message.interstellar.ship.drive"
+                : landing ? "message.interstellar.ship.landing" : "message.interstellar.ship.launch", result.blocks().size()));
         return true;
     }
 }

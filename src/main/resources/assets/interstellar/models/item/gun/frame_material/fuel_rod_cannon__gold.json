@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/fuel_rod_cannon",
+  "textures": {
+    "metal": "minecraft:block/gold_block",
+    "particle": "minecraft:block/gold_block"
+  }
+}

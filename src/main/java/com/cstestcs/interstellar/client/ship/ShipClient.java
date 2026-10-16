@@ -70,11 +70,55 @@ public final class ShipClient {
         }
     }
 
+    /**
+     * Third person aboard a craft pulls back far enough to show all of it (outside space, where ships are full size):
+     * the craft's bounding sphere must fit the view, measured from the rider's eye.
+     */
     private static void onCameraDistance(CalculateDetachedCameraDistanceEvent event) {
-        SpacecraftEntity ship = ship(Minecraft.getInstance().player);
+        Minecraft mc = Minecraft.getInstance();
+        SpacecraftEntity ship = ship(mc.player);
         if (ship == null) return;
-        double size = ship.getBoundingBox().getSize();
-        event.setDistance((float) Math.max(event.getDistance(), size * 1.2 + 2));
+        net.minecraft.world.phys.AABB box = ship.getBoundingBox();
+        if (SpaceTravel.isSpace(ship.level())) {
+            event.setDistance((float) Math.max(event.getDistance(), box.getSize() * 1.2 + 2));
+            return;
+        }
+        double radius = Math.sqrt(box.getXsize() * box.getXsize() + box.getYsize() * box.getYsize() + box.getZsize() * box.getZsize()) / 2;
+        double offCentre = mc.player.getEyePosition().distanceTo(box.getCenter());
+        double halfFov = Math.toRadians(mc.options.fov().get() / 2.0);
+        double fit = radius / Math.tan(halfFov) + offCentre + 1;
+        event.setDistance((float) Math.max(event.getDistance(), fit));
+    }
+
+    /**
+     * Riders lean with the craft: their model is tilted about their feet by the ship's pitch, around the ship's own
+     * yaw axis (the same rotation the ship's blocks get).
+     */
+    public static void tiltRider(net.neoforged.neoforge.client.event.RenderLivingEvent.Pre<?, ?, ?> event) {
+        ShipTilt tilt = event.getRenderState().getRenderData(ShipTilt.KEY);
+        if (tilt == null || Math.abs(tilt.pitch()) < 0.01f) return;
+        var pose = event.getPoseStack();
+        pose.rotateDegrees(com.mojang.math.Axis.YP, -tilt.yaw());
+        pose.rotateDegrees(com.mojang.math.Axis.XP, tilt.pitch());
+        pose.rotateDegrees(com.mojang.math.Axis.YP, tilt.yaw());
+    }
+
+    /** Yaw and pitch of the craft an entity rides, attached to its render state. */
+    public record ShipTilt(float yaw, float pitch) {
+        public static final net.minecraft.util.context.ContextKey<ShipTilt> KEY = new net.minecraft.util.context.ContextKey<>(
+                com.cstestcs.interstellar.Interstellar.id("ship_tilt"));
+    }
+
+    /** Called from the render state modifier for every living entity. */
+    public static void extract(net.minecraft.world.entity.LivingEntity entity, net.minecraft.client.renderer.entity.state.LivingEntityRenderState state) {
+        if (!(entity.getVehicle() instanceof SpacecraftEntity ship)) {
+            state.setRenderData(ShipTilt.KEY, null);
+            return;
+        }
+        float pt = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        state.setRenderData(ShipTilt.KEY, new ShipTilt(net.minecraft.util.Mth.rotLerp(pt, ship.yRotO, ship.getYRot()),
+                net.minecraft.util.Mth.lerp(pt, ship.xRotO, ship.getXRot())));
+        if (state instanceof net.minecraft.client.renderer.entity.state.HumanoidRenderState hs && ship.isSeated(entity)) hs.isPassenger = true;
     }
 
     /** Client side of the dismount guard: never in space, pilots halt instead, everyone else must confirm. */
@@ -82,6 +126,7 @@ public final class ShipClient {
         if (!event.getLevel().isClientSide() || !event.isDismounting()) return;
         Minecraft mc = Minecraft.getInstance();
         if (event.getEntityMounting() != mc.player || !(event.getEntityBeingMounted() instanceof SpacecraftEntity ship)) return;
+        if (ship.isVehicle()) return; // land vehicles: get out whenever you like
         // Only guard the player's own sneak; dismounts ordered by the server (landing, halting) always go through.
         if (!mc.options.keyShift.isDown()) return;
         if (ship.isRemoved() || !mc.player.isAlive() || DismountConfirmScreen.confirmed) {

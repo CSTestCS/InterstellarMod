@@ -47,7 +47,12 @@ public final class ShipStructure {
     /** Seat positions (relative, block positions) in seat order; index 0 is the pilot spot behind the control panel. */
     public final List<BlockPos> seats = new ArrayList<>();
     public final List<Entry> weapons = new ArrayList<>();
+    public final List<BlockPos> wheels = new ArrayList<>();
     public final BlockPos min, max;
+    /** Land vehicle (on wheels) rather than a spacecraft. */
+    public final boolean vehicle;
+    /** The pilot sits in a seat next to the control panel instead of standing behind it. */
+    public final boolean pilotSeated;
 
     public ShipStructure(List<Entry> entries, float baseYaw) {
         this.entries = List.copyOf(entries);
@@ -64,8 +69,25 @@ public final class ShipStructure {
             }
             if (k == ShipScanner.Kind.SEAT) seats.add(p);
             if (k == ShipScanner.Kind.WEAPON) weapons.add(e);
+            if (k == ShipScanner.Kind.WHEEL) wheels.add(p);
         }
         seats.sort(Comparator.<BlockPos>comparingInt(BlockPos::getY).thenComparingInt(BlockPos::getX).thenComparingInt(BlockPos::getZ));
+        // A seat touching the control panel is the pilot's (preferably the one where the pilot would stand).
+        BlockPos pilotSeat = seats.contains(pilot) ? pilot : null;
+        if (pilotSeat == null) {
+            for (Direction d : Direction.Plane.HORIZONTAL) {
+                if (seats.contains(BlockPos.ZERO.relative(d))) {
+                    pilotSeat = BlockPos.ZERO.relative(d);
+                    break;
+                }
+            }
+        }
+        if (pilotSeat != null) {
+            seats.remove(pilotSeat);
+            pilot = pilotSeat;
+        }
+        this.pilotSeated = pilotSeat != null;
+        this.vehicle = !wheels.isEmpty();
         seats.add(0, pilot);
         this.min = new BlockPos(x0, y0, z0);
         this.max = new BlockPos(x1, y1, z1);
@@ -103,6 +125,18 @@ public final class ShipStructure {
             level.setBlock(p, Blocks.AIR.defaultBlockState(), flags);
         }
         for (BlockPos p : positions) level.updateNeighborsAt(p, Blocks.AIR);
+        return new ShipStructure(out, baseYaw);
+    }
+
+    /** Copies the scanned blocks without touching the world (for saving a design). Block entity contents are dropped. */
+    public static ShipStructure copy(ServerLevel level, BlockPos origin, List<long[]> blocks, float baseYaw) {
+        List<Entry> out = new ArrayList<>();
+        for (long[] b : blocks) {
+            BlockPos world = new BlockPos((int) b[0], (int) b[1], (int) b[2]);
+            BlockState state = level.getBlockState(world);
+            if (state.getBlock() instanceof LandingGearBlock) state = state.setValue(LandingGearBlock.EXTENDED, false);
+            out.add(new Entry(world.subtract(origin), state, Optional.empty()));
+        }
         return new ShipStructure(out, baseYaw);
     }
 

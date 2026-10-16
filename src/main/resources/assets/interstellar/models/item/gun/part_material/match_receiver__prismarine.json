@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/match_receiver",
+  "textures": {
+    "metal": "minecraft:block/prismarine",
+    "particle": "minecraft:block/prismarine"
+  }
+}

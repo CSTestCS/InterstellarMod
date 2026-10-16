@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "YYY",
+    "SSS",
+    "III"
+  ],
+  "key": {
+    "Y": "minecraft:yellow_concrete",
+    "S": "minecraft:smooth_stone",
+    "I": "minecraft:iron_ingot"
+  },
+  "result": {
+    "id": "interstellar:vehicle_pad",
+    "count": 6
+  }
+}

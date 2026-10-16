@@ -13,10 +13,17 @@
       "destroy_on_use": true
     },
     "minecraft:visual/ambient_light_color": "#3f473f",
-    "minecraft:visual/fog_color": "#03030a",
+    "minecraft:visual/fog_color": "#000000",
     "minecraft:visual/sky_color": "#000000",
     "minecraft:visual/sky_light_color": "#ac60cd",
-    "minecraft:visual/sky_light_factor": 0.0
+    "minecraft:visual/sky_light_factor": 0.0,
+    "minecraft:visual/sun_angle": 180.0,
+    "minecraft:visual/moon_angle": 180.0,
+    "minecraft:visual/moon_phase": "new_moon",
+    "minecraft:visual/star_angle": 0.0,
+    "minecraft:visual/star_brightness": 0.5,
+    "minecraft:visual/sunrise_sunset_color": "#00000000",
+    "neoforge:custom_skybox": "interstellar:space"
   },
   "coordinate_scale": 1.0,
   "default_clock": "minecraft:the_end",
@@ -30,6 +37,5 @@
   "min_y": 0,
   "monster_spawn_block_light_limit": 0,
   "monster_spawn_light_level": 15,
-  "skybox": "end",
   "timelines": "#minecraft:in_end"
 }

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "MMM",
+    "MMM",
+    "MMM"
+  ],
+  "key": {
+    "M": "interstellar:hydro_pearl"
+  },
+  "result": {
+    "id": "interstellar:hydro_pearl_block",
+    "count": 1
+  }
+}

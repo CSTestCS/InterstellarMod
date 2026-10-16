@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "interstellar:solar_cell_block"
+  ],
+  "result": {
+    "id": "interstellar:solar_cell",
+    "count": 9
+  }
+}

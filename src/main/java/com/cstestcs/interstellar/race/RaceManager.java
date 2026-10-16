@@ -66,10 +66,7 @@ public final class RaceManager {
         Path dir = folder();
         try {
             Files.createDirectories(dir);
-            for (Map.Entry<String, byte[]> e : DefaultRaces.files().entrySet()) {
-                Path f = dir.resolve(e.getKey());
-                if (!Files.exists(f)) Files.write(f, e.getValue());
-            }
+            writeDefaults(dir, DefaultRaces.files());
             List<String> names;
             try (Stream<Path> s = Files.list(dir)) {
                 names = s.filter(Files::isRegularFile).map(p -> p.getFileName().toString()).sorted().toList();
@@ -92,6 +89,40 @@ public final class RaceManager {
             Interstellar.LOGGER.error("Could not load the races folder {}", dir, e);
         }
         if (server != null) for (ServerPlayer p : server.getPlayerList().getPlayers()) sendAssets(p);
+    }
+
+    /**
+     * Writes missing default files and refreshes generated ones the user never edited (tracked by hash in
+     * {@code .defaults}), so fixes to the defaults reach existing installs without touching customised files.
+     */
+    public static void writeDefaults(Path dir, Map<String, byte[]> defaults) throws IOException {
+        Path manifestFile = dir.resolve(".defaults");
+        java.util.Properties manifest = new java.util.Properties();
+        if (Files.exists(manifestFile)) {
+            try (var in = Files.newBufferedReader(manifestFile, StandardCharsets.UTF_8)) {
+                manifest.load(in);
+            }
+        }
+        boolean changed = false;
+        for (Map.Entry<String, byte[]> e : defaults.entrySet()) {
+            Path f = dir.resolve(e.getKey());
+            String newHash = com.cstestcs.interstellar.core.race.DefaultFileUpdater.hash(e.getValue());
+            if (!Files.exists(f) || com.cstestcs.interstellar.core.race.DefaultFileUpdater.replaceable(e.getKey(), Files.readAllBytes(f), e.getValue(),
+                    manifest.getProperty(e.getKey()))) {
+                Files.write(f, e.getValue());
+            } else if (!newHash.equals(com.cstestcs.interstellar.core.race.DefaultFileUpdater.hash(Files.readAllBytes(f)))) {
+                continue; // edited by the user: keep it and keep remembering the original hash
+            }
+            if (!newHash.equals(manifest.getProperty(e.getKey()))) {
+                manifest.setProperty(e.getKey(), newHash);
+                changed = true;
+            }
+        }
+        if (changed) {
+            try (var out = Files.newBufferedWriter(manifestFile, StandardCharsets.UTF_8)) {
+                manifest.store(out, "Hashes of generated default files; files still matching them are updated automatically");
+            }
+        }
     }
 
     private static byte[] zip(Path dir, List<String> names) throws IOException {

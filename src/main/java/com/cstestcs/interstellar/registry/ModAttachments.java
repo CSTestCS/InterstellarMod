@@ -24,4 +24,11 @@ public final class ModAttachments {
      */
     public static final Supplier<AttachmentType<String>> BODY = ATTACHMENTS.register("body", () -> AttachmentType.builder(() -> "")
             .serialize(Codec.STRING.fieldOf("value")).sync(ByteBufCodecs.STRING_UTF8).copyOnDeath().build());
+
+    /**
+     * Body a player picked with {@code /race body}: a body name, "none" for the standard player model, or "" when
+     * the player never chose (then the client's {@code ownBody} setting decides). Saved with the player.
+     */
+    public static final Supplier<AttachmentType<String>> BODY_CHOICE = ATTACHMENTS.register("body_choice", () -> AttachmentType.builder(() -> "")
+            .serialize(Codec.STRING.fieldOf("value")).copyOnDeath().build());
 }

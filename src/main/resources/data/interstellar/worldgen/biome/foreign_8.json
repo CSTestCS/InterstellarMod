@@ -95,7 +95,12 @@
       "minecraft:ore_diamond",
       "minecraft:ore_lapis",
       "minecraft:ore_copper",
-      "minecraft:ore_emerald"
+      "minecraft:ore_emerald",
+      "interstellar:foreign_8_alien_ore",
+      "interstellar:foreign_8_ore_iron",
+      "interstellar:foreign_8_ore_gold",
+      "interstellar:foreign_8_ore_copper",
+      "interstellar:foreign_8_ore_diamond"
     ],
     [],
     [],

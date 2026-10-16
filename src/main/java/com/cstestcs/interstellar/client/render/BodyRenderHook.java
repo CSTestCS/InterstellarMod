@@ -29,6 +29,9 @@ public final class BodyRenderHook {
         if (!(state instanceof EntityRenderState es)) return false;
         RenderInfo info = es.getRenderData(RenderInfo.KEY);
         if (info == null) return false;
+        // Converted bodies (villagers, illagers, skeletons): the race layer draws the body with the converted skin;
+        // the mob's own non-humanoid layers (villager clothes, crossed arms) are already part of that skin.
+        if (info.drawsConvertedBody() && info.bodySkin != null && (model == info.mainModel || !(model instanceof HumanoidModel<?>))) return true;
         if (model == info.mainModel) {
             if (info.replacesBody()) return true; // the race layer draws the race biped/body with the race skin
             if (info.drawsBody()) {

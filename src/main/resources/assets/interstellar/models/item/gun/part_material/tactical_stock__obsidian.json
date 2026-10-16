@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/tactical_stock",
+  "textures": {
+    "metal": "minecraft:block/obsidian",
+    "particle": "minecraft:block/obsidian"
+  }
+}

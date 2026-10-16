@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/shard_launcher",
+  "textures": {
+    "metal": "minecraft:block/magma",
+    "particle": "minecraft:block/magma"
+  }
+}

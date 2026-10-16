@@ -119,6 +119,51 @@ public final class ModPayloads {
         }
     }
 
+    /** Server confirmed a {@code /race body} choice: the client saves it as its ownBody setting for other worlds too. */
+    public record SaveOwnBody(String body) implements CustomPacketPayload {
+        public static final Type<SaveOwnBody> TYPE = typeOf("save_own_body");
+        public static final StreamCodec<ByteBuf, SaveOwnBody> CODEC = StreamCodec.composite(ByteBufCodecs.stringUtf8(64), SaveOwnBody::body, SaveOwnBody::new);
+
+        @Override
+        public Type<SaveOwnBody> type() {
+            return TYPE;
+        }
+    }
+
+    /** One planet in space and the sky colour of the dimension it stands for. */
+    public record PlanetInfo(String dimension, int size, int x, int y, int z, boolean moon, int color) {
+        public static final StreamCodec<ByteBuf, PlanetInfo> CODEC = new StreamCodec<>() {
+            @Override
+            public PlanetInfo decode(ByteBuf buf) {
+                return new PlanetInfo(ByteBufCodecs.STRING_UTF8.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf),
+                        ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.BOOL.decode(buf), ByteBufCodecs.INT.decode(buf));
+            }
+
+            @Override
+            public void encode(ByteBuf buf, PlanetInfo p) {
+                ByteBufCodecs.STRING_UTF8.encode(buf, p.dimension());
+                ByteBufCodecs.VAR_INT.encode(buf, p.size());
+                ByteBufCodecs.VAR_INT.encode(buf, p.x());
+                ByteBufCodecs.VAR_INT.encode(buf, p.y());
+                ByteBufCodecs.VAR_INT.encode(buf, p.z());
+                ByteBufCodecs.BOOL.encode(buf, p.moon());
+                ByteBufCodecs.INT.encode(buf, p.color());
+            }
+        };
+    }
+
+    /** Planets of the space dimension, sent when a player enters space (drawn with glowing atmospheres). */
+    public record Planets(List<PlanetInfo> planets) implements CustomPacketPayload {
+        public static final Type<Planets> TYPE = typeOf("planets");
+        public static final StreamCodec<ByteBuf, Planets> CODEC = StreamCodec.composite(PlanetInfo.CODEC.apply(ByteBufCodecs.list(512)), Planets::planets,
+                Planets::new);
+
+        @Override
+        public Type<Planets> type() {
+            return TYPE;
+        }
+    }
+
     // ------------------------------------------------------------------ registration
 
     public static void register(RegisterPayloadHandlersEvent event) {
@@ -130,6 +175,8 @@ public final class ModPayloads {
         r.playToServer(InstalledBodies.TYPE, InstalledBodies.CODEC, (p, ctx) -> BodyServer.onInstalledBodies((ServerPlayer) ctx.player(), p));
         r.playToClient(RaceAssets.TYPE, RaceAssets.CODEC);
         r.playToClient(GunData.TYPE, GunData.CODEC);
+        r.playToClient(SaveOwnBody.TYPE, SaveOwnBody.CODEC);
+        r.playToClient(Planets.TYPE, Planets.CODEC);
     }
 
     private static void onShipInput(ShipInput p, IPayloadContext ctx) {

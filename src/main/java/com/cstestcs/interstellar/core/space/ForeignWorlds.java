@@ -43,6 +43,26 @@ public final class ForeignWorlds {
         }
     }
 
+    /**
+     * The world's foremost metal or stone, used in place of hull plating on its aliens' starships.
+     */
+    public static String hullBlock(World w) {
+        return switch (w.theme()) {
+            case CRYSTAL -> "minecraft:amethyst_block";
+            case MAGMA -> "minecraft:polished_blackstone";
+            case VOID -> "minecraft:purpur_block";
+            case FUNGAL -> "minecraft:mushroom_stem";
+            case FROZEN -> "minecraft:packed_ice";
+            case TOXIC -> "minecraft:lime_terracotta";
+            case DUNE -> "minecraft:gold_block";
+            case REEF -> "minecraft:prismarine_bricks";
+            case RUST -> "minecraft:copper_block";
+            case ECHO -> "minecraft:deepslate_tiles";
+            case HONEY -> "minecraft:honeycomb_block";
+            case BONE -> "minecraft:bone_block";
+        };
+    }
+
     /** Which vanilla noise template the terrain is cloned from (20w14∞ also mixed generator types). */
     public enum Terrain { OVERWORLD, AMPLIFIED, LARGE_BIOMES, CAVES, FLOATING_ISLANDS, FLAT }
 

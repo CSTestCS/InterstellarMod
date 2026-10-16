@@ -48,9 +48,11 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
     @Override
     public void submit(PoseStack poseStack, SubmitNodeCollector collector, int light, S state, float yRot, float xRot) {
         RenderInfo info = state.getRenderData(RenderInfo.KEY);
-        if (info == null || info.race == null) return;
-        ClientRaces.Race race = info.race;
+        if (info == null) return;
         int overlay = LivingEntityRenderer.getOverlayCoords(state, 0f);
+        if (info.drawsConvertedBody() && info.bodySkin != null) submitConvertedBody(poseStack, collector, light, overlay, info);
+        if (info.race == null) return;
+        ClientRaces.Race race = info.race;
         RaceModels.RaceBiped biped = biped(race.def.slimArms(), info.hasRaceHead());
         HumanoidRenderState hs = humanoid(state);
         boolean bodyDrawn = info.body != null && info.replacesBody();
@@ -120,6 +122,25 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
                 poseStack.popPose();
             }
         }
+    }
+
+    /**
+     * A villager/illager/skeleton with a custom body: the body mesh wears the converted skin, the biped head (with
+     * hat layer) sits on the head bone, plus the villager nose.
+     */
+    private void submitConvertedBody(PoseStack poseStack, SubmitNodeCollector collector, int light, int overlay, RenderInfo info) {
+        Identifier skin = info.bodySkin;
+        var inst = info.body;
+        collector.submitCustomGeometry(poseStack, RenderTypes.entityCutout(skin), (pose, vc) -> BodyDraw.mesh(pose, vc, inst, light, overlay, -1));
+        if (info.hasRaceHead()) return; // the race head is drawn below
+        RaceModels.RaceBiped biped = biped(false, false);
+        poseStack.pushPose();
+        poseStack.mulPose(inst.headTransform());
+        collector.submitModel(new RaceModels.Part(biped.head), Unit.INSTANCE, poseStack, RenderTypes.entityCutout(skin), light, overlay, -1);
+        if (info.convertLayout != com.cstestcs.interstellar.core.image.SkinConverter.Layout.THIN_BIPED) {
+            collector.submitModel(new RaceModels.Part(RaceModels.nose()), Unit.INSTANCE, poseStack, RenderTypes.entityCutout(skin), light, overlay, -1);
+        }
+        poseStack.popPose();
     }
 
     /** Humanoid render states are used as they are; others (villagers) get the basics copied into a scratch state. */

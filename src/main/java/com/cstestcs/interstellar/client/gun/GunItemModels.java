@@ -54,6 +54,33 @@ public final class GunItemModels {
         }
     }
 
+    /**
+     * Material a slot's part was made from ("" if none). Item models use it to pick the part model textured with the
+     * material's block (gold block for gold, diamond block for diamond...).
+     */
+    public record MaterialProperty(GunData.Slot slot) implements SelectItemModelProperty<String> {
+        public static final MapCodec<MaterialProperty> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                GunCodecs.SLOT.fieldOf("slot").forGetter(MaterialProperty::slot)).apply(i, MaterialProperty::new));
+        public static final Type<MaterialProperty, String> TYPE = Type.create(MAP_CODEC, Codec.STRING);
+
+        @Override
+        public String get(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed, ItemDisplayContext context) {
+            GunBuild build = stack.get(ModComponents.GUN_BUILD.get());
+            GunBuild.Choice c = build == null ? null : build.get(slot);
+            return c == null || c.material() == null ? "" : c.material();
+        }
+
+        @Override
+        public Codec<String> valueCodec() {
+            return Codec.STRING;
+        }
+
+        @Override
+        public Type<MaterialProperty, String> type() {
+            return TYPE;
+        }
+    }
+
     /** Gun-wide value: {@code "field": "archetype"} (selects the frame) or {@code "trim"} (trim pattern, "" if none). */
     public record InfoProperty(String field) implements SelectItemModelProperty<String> {
         public static final MapCodec<InfoProperty> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
@@ -107,6 +134,7 @@ public final class GunItemModels {
     public static void registerSelectProperties(RegisterSelectItemModelPropertyEvent event) {
         event.register(Interstellar.id("gun_part"), PartProperty.TYPE);
         event.register(Interstellar.id("gun_info"), InfoProperty.TYPE);
+        event.register(Interstellar.id("gun_material"), MaterialProperty.TYPE);
     }
 
     public static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {

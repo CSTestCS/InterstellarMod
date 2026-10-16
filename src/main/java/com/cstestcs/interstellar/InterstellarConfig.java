@@ -18,8 +18,10 @@ public final class InterstellarConfig {
         public final ModConfigSpec.DoubleValue shipMinSpeed;
         public final ModConfigSpec.DoubleValue shipMaxSpeed;
         public final ModConfigSpec.DoubleValue landingSpeed;
+        public final ModConfigSpec.DoubleValue vehicleMaxSpeed;
         public final ModConfigSpec.IntValue seatPickupRadius;
         public final ModConfigSpec.DoubleValue alienWeaponDropChance;
+        public final ModConfigSpec.IntValue alienShipsPerPlayer;
         public final ModConfigSpec.ConfigValue<List<? extends String>> planetSizeOverrides;
         public final ModConfigSpec.ConfigValue<List<? extends String>> excludedPlanetDimensions;
 
@@ -33,7 +35,8 @@ public final class InterstellarConfig {
             shipMinSpeed = b.comment("Cruise speed (blocks/tick) when the interact key is released.").defineInRange("minSpeed", 0.4, 0.05, 10);
             shipMaxSpeed = b.comment("Boost speed (blocks/tick) while the interact key is held.").defineInRange("maxSpeed", 2.0, 0.1, 20);
             landingSpeed = b.comment("Descent speed (blocks/tick) during the landing procedure.").defineInRange("landingSpeed", 0.25, 0.02, 2);
-            seatPickupRadius = b.comment("Mobs (leashed or recruited) this close to an empty passenger seat sit down in it.").defineInRange("seatPickupRadius", 4, 1, 16);
+            vehicleMaxSpeed = b.comment("Top speed (blocks/tick) of land vehicles built on wheels.").defineInRange("vehicleMaxSpeed", 0.45, 0.05, 4);
+            seatPickupRadius = b.comment("Calm mobs this close to a free passenger seat walk over and sit down in it.").defineInRange("seatPickupRadius", 4, 1, 16);
             b.pop();
             b.push("space");
             spaceScale = b.comment("Scale of spacecraft and their passengers inside the space dimension (1.0 = normal size).").defineInRange("scale", 0.1, 0.01, 1);
@@ -46,6 +49,7 @@ public final class InterstellarConfig {
             b.pop();
             b.push("aliens");
             alienWeaponDropChance = b.comment("Chance an alien drops the gun it carries.").defineInRange("weaponDropChance", 0.30, 0, 1);
+            alienShipsPerPlayer = b.comment("Alien starships that may fly around each player in space at once (0 = none).").defineInRange("shipsPerPlayer", 2, 0, 16);
             b.pop();
         }
     }
@@ -67,7 +71,8 @@ public final class InterstellarConfig {
                     .defineListAllowEmpty("disabled", List.of(), () -> "buff", o -> o instanceof String);
             customAnimations = b.comment("Play Mixamo clips from the customanimations folder (otherwise bodies follow vanilla limb angles).").define("animations", true);
             deformArmor = b.comment("Bend armour and other biped layers to fit custom bodies.").define("deformArmor", true);
-            ownBody = b.comment("Body your own player uses: a body name, 'auto' (server assigned) or 'none'.").define("ownBody", "auto");
+            ownBody = b.comment("Body your own player uses: a body name, or 'none' for the standard player model. /race body changes and saves it.")
+                    .define("ownBody", "none");
             bodyRenderDistance = b.comment("Beyond this distance (blocks) bodies render with vanilla models, for performance.").defineInRange("renderDistance", 64, 8, 512);
             b.pop();
             b.push("spacecraft");

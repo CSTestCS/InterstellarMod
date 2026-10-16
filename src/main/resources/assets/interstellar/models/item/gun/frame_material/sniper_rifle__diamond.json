@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/sniper_rifle",
+  "textures": {
+    "metal": "minecraft:block/diamond_block",
+    "particle": "minecraft:block/diamond_block"
+  }
+}

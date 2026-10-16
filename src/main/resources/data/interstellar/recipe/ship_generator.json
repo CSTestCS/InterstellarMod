@@ -2,15 +2,15 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "IBI",
-    "RNR",
-    "IBI"
+    "NBN",
+    "RSR",
+    "NBN"
   ],
   "key": {
-    "I": "minecraft:iron_block",
+    "N": "minecraft:netherite_scrap",
     "B": "minecraft:blaze_rod",
     "R": "minecraft:redstone_block",
-    "N": "minecraft:nether_star"
+    "S": "minecraft:nether_star"
   },
   "result": {
     "id": "interstellar:ship_generator",

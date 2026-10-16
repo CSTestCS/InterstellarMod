@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/laser_sight",
+  "textures": {
+    "metal": "minecraft:block/magma",
+    "particle": "minecraft:block/magma"
+  }
+}

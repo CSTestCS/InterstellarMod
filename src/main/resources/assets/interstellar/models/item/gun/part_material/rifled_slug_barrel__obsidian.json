@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/rifled_slug_barrel",
+  "textures": {
+    "metal": "minecraft:block/obsidian",
+    "particle": "minecraft:block/obsidian"
+  }
+}

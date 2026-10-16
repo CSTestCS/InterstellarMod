@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "interstellar:plasma_core_ore",
+    "interstellar:nether_cinder_ore",
+    "interstellar:void_shard_ore",
+    "interstellar:crystal_lattice_ore",
+    "interstellar:bio_gel_ore",
+    "interstellar:cryo_crystal_ore",
+    "interstellar:solar_cell_ore",
+    "interstellar:hydro_pearl_ore",
+    "interstellar:tech_chip_ore",
+    "interstellar:sonic_resonator_ore"
+  ]
+}

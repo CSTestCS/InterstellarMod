@@ -78,6 +78,19 @@ public final class RaceModels {
         }
     }
 
+    private static ModelPart nose;
+
+    /** Villager nose for converted skins (texture region {@link com.cstestcs.interstellar.core.image.SkinConverter#NOSE}). */
+    public static ModelPart nose() {
+        if (nose == null) {
+            MeshDefinition mesh = new MeshDefinition();
+            int[] n = com.cstestcs.interstellar.core.image.SkinConverter.NOSE;
+            mesh.getRoot().addOrReplaceChild("nose", CubeListBuilder.create().texOffs(n[0], n[1]).addBox(-1, -3, -6, 2, 4, 2), PartPose.ZERO);
+            nose = LayerDefinition.create(mesh, 64, 64).bakeRoot();
+        }
+        return nose;
+    }
+
     public static RaceBiped biped(boolean slim) {
         return new RaceBiped(LayerDefinition.create(PlayerModel.createMesh(CubeDeformation.NONE, slim), 64, 64).bakeRoot());
     }

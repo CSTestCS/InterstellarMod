@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/bio_spitter",
+  "textures": {
+    "metal": "interstellar:block/alien_alloy_block",
+    "particle": "interstellar:block/alien_alloy_block"
+  }
+}

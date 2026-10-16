@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/refined_tech_core",
+  "textures": {
+    "metal": "interstellar:block/nether_cinder_block",
+    "particle": "interstellar:block/nether_cinder_block"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/incendiary_choke",
+  "textures": {
+    "metal": "minecraft:block/magma",
+    "particle": "minecraft:block/magma"
+  }
+}

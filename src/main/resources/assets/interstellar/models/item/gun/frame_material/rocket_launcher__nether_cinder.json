@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/rocket_launcher",
+  "textures": {
+    "metal": "interstellar:block/nether_cinder_block",
+    "particle": "interstellar:block/nether_cinder_block"
+  }
+}

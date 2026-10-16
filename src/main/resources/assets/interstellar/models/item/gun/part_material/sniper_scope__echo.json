@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/sniper_scope",
+  "textures": {
+    "metal": "minecraft:block/sculk",
+    "particle": "minecraft:block/sculk"
+  }
+}

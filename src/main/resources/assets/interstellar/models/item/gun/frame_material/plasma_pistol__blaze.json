@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/plasma_pistol",
+  "textures": {
+    "metal": "minecraft:block/magma",
+    "particle": "minecraft:block/magma"
+  }
+}

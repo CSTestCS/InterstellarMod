@@ -1,6 +1,7 @@
 package com.cstestcs.interstellar.client;
 
 import com.cstestcs.interstellar.Interstellar;
+import com.cstestcs.interstellar.InterstellarConfig;
 import com.cstestcs.interstellar.client.body.BodyInstances;
 import com.cstestcs.interstellar.client.body.BodyLibrary;
 import com.cstestcs.interstellar.client.gun.GunHud;
@@ -68,12 +69,20 @@ public final class InterstellarClient {
         modBus.addListener((RegisterGuiLayersEvent e) -> e.registerAboveAll(Interstellar.id("gun_hud"), GunHud::render));
         modBus.addListener(GunItemModels::registerSelectProperties);
         modBus.addListener(GunItemModels::registerTints);
+        modBus.addListener(com.cstestcs.interstellar.client.space.SpaceClient::registerSky);
+        modBus.addListener(OreTint::register);
+        modBus.addListener(com.cstestcs.interstellar.client.gun.GunModelPack::onAddPackFinders);
+        NeoForge.EVENT_BUS.addListener(com.cstestcs.interstellar.client.space.SpaceClient::submitGlow);
 
         NeoForge.EVENT_BUS.addListener(InterstellarClient::onRenderLivingPre);
         NeoForge.EVENT_BUS.addListener((RenderFrameEvent.Post e) -> BodyInstances.endFrame());
         NeoForge.EVENT_BUS.addListener(InterstellarClient::onClientTick);
         NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingIn e) -> BodyLibrary.reportToServer());
-        NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> ClientRaces.clear());
+        NeoForge.EVENT_BUS.addListener((ClientPlayerNetworkEvent.LoggingOut e) -> {
+            ClientRaces.clear();
+            com.cstestcs.interstellar.client.body.BipedSkins.clear();
+            com.cstestcs.interstellar.client.space.SpaceClient.clear();
+        });
         ShipClient.register();
         // Minecraft.getInstance() is still null while mods are constructed; load bodies once the client exists.
         modBus.addListener((FMLClientSetupEvent e) -> BodyLibrary.reload());
@@ -105,11 +114,15 @@ public final class InterstellarClient {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static void registerModifiers(RegisterRenderStateModifiersEvent event) {
         event.registerEntityModifier((Class) LivingEntityRenderer.class,
-                (java.util.function.BiConsumer<LivingEntity, LivingEntityRenderState>) RenderInfoExtractor::extract);
+                (java.util.function.BiConsumer<LivingEntity, LivingEntityRenderState>) (e, st) -> {
+                    RenderInfoExtractor.extract(e, st);
+                    ShipClient.extract(e, st);
+                });
         event.registerAvatarEntityModifier(new AvatarRenderStateModifier() {
             @Override
             public <T extends Avatar & ClientAvatarEntity> void accept(T avatar, AvatarRenderState state) {
                 RenderInfoExtractor.extract(avatar, state);
+                ShipClient.extract(avatar, state);
             }
         });
     }
@@ -117,6 +130,7 @@ public final class InterstellarClient {
     /** The renderer knows its model and texture; record them so the render hook can tell the entity's model from layers. */
     private static void onRenderLivingPre(RenderLivingEvent.Pre<?, ?, ?> event) {
         RenderInfoExtractor.complete(event);
+        ShipClient.tiltRider(event);
     }
 
     private static void registerKeys(RegisterKeyMappingsEvent event) {
@@ -131,6 +145,11 @@ public final class InterstellarClient {
     private static void registerPayloads(RegisterClientPayloadHandlersEvent event) {
         event.register(ModPayloads.RaceAssets.TYPE, (p, ctx) -> ClientRaces.receive(p));
         event.register(ModPayloads.GunData.TYPE, (p, ctx) -> GunDataManager.receive(p));
+        event.register(ModPayloads.Planets.TYPE, (p, ctx) -> com.cstestcs.interstellar.client.space.SpaceClient.receive(p));
+        event.register(ModPayloads.SaveOwnBody.TYPE, (p, ctx) -> {
+            InterstellarConfig.CLIENT.ownBody.set(p.body());
+            InterstellarConfig.CLIENT_SPEC.save();
+        });
     }
 
     private static void onClientTick(ClientTickEvent.Post event) {

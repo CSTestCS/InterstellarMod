@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/incendiary_choke",
+  "textures": {
+    "metal": "interstellar:block/cryo_crystal_block",
+    "particle": "interstellar:block/cryo_crystal_block"
+  }
+}

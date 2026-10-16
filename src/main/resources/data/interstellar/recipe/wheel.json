@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " K ",
+    "KIK",
+    " K "
+  ],
+  "key": {
+    "K": "minecraft:dried_kelp_block",
+    "I": "minecraft:iron_block"
+  },
+  "result": {
+    "id": "interstellar:wheel",
+    "count": 2
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/refined_bio_core",
+  "textures": {
+    "metal": "minecraft:block/prismarine",
+    "particle": "minecraft:block/prismarine"
+  }
+}

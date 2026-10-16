@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/needler",
+  "textures": {
+    "metal": "minecraft:block/gold_block",
+    "particle": "minecraft:block/gold_block"
+  }
+}

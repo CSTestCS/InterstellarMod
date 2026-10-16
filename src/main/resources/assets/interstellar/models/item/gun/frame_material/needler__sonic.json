@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/needler",
+  "textures": {
+    "metal": "interstellar:block/sonic_resonator_block",
+    "particle": "interstellar:block/sonic_resonator_block"
+  }
+}

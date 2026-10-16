@@ -1,0 +1,74 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "interstellar:block/wheel_tread",
+    "tread": "interstellar:block/wheel_tread",
+    "hub": "interstellar:block/wheel_hub"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        3,
+        1
+      ],
+      "to": [
+        16,
+        13,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#hub"
+        },
+        "west": {
+          "texture": "#hub"
+        },
+        "north": {
+          "texture": "#tread"
+        },
+        "south": {
+          "texture": "#tread"
+        },
+        "up": {
+          "texture": "#tread"
+        },
+        "down": {
+          "texture": "#tread"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        4
+      ],
+      "to": [
+        16,
+        16,
+        12
+      ],
+      "faces": {
+        "east": {
+          "texture": "#hub"
+        },
+        "west": {
+          "texture": "#hub"
+        },
+        "north": {
+          "texture": "#tread"
+        },
+        "south": {
+          "texture": "#tread"
+        },
+        "up": {
+          "texture": "#tread"
+        },
+        "down": {
+          "texture": "#tread"
+        }
+      }
+    }
+  ]
+}

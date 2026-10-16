@@ -13,7 +13,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -37,11 +36,16 @@ public class SeatEntity extends Entity {
         return rider.startRiding(seat, true, true);
     }
 
-    /** Mobs that follow a player (leashed) or were recruited sit down in nearby empty seats. */
+    /**
+     * Mobs that take a free seat: anything calm enough (not fighting, not a monster unless recruited) and small
+     * enough to sit.
+     */
     public static boolean wantsToSit(Mob mob) {
-        if (mob.isLeashed() && mob.getLeashHolder() instanceof Player) return true;
+        if (!mob.isAlive() || mob.isAggressive() || mob.getTarget() != null || mob.isPassenger() || mob.isVehicle()) return false;
+        if (mob.getBbHeight() > 2.6f || mob.getBbWidth() > 1.6f) return false;
         RaceData race = mob.getData(ModAttachments.RACE);
-        return race.isRecruited() && !mob.isAggressive();
+        if (mob instanceof net.minecraft.world.entity.monster.Enemy && !race.isRecruited()) return false;
+        return true;
     }
 
     @Override
@@ -63,25 +67,11 @@ public class SeatEntity extends Entity {
         super.tick();
         if (level().isClientSide()) return;
         BlockPos at = BlockPos.containing(getX(), getY(), getZ());
-        if (getPassengers().isEmpty() || !(level().getBlockState(at).getBlock() instanceof PassengerSeatBlock)) {
+        net.minecraft.world.level.block.state.BlockState below = level().getBlockState(at);
+        if (getPassengers().isEmpty() || !(below.getBlock() instanceof PassengerSeatBlock) || below.getValue(PassengerSeatBlock.COLLAPSED)) {
             ejectPassengers();
             discard();
         }
-    }
-
-    @Override
-    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
-        // Interacting with a lead takes seated mobs out of the seat and onto the lead.
-        if (!level().isClientSide() && player.getItemInHand(hand).is(Items.LEAD)) {
-            for (Entity e : getPassengers()) {
-                if (e instanceof Mob mob && mob.canBeLeashed()) {
-                    mob.stopRiding();
-                    mob.setLeashedTo(player, true);
-                    return InteractionResult.SUCCESS;
-                }
-            }
-        }
-        return InteractionResult.PASS;
     }
 
     @Override

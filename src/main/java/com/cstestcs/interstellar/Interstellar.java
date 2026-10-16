@@ -29,6 +29,7 @@ public final class Interstellar {
 
     public Interstellar(IEventBus modBus, ModContainer container) {
         ModBlocks.BLOCKS.register(modBus);
+        ModBlocks.BLOCK_ENTITIES.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModItems.TABS.register(modBus);
         ModEntities.ENTITIES.register(modBus);

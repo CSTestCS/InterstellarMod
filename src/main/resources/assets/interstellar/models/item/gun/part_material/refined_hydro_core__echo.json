@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/refined_hydro_core",
+  "textures": {
+    "metal": "minecraft:block/sculk",
+    "particle": "minecraft:block/sculk"
+  }
+}

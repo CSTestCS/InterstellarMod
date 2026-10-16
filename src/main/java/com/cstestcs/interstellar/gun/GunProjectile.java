@@ -41,7 +41,7 @@ public class GunProjectile extends Projectile {
         this.noPhysics = true;
     }
 
-    public static void spawn(ServerLevel level, LivingEntity shooter, Vec3 pos, Vec3 dir, GunRegistry.Stats stats, int color) {
+    public static void spawn(ServerLevel level, @Nullable LivingEntity shooter, Vec3 pos, Vec3 dir, GunRegistry.Stats stats, int color) {
         GunProjectile p = new GunProjectile(ModEntities.GUN_PROJECTILE.get(), level);
         p.setOwner(shooter);
         p.stats = stats;

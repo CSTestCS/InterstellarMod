@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/unstable_tech_core",
+  "textures": {
+    "metal": "interstellar:block/hydro_pearl_block",
+    "particle": "interstellar:block/hydro_pearl_block"
+  }
+}

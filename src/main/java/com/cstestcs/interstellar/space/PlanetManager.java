@@ -43,18 +43,21 @@ public final class PlanetManager extends SavedData {
 
     private static final Codec<PlanetManager> CODEC = RecordCodecBuilder.create(i -> i.group(
             Stored.CODEC.listOf().fieldOf("planets").forGetter(m -> new ArrayList<>(m.planets.values())),
-            Codec.INT.fieldOf("next_slot").forGetter(m -> m.nextSlot)
+            Codec.INT.fieldOf("next_slot").forGetter(m -> m.nextSlot),
+            Codec.INT.optionalFieldOf("builder_version", 0).forGetter(m -> m.builderVersion)
     ).apply(i, PlanetManager::new));
 
     public static final SavedDataType<PlanetManager> TYPE = new SavedDataType<>(Interstellar.id("planets"),
-            level -> new PlanetManager(List.of(), 0), level -> CODEC);
+            level -> new PlanetManager(List.of(), 0, PlanetBuilder.VERSION), level -> CODEC);
 
     private final Map<String, Stored> planets = new LinkedHashMap<>();
     private int nextSlot;
+    private int builderVersion;
 
-    private PlanetManager(List<Stored> list, int nextSlot) {
+    private PlanetManager(List<Stored> list, int nextSlot, int builderVersion) {
         for (Stored s : list) planets.put(s.dimension, s);
         this.nextSlot = nextSlot;
+        this.builderVersion = builderVersion;
     }
 
     public static PlanetManager get(MinecraftServer server) {
@@ -85,6 +88,11 @@ public final class PlanetManager extends SavedData {
     public void ensurePlanets(MinecraftServer server) {
         ServerLevel space = server.getLevel(SpaceTravel.SPACE);
         if (space == null) return;
+        if (builderVersion < PlanetBuilder.VERSION) {
+            // Planet looks changed: rebuild existing planets in place.
+            markAllUnbuilt();
+            builderVersion = PlanetBuilder.VERSION;
+        }
         Map<String, Integer> overrides = new HashMap<>();
         for (String o : InterstellarConfig.SERVER.planetSizeOverrides.get()) {
             String[] kv = o.split("=");

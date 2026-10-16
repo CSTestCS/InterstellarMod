@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/beam_rifle",
+  "textures": {
+    "metal": "minecraft:block/obsidian",
+    "particle": "minecraft:block/obsidian"
+  }
+}

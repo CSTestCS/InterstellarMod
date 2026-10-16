@@ -2,12 +2,13 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "III",
+    "IOI",
     "TDT",
-    "III"
+    "IOI"
   ],
   "key": {
     "I": "minecraft:iron_block",
+    "O": "minecraft:observer",
     "T": "minecraft:tnt",
     "D": "minecraft:dispenser"
   },

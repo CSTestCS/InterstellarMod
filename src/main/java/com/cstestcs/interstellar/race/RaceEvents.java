@@ -138,18 +138,14 @@ public final class RaceEvents {
     /** Effects that are not saved with the entity (AI goals, trait effects) and must be re-added on every load. */
     private static void applyEveryLoad(LivingEntity living, RaceDefinition race, RaceData data) {
         applyAttributes(living, race);
-        for (String trait : race.traits()) {
-            Holder<MobEffect> effect = switch (trait) {
-                case "fire_immune" -> MobEffects.FIRE_RESISTANCE;
-                case "water_breathing" -> MobEffects.WATER_BREATHING;
-                case "night_vision" -> MobEffects.NIGHT_VISION;
-                case "slow_fall" -> MobEffects.SLOW_FALLING;
-                case "glowing" -> MobEffects.GLOWING;
-                case "regeneration" -> MobEffects.REGENERATION;
-                default -> null;
-            };
-            if (effect != null && !living.hasEffect(effect)) {
-                living.addEffect(new MobEffectInstance(effect, MobEffectInstance.INFINITE_DURATION, 0, true, false));
+        for (java.util.Map.Entry<String, Holder<MobEffect>> t : traitEffects().entrySet()) {
+            Holder<MobEffect> effect = t.getValue();
+            if (race.traits().contains(t.getKey())) {
+                if (!living.hasEffect(effect)) living.addEffect(new MobEffectInstance(effect, MobEffectInstance.INFINITE_DURATION, 0, true, false));
+            } else {
+                // A trait the race no longer has (edited race file): drop the permanent effect it left behind.
+                MobEffectInstance inst = living.getEffect(effect);
+                if (inst != null && inst.isInfiniteDuration() && inst.isAmbient()) living.removeEffect(effect);
             }
         }
         if (living instanceof PathfinderMob mob && !race.fallback()) applyDisposition(mob, race);
@@ -161,6 +157,12 @@ public final class RaceEvents {
             mob.goalSelector.addGoal(3, new RaceGoals.FollowRecruiter(mob));
             mob.targetSelector.addGoal(1, new RaceGoals.DefendRecruiter(mob));
         }
+    }
+
+    private static java.util.Map<String, Holder<MobEffect>> traitEffects() {
+        return java.util.Map.of("fire_immune", MobEffects.FIRE_RESISTANCE, "water_breathing", MobEffects.WATER_BREATHING,
+                "night_vision", MobEffects.NIGHT_VISION, "slow_fall", MobEffects.SLOW_FALLING, "glowing", MobEffects.GLOWING,
+                "regeneration", MobEffects.REGENERATION);
     }
 
     private static void applyAttributes(LivingEntity living, RaceDefinition race) {

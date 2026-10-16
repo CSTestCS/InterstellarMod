@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/drum_mag",
+  "textures": {
+    "metal": "minecraft:block/obsidian",
+    "particle": "minecraft:block/obsidian"
+  }
+}

@@ -52,6 +52,23 @@ class ShipPlanetGunTest {
     }
 
     @Test
+    void vehiclesStandOnWheelsAndPadsAreExcluded() {
+        Map<Long, Kind> w = new HashMap<>();
+        for (int x = -3; x <= 3; x++) for (int z = -3; z <= 3; z++) w.put(ShipScanner.pack(x, 0, z), Kind.VEHICLE_PAD);
+        for (int x = -1; x <= 1; x += 2) for (int z = -1; z <= 1; z += 2) w.put(ShipScanner.pack(x, 1, z), Kind.WHEEL);
+        for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) w.put(ShipScanner.pack(x, 2, z), Kind.SOLID);
+        w.put(ShipScanner.pack(0, 3, 0), Kind.CONTROL_PANEL);
+        w.put(ShipScanner.pack(1, 3, 0), Kind.GENERATOR);
+        ShipScanner.Result r = ShipScanner.scan(0, 3, 0, 100, (x, y, z) -> w.getOrDefault(ShipScanner.pack(x, y, z), Kind.AIR));
+        assertTrue(r.ok(), r.problems().toString()); // no life support needed for vehicles
+        assertTrue(r.vehicle());
+        assertEquals(15, r.blocks().size());          // 4 wheels + 9 body + panel + generator, no pads
+        w.put(ShipScanner.pack(0, 1, 0), Kind.LANDING_GEAR);
+        r = ShipScanner.scan(0, 3, 0, 100, (x, y, z) -> w.getOrDefault(ShipScanner.pack(x, y, z), Kind.AIR));
+        assertTrue(r.problems().contains(ShipScanner.Problem.GEAR_AND_WHEELS));
+    }
+
+    @Test
     void planetsDoNotOverlapAndAreStable() {
         Map<String, Integer> sizes = new LinkedHashMap<>();
         for (String d : List.of("minecraft:overworld", "minecraft:the_nether", "minecraft:the_end", "othermod:moon", "othermod:mars", "othermod:moon_b"))

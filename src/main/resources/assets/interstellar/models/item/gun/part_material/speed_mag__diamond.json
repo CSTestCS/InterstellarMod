@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/speed_mag",
+  "textures": {
+    "metal": "minecraft:block/diamond_block",
+    "particle": "minecraft:block/diamond_block"
+  }
+}

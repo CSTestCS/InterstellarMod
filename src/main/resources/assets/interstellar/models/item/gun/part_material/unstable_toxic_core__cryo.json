@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/unstable_toxic_core",
+  "textures": {
+    "metal": "interstellar:block/cryo_crystal_block",
+    "particle": "interstellar:block/cryo_crystal_block"
+  }
+}

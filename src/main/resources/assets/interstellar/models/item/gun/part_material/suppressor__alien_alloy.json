@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/suppressor",
+  "textures": {
+    "metal": "interstellar:block/alien_alloy_block",
+    "particle": "interstellar:block/alien_alloy_block"
+  }
+}

@@ -106,7 +106,8 @@ public final class AlienRaces {
             case REEF -> "water_breathing";
             case VOID -> "slow_fall, no_fall_damage";
             case ECHO -> "night_vision";
-            case CRYSTAL, TOXIC -> "glowing";
+            case CRYSTAL -> "night_vision";
+            case TOXIC -> "regeneration";
             case FUNGAL, HONEY -> "regeneration";
             default -> "";
         };

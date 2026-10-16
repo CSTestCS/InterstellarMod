@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/alien_receiver",
+  "textures": {
+    "metal": "minecraft:block/gold_block",
+    "particle": "minecraft:block/gold_block"
+  }
+}

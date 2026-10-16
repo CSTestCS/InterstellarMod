@@ -81,7 +81,13 @@
     [],
     [],
     [],
-    [],
+    [
+      "interstellar:foreign_6_alien_ore",
+      "interstellar:foreign_6_ore_iron",
+      "interstellar:foreign_6_ore_gold",
+      "interstellar:foreign_6_ore_copper",
+      "interstellar:foreign_6_ore_diamond"
+    ],
     [],
     [],
     [

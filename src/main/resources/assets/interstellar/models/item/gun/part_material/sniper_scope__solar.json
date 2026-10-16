@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/sniper_scope",
+  "textures": {
+    "metal": "interstellar:block/solar_cell_block",
+    "particle": "interstellar:block/solar_cell_block"
+  }
+}

@@ -27,6 +27,10 @@ public final class RenderInfo {
     public boolean villagerLike;
     /** Villager type, profession and level textures, drawn on the race biped. */
     public java.util.List<Identifier> outfit = java.util.List.of();
+    /** Non-biped texture layout that is converted for custom bodies (villagers, illagers, skeletons), or null. */
+    public com.cstestcs.interstellar.core.image.SkinConverter.@Nullable Layout convertLayout;
+    /** Converted biped skin the custom body wears when {@link #convertLayout} is set (filled once the texture is known). */
+    public @Nullable Identifier bodySkin;
     public float ageInTicks, walkSpeed;
 
     /** The race replaces the whole model with a biped wearing RACENAME_skin. */
@@ -40,6 +44,11 @@ public final class RenderInfo {
 
     /** Whether a custom body is drawn for this entity this frame. */
     public boolean drawsBody() {
-        return body != null && (replacesBody() || bipedTexture);
+        return body != null && (replacesBody() || bipedTexture || convertLayout != null);
+    }
+
+    /** The body is drawn by the race layer with a converted skin instead of by the mob's own model. */
+    public boolean drawsConvertedBody() {
+        return body != null && !replacesBody() && convertLayout != null;
     }
 }

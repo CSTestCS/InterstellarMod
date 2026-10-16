@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/ancient_solar_core",
+  "textures": {
+    "metal": "minecraft:block/gold_block",
+    "particle": "minecraft:block/gold_block"
+  }
+}

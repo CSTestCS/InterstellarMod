@@ -13,12 +13,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Builds a planet out of blocks: a cube whose surface is painted to resemble its dimension (continents and oceans
- * for the overworld, netherrack for the nether, the theme blocks of a foreign world, a stable colour scheme for modded
+ * Builds a planet out of blocks: a cube whose surface is painted to resemble its dimension (moss continents and oceans
+ * for the overworld, magma for the nether, the theme blocks of a foreign world, a stable colour scheme for modded
  * dimensions), wrapped in an invisible glowing atmosphere shell.
  */
 public final class PlanetBuilder {
     private PlanetBuilder() {}
+
+    /** Bumped whenever planets should look different; existing planets are rebuilt once. */
+    public static final int VERSION = 2;
 
     /** Dyed blocks are looked up by id (26.3 no longer exposes every colour as a Blocks constant). */
     private static final String[] MODDED_PALETTE = { "terracotta", "red_terracotta", "orange_terracotta", "yellow_terracotta", "lime_terracotta",
@@ -34,7 +37,8 @@ public final class PlanetBuilder {
                 for (int z = 0; z < n; z++) {
                     boolean surface = x == 0 || y == 0 || z == 0 || x == n - 1 || y == n - 1 || z == n - 1;
                     if (!surface) {
-                        space.setBlock(new BlockPos(x0 + x, y0 + y, z0 + z), core(planet.dimension()), flags);
+                        boolean shallow = x == 1 || y == 1 || z == 1 || x == n - 2 || y == n - 2 || z == n - 2;
+                        space.setBlock(new BlockPos(x0 + x, y0 + y, z0 + z), core(planet.dimension(), shallow), flags);
                         continue;
                     }
                     space.setBlock(new BlockPos(x0 + x, y0 + y, z0 + z), surface(planet.dimension(), x, y, z, n, seed), flags);
@@ -54,9 +58,10 @@ public final class PlanetBuilder {
         }
     }
 
-    private static BlockState core(String dim) {
+    private static BlockState core(String dim, boolean shallow) {
         return switch (dim) {
-            case "minecraft:the_nether" -> Blocks.MAGMA_BLOCK.defaultBlockState();
+            case "minecraft:overworld" -> shallow ? Blocks.MOSSY_COBBLESTONE.defaultBlockState() : Blocks.STONE.defaultBlockState();
+            case "minecraft:the_nether" -> Blocks.NETHERRACK.defaultBlockState();
             case "minecraft:the_end" -> Blocks.END_STONE.defaultBlockState();
             default -> Blocks.STONE.defaultBlockState();
         };
@@ -69,12 +74,13 @@ public final class PlanetBuilder {
                 // Polar caps on top and bottom, continents of grass with sandy coasts in blue ocean elsewhere.
                 if (y == n - 1 || y == 0) return (h & 3) == 0 ? Blocks.PACKED_ICE.defaultBlockState() : Blocks.SNOW_BLOCK.defaultBlockState();
                 double land = continent(x, y, z, n, seed);
-                if (land > 0.15) return (h & 7) == 0 ? Blocks.MOSS_BLOCK.defaultBlockState() : Blocks.GRASS_BLOCK.defaultBlockState();
+                // Moss for grassland, mossy cobblestone where dirt would show.
+                if (land > 0.15) return (h & 7) == 0 ? Blocks.MOSSY_COBBLESTONE.defaultBlockState() : Blocks.MOSS_BLOCK.defaultBlockState();
                 if (land > 0.0) return Blocks.SAND.defaultBlockState();
                 return block((h & 3) == 0 ? "minecraft:light_blue_concrete" : "minecraft:blue_concrete", Blocks.WATER).defaultBlockState();
             }
             case "minecraft:the_nether":
-                return Blocks.NETHERRACK.defaultBlockState();
+                return Blocks.MAGMA_BLOCK.defaultBlockState();
             case "minecraft:the_end":
                 return (h % 9) == 0 ? Blocks.PURPUR_BLOCK.defaultBlockState() : Blocks.END_STONE.defaultBlockState();
             default:

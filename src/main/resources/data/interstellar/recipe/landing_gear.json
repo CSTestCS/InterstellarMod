@@ -3,13 +3,14 @@
   "category": "misc",
   "pattern": [
     "III",
-    " P ",
-    "B B"
+    "PSP",
+    "A A"
   ],
   "key": {
     "I": "minecraft:iron_block",
-    "P": "minecraft:piston",
-    "B": "minecraft:iron_bars"
+    "P": "minecraft:sticky_piston",
+    "S": "minecraft:slime_block",
+    "A": "minecraft:anvil"
   },
   "result": {
     "id": "interstellar:landing_gear",

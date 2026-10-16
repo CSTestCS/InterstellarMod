@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "interstellar:block/void_shard_block"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "MMM",
+    "MMM",
+    "MMM"
+  ],
+  "key": {
+    "M": "interstellar:tech_chip"
+  },
+  "result": {
+    "id": "interstellar:tech_chip_block",
+    "count": 1
+  }
+}

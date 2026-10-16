@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "interstellar:block/vehicle_pad_top",
+    "bottom": "interstellar:block/vehicle_pad",
+    "side": "interstellar:block/vehicle_pad"
+  }
+}

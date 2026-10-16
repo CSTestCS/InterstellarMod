@@ -36,6 +36,13 @@ THEME_FEATURES = {
 }
 ORES = ["minecraft:ore_coal_upper", "minecraft:ore_iron_upper", "minecraft:ore_iron_middle", "minecraft:ore_gold",
         "minecraft:ore_redstone", "minecraft:ore_diamond", "minecraft:ore_lapis", "minecraft:ore_copper", "minecraft:ore_emerald"]
+# Alien resource ore per theme (the material its aliens drop), set in the world's base stone.
+ALIEN_ORE = {"crystal": "crystal_lattice", "magma": "nether_cinder", "void": "void_shard", "fungal": "bio_gel", "frozen": "cryo_crystal",
+             "toxic": "plasma_core", "dune": "solar_cell", "reef": "hydro_pearl", "rust": "tech_chip", "echo": "sonic_resonator",
+             "honey": "bio_gel", "bone": "void_shard"}
+# Metals every foreign world has, embedded in its own base stone: (ore block, vein size, veins per chunk, max height).
+WORLD_ORES = [("iron", "minecraft:iron_ore", 9, 12, 96), ("gold", "minecraft:gold_ore", 9, 4, 40), ("copper", "minecraft:copper_ore", 10, 10, 112),
+              ("diamond", "minecraft:diamond_ore", 6, 2, 16)]
 CREATURES = ["minecraft:sheep", "minecraft:pig", "minecraft:cow", "minecraft:chicken", "minecraft:goat", "minecraft:frog",
              "minecraft:armadillo", "minecraft:camel", "minecraft:rabbit", "minecraft:mooshroom", "minecraft:sniffer", "minecraft:llama"]
 MONSTERS = ["minecraft:spider", "minecraft:creeper", "minecraft:slime", "minecraft:enderman", "minecraft:phantom", "minecraft:silverfish"]
@@ -110,6 +117,19 @@ def main(vanilla, worlds_file):
         features = [[] for _ in range(11)]
         if terrain != "flat":
             features[6] = [o for o in ORES if placed_exists(vanilla, o)]
+        # Ores in the world's own base stone: its alien resource plus the common metals.
+        ore_list = [(f"{wid}_alien_ore", f"interstellar:{ALIEN_ORE[w['theme']]}_ore", 7, 9, 128)]
+        ore_list += [(f"{wid}_ore_{name}", state, size, count, top) for name, state, size, count, top in WORLD_ORES]
+        for fid, state, size, count, top in ore_list:
+            write(f"worldgen/feature/{fid}.json", {"type": "minecraft:ore", "discard_chance_on_air_exposure": 0.0, "size": size,
+                                                    "targets": [{"state": state, "target": {"predicate_type": "minecraft:block_match",
+                                                                                            "block": w["default_block"]}}]})
+            write(f"worldgen/placed_feature/{fid}.json", {"feature": f"interstellar:{fid}", "placement": [
+                {"type": "minecraft:count", "count": count}, {"type": "minecraft:in_square"},
+                {"type": "minecraft:height_range", "height": {"type": "minecraft:uniform", "min_inclusive": {"above_bottom": 4},
+                                                              "max_inclusive": {"absolute": top}}},
+                {"type": "minecraft:biome"}]})
+            features[6].append(f"interstellar:{fid}")
         for step, ids in THEME_FEATURES.get(w["theme"], {}).items():
             features[step] += [i for i in ids if placed_exists(vanilla, i)]
         creatures = [{"type": c, "count": {"type": "minecraft:uniform", "min_inclusive": 1, "max_inclusive": 4}, "weight": 8}
@@ -152,12 +172,20 @@ def main(vanilla, worlds_file):
                          "settings": f"interstellar:{wid}"}
         write(f"dimension/{wid}.json", {"type": f"interstellar:{wid}", "generator": generator})
 
-    # ---- space: an empty, end-like void
+    # ---- space: an empty void under a starry night sky without sun or moon
     st = copy.deepcopy(end_type)
     st["has_ender_dragon_fight"] = False
     st["min_y"], st["height"], st["logical_height"] = 0, 256, 256
+    st.pop("skybox", None)  # overworld sky (stars); the custom renderer below hides the sun and moon
     st["attributes"]["minecraft:visual/sky_color"] = "#000000"
-    st["attributes"]["minecraft:visual/fog_color"] = "#03030a"
+    st["attributes"]["minecraft:visual/fog_color"] = "#000000"
+    st["attributes"]["minecraft:visual/sun_angle"] = 180.0
+    st["attributes"]["minecraft:visual/moon_angle"] = 180.0
+    st["attributes"]["minecraft:visual/moon_phase"] = "new_moon"
+    st["attributes"]["minecraft:visual/star_angle"] = 0.0
+    st["attributes"]["minecraft:visual/star_brightness"] = 0.5
+    st["attributes"]["minecraft:visual/sunrise_sunset_color"] = "#00000000"
+    st["attributes"]["neoforge:custom_skybox"] = "interstellar:space"
     st["attributes"].pop("minecraft:audio/background_music", None)
     st["attributes"].pop("minecraft:audio/ambient_sounds", None)
     write("dimension_type/space.json", st)

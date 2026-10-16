@@ -2,14 +2,17 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "I I",
     "IFI",
-    "BBB"
+    "DGD",
+    "BRB"
   ],
   "key": {
-    "I": "minecraft:iron_ingot",
+    "I": "minecraft:iron_block",
     "F": "minecraft:fire_charge",
-    "B": "minecraft:blast_furnace"
+    "D": "minecraft:diamond",
+    "G": "minecraft:ghast_tear",
+    "B": "minecraft:blast_furnace",
+    "R": "minecraft:redstone_block"
   },
   "result": {
     "id": "interstellar:ship_thruster",

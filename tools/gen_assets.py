@@ -118,6 +118,17 @@ def item_icon(name, color, shape):
                 put(x, y, shade(color, 0.75 if y in (3, 13) else 1.0))
         for x in range(7, 10):
             put(x, 2, (230, 190, 80, 255))
+    elif shape == "scanner":
+        for y in range(3, 14):
+            for x in range(4, 12):
+                put(x, y, shade((70, 74, 84, 255), 0.8 if x in (4, 11) or y in (3, 13) else 1.0))
+        for y in range(5, 9):
+            for x in range(6, 10):
+                put(x, y, shade(color, 0.9 + (x + y) % 2 * 0.25))
+        for x in range(6, 10, 3):
+            put(x, 11, (230, 80, 60, 255))
+        put(8, 2, (200, 200, 200, 255))
+        put(8, 1, (255, 220, 90, 255))
     elif shape == "egg":
         for y in range(16):
             for x in range(16):
@@ -134,7 +145,6 @@ DIRECTIONAL = {  # block: (front, side, top)
     "ship_generator": ("block/ship_generator_front", "block/ship_side", "block/ship_top"),
     "life_support": ("block/life_support_front", "block/ship_side", "block/ship_top"),
     "ship_thruster": ("block/ship_thruster_front", "block/ship_side", "block/ship_top"),
-    "ship_cannon": ("block/ship_cannon_front", "block/ship_side", "block/ship_top"),
     "gunsmith_table": ("block/gunsmith_table_front", "block/gunsmith_table_side", "block/gunsmith_table_top"),
 }
 
@@ -192,19 +202,110 @@ def blocks():
         "elements": [
             {"from": [1, 0, 1], "to": [15, 8, 15], "faces": {d: {"texture": "#c" if d == "up" else "#m"} for d in ("north", "south", "east", "west", "up", "down")}},
             {"from": [1, 8, 13], "to": [15, 20, 15], "faces": {d: {"texture": "#c"} for d in ("north", "south", "east", "west", "up", "down")}}]})
-    write_json(f"{A}/blockstates/passenger_seat.json", {"variants": {f"facing={f}": {"model": f"{NS}:block/passenger_seat", **({"y": r} if r else {})}
-                                                                    for f, r in (("north", 0), ("east", 90), ("south", 180), ("west", 270))}})
+    write_json(f"{A}/models/block/passenger_seat_collapsed.json", {
+        "parent": "minecraft:block/block", "textures": {"particle": f"{NS}:block/passenger_seat", "c": f"{NS}:block/passenger_seat", "m": f"{NS}:block/ship_side"},
+        "elements": [
+            {"from": [1, 0, 1], "to": [15, 3, 15], "faces": {d: {"texture": "#c" if d == "up" else "#m"} for d in ("north", "south", "east", "west", "up", "down")}},
+            {"from": [1, 3, 13], "to": [15, 5, 15], "faces": {d: {"texture": "#c"} for d in ("north", "south", "east", "west", "up", "down")}}]})
+    write_json(f"{A}/blockstates/passenger_seat.json", {"variants": {
+        f"collapsed={str(c).lower()},facing={f}": {"model": f"{NS}:block/passenger_seat" + ("_collapsed" if c else ""), **({"y": r} if r else {})}
+        for c in (False, True) for f, r in (("north", 0), ("east", 90), ("south", 180), ("west", 270))}})
+    extra_blocks()
     # atmosphere: invisible, only a particle texture
     tex("block/atmosphere", (120, 180, 255), pattern="panel")
     write_json(f"{A}/models/block/atmosphere.json", {"textures": {"particle": f"{NS}:block/atmosphere"}})
     write_json(f"{A}/blockstates/atmosphere.json", {"variants": {"": {"model": f"{NS}:block/atmosphere"}}})
 
-    for b in ["landing_gear", "control_panel", "ship_generator", "life_support", "ship_thruster", "ship_cannon", "passenger_seat", "hull_plating", "gunsmith_table"]:
-        model = f"{NS}:block/landing_gear_extended" if b == "landing_gear" else f"{NS}:block/{b}"
+    item_models = {"landing_gear": "landing_gear_extended", "ship_cannon": "ship_cannon_3"}
+    for b in ["landing_gear", "control_panel", "ship_generator", "life_support", "ship_thruster", "ship_cannon", "passenger_seat", "hull_plating", "gunsmith_table",
+              "wheel", "vehicle_pad"] + [f"{m}_block" for m in STORAGE]:
+        model = f"{NS}:block/{item_models.get(b, b)}"
         write_json(f"{A}/items/{b}.json", {"model": {"type": "minecraft:model", "model": model}})
         write_json(f"{D}/{NS}/loot_table/blocks/{b}.json", {"type": "minecraft:block", "pools": [{"rolls": 1, "entries": [{"type": "minecraft:item", "name": f"{NS}:{b}"}],
                                                                                                     "conditions": [{"condition": "minecraft:survives_explosion"}]}],
                                                               "random_sequence": f"{NS}:blocks/{b}"})
+
+
+STORAGE = ["alien_alloy", "plasma_core", "nether_cinder", "void_shard", "crystal_lattice", "bio_gel", "cryo_crystal", "solar_cell", "hydro_pearl",
+           "tech_chip", "sonic_resonator"]
+ORES = STORAGE[1:]
+
+
+def cube(d_from, d_to, faces):
+    return {"from": d_from, "to": d_to, "faces": faces}
+
+
+def extra_blocks():
+    """Cannon (6 facings x 4 barrel sizes), wheel, vehicle pad, alien ores and material blocks."""
+    # ---- cannon: the barrel points north in the model; blockstates rotate it to the six facings
+    for size, t in enumerate((4, 8, 12, 16)):
+        lo, hi = (16 - t) / 2, 16 - (16 - t) / 2
+        els = [cube([lo, lo, 0], [hi, hi, 16], {"north": {"texture": "#front"}, "south": {"texture": "#back"},
+                                                 **{d: {"texture": "#side"} for d in ("east", "west", "up", "down")}})]
+        if size < 3:
+            # mounting plate at the back
+            els.append(cube([2, 2, 14], [14, 14, 16], {d: {"texture": "#back"} for d in ("north", "south", "east", "west", "up", "down")}))
+        write_json(f"{A}/models/block/ship_cannon_{size}.json", {"parent": "minecraft:block/block", "textures": {
+            "particle": f"{NS}:block/ship_side", "front": f"{NS}:block/ship_cannon_front", "side": f"{NS}:block/ship_side", "back": f"{NS}:block/ship_top"},
+            "elements": els})
+    rot = {"north": {}, "south": {"y": 180}, "east": {"y": 90}, "west": {"y": 270}, "up": {"x": 270}, "down": {"x": 90}}
+    write_json(f"{A}/blockstates/ship_cannon.json", {"variants": {f"facing={f},size={sz}": {"model": f"{NS}:block/ship_cannon_{sz}", **r}
+                                                                  for f, r in rot.items() for sz in range(4)}})
+    # ---- wheel: tyre with hub; axle along x by default
+    tex("block/wheel_tread", (34, 34, 38), pattern="grate")
+    tex("block/wheel_hub", (150, 154, 162), accent=(90, 90, 96), pattern="rivets")
+    write_json(f"{A}/models/block/wheel.json", {"parent": "minecraft:block/block", "textures": {
+        "particle": f"{NS}:block/wheel_tread", "tread": f"{NS}:block/wheel_tread", "hub": f"{NS}:block/wheel_hub"},
+        "elements": [cube([0, 3, 1], [16, 13, 15], {"east": {"texture": "#hub"}, "west": {"texture": "#hub"},
+                                                     **{d: {"texture": "#tread"} for d in ("north", "south", "up", "down")}}),
+                     cube([0, 0, 4], [16, 16, 12], {"east": {"texture": "#hub"}, "west": {"texture": "#hub"},
+                                                     **{d: {"texture": "#tread"} for d in ("north", "south", "up", "down")}})]})
+    write_json(f"{A}/blockstates/wheel.json", {"variants": {"axis=x": {"model": f"{NS}:block/wheel"}, "axis=z": {"model": f"{NS}:block/wheel", "y": 90}}})
+    # ---- vehicle pad
+    tex("block/vehicle_pad", (70, 74, 80), accent=(240, 200, 40), pattern="rivets")
+    tex("block/vehicle_pad_top", (64, 68, 74), accent=(240, 200, 40), pattern="screen")
+    write_json(f"{A}/models/block/vehicle_pad.json", {"parent": "minecraft:block/cube_bottom_top", "textures": {
+        "top": f"{NS}:block/vehicle_pad_top", "bottom": f"{NS}:block/vehicle_pad", "side": f"{NS}:block/vehicle_pad"}})
+    write_json(f"{A}/blockstates/vehicle_pad.json", {"variants": {"": {"model": f"{NS}:block/vehicle_pad"}}})
+    # ---- alien material blocks (also the textures guns use for these materials)
+    for m in STORAGE:
+        color = ALIEN[m][0]
+        tex(f"block/{m}_block", color, accent=shade(color, 1.35)[:3], pattern="glow" if ALIEN[m][1] in ("orb", "crystal") else "panel")
+        write_json(f"{A}/models/block/{m}_block.json", {"parent": "minecraft:block/cube_all", "textures": {"all": f"{NS}:block/{m}_block"}})
+        write_json(f"{A}/blockstates/{m}_block.json", {"variants": {"": {"model": f"{NS}:block/{m}_block"}}})
+    # ---- alien ores: grey stone (tinted to the world's base stone in game) + coloured, untinted specks
+    rng = random.Random(42)
+    stone = []
+    for y in range(16):
+        for x in range(16):
+            v = int(150 + rng.random() * 50)
+            stone.append((v, v, v, 255))
+    png(os.path.join(A, "textures", "block", "alien_ore_stone.png"), 16, 16, stone)
+    for m in ORES:
+        color = ALIEN[m][0]
+        r2 = random.Random(m)
+        px = [(0, 0, 0, 0)] * 256
+        for _ in range(6):
+            cx, cy = r2.randint(2, 13), r2.randint(2, 13)
+            for dx, dy in ((0, 0), (1, 0), (0, 1), (1, 1), (-1, 0)):
+                if r2.random() < 0.85:
+                    px[(cy + dy) % 16 * 16 + (cx + dx) % 16] = shade(color + (255,), 0.85 + r2.random() * 0.4)
+        png(os.path.join(A, "textures", "block", f"{m}_ore_overlay.png"), 16, 16, px)
+        faces = ("north", "south", "east", "west", "up", "down")
+        write_json(f"{A}/models/block/{m}_ore.json", {"parent": "minecraft:block/block", "render_type": "minecraft:cutout",
+                                                     "textures": {"particle": f"{NS}:block/alien_ore_stone", "stone": f"{NS}:block/alien_ore_stone",
+                                                                  "overlay": f"{NS}:block/{m}_ore_overlay"},
+                                                     "elements": [cube([0, 0, 0], [16, 16, 16], {d: {"texture": "#stone", "tintindex": 0, "cullface": d} for d in faces}),
+                                                                  cube([0, 0, 0], [16, 16, 16], {d: {"texture": "#overlay", "cullface": d} for d in faces})]})
+        write_json(f"{A}/blockstates/{m}_ore.json", {"variants": {"": {"model": f"{NS}:block/{m}_ore"}}})
+        write_json(f"{A}/items/{m}_ore.json", {"model": {"type": "minecraft:model", "model": f"{NS}:block/{m}_ore",
+                                                         "tints": [{"type": "minecraft:constant", "value": -7368817}]}})
+        write_json(f"{D}/{NS}/loot_table/blocks/{m}_ore.json", {"type": "minecraft:block", "pools": [{"rolls": 1, "entries": [{
+            "type": "minecraft:alternatives", "children": [
+                {"type": "minecraft:item", "condition": "minecraft:tool/can_silk_touch", "name": f"{NS}:{m}_ore"},
+                {"type": "minecraft:item", "name": f"{NS}:{m}", "functions": [
+                    {"function": "minecraft:apply_bonus", "enchantment": "minecraft:fortune", "formula": "minecraft:ore_drops"},
+                    {"function": "minecraft:explosion_decay"}]}]}]}], "random_sequence": f"{NS}:blocks/{m}_ore"})
 
 
 # ---------------------------------------------------------------- items
@@ -222,17 +323,33 @@ def items():
     item_icon("magazine", (90, 92, 100, 255), "magazine")
     write_json(f"{A}/models/item/magazine.json", {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/magazine"}})
     write_json(f"{A}/items/magazine.json", {"model": {"type": "minecraft:model", "model": f"{NS}:item/magazine"}})
+    item_icon("race_scanner", (70, 200, 230, 255), "scanner")
+    write_json(f"{A}/models/item/race_scanner.json", {"parent": "minecraft:item/handheld", "textures": {"layer0": f"{NS}:item/race_scanner"}})
+    write_json(f"{A}/items/race_scanner.json", {"model": {"type": "minecraft:model", "model": f"{NS}:item/race_scanner"}})
     item_icon("alien_spawn_egg", (60, 200, 120, 255), "egg")
     write_json(f"{A}/models/item/alien_spawn_egg.json", {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/alien_spawn_egg"}})
     write_json(f"{A}/items/alien_spawn_egg.json", {"model": {"type": "minecraft:model", "model": f"{NS}:item/alien_spawn_egg"}})
 
 
 # ---------------------------------------------------------------- guns
+# Gun parts show the block of the material they are made of.
+MATERIAL_BLOCK_TEXTURE = {
+    "iron": "minecraft:block/iron_block", "gold": "minecraft:block/gold_block", "diamond": "minecraft:block/diamond_block",
+    "emerald": "minecraft:block/emerald_block", "netherite": "minecraft:block/netherite_block", "copper": "minecraft:block/copper_block",
+    "amethyst": "minecraft:block/amethyst_block", "obsidian": "minecraft:block/obsidian", "quartz": "minecraft:block/quartz_block_side",
+    "prismarine": "minecraft:block/prismarine", "blaze": "minecraft:block/magma", "echo": "minecraft:block/sculk",
+    "alien_alloy": f"{NS}:block/alien_alloy_block", "plasma": f"{NS}:block/plasma_core_block", "nether_cinder": f"{NS}:block/nether_cinder_block",
+    "void": f"{NS}:block/void_shard_block", "crystal": f"{NS}:block/crystal_lattice_block", "bio": f"{NS}:block/bio_gel_block",
+    "cryo": f"{NS}:block/cryo_crystal_block", "solar": f"{NS}:block/solar_cell_block", "hydro": f"{NS}:block/hydro_pearl_block",
+    "tech": f"{NS}:block/tech_chip_block", "sonic": f"{NS}:block/sonic_resonator_block",
+}
 GUN_DISPLAY = {
     "thirdperson_righthand": {"rotation": [0, 90, 0], "translation": [0, 2.5, 1.5], "scale": [0.75, 0.75, 0.75]},
-    "thirdperson_lefthand": {"rotation": [0, 90, 0], "translation": [0, 2.5, 1.5], "scale": [0.75, 0.75, 0.75]},
+    # Left hand entries are mirrored by the game (y/z rotation and x translation negated), so these are written
+    # pre-mirrored: the barrel points forward in either hand.
+    "thirdperson_lefthand": {"rotation": [0, -90, 0], "translation": [0, 2.5, 1.5], "scale": [0.75, 0.75, 0.75]},
     "firstperson_righthand": {"rotation": [0, 95, 5], "translation": [1.5, 3, -2], "scale": [0.8, 0.8, 0.8]},
-    "firstperson_lefthand": {"rotation": [0, 95, 5], "translation": [1.5, 3, -2], "scale": [0.8, 0.8, 0.8]},
+    "firstperson_lefthand": {"rotation": [0, -95, -5], "translation": [1.5, 3, -2], "scale": [0.8, 0.8, 0.8]},
     "ground": {"rotation": [0, 0, 0], "translation": [0, 2, 0], "scale": [0.5, 0.5, 0.5]},
     "gui": {"rotation": [0, 0, -30], "translation": [0, 0, 0], "scale": [0.85, 0.85, 0.85]},
     "fixed": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [1, 1, 1]},
@@ -322,6 +439,31 @@ def guns():
     write_json(f"{A}/models/item/gun/trim.json", {"textures": {"metal": f"{NS}:item/gun/trim", "particle": f"{NS}:item/gun/trim"}, "display": GUN_DISPLAY,
                                                   "elements": [box([3.5, 9.9, 6.4], [9.5, 10.2, 9.6]), box([3.5, 7, 6.3], [9.5, 7.5, 6.5])]})
 
+    # Every part and frame also exists once per material, textured with that material's block. These children only
+    # name a texture; the shape comes from the parent part model (editable in config/interstellar/gunmodels).
+    mat_dir = os.path.join(D, NS, "gun", "material")
+    materials = sorted(f[:-5] for f in os.listdir(mat_dir))
+    for mid in materials:
+        if mid not in MATERIAL_BLOCK_TEXTURE:
+            raise SystemExit(f"material {mid} has no block texture in MATERIAL_BLOCK_TEXTURE")
+    for kind, ids in (("part", list(parts)), ("frame", list(archs))):
+        for pid in ids:
+            for mid in materials:
+                t = MATERIAL_BLOCK_TEXTURE[mid]
+                write_json(f"{A}/models/item/gun/{kind}_material/{pid}__{mid}.json",
+                           {"parent": f"{NS}:item/gun/{kind}/{pid}", "textures": {"metal": t, "particle": t}})
+    index = ["assets/interstellar/models/item/gun/base.json", "assets/interstellar/models/item/gun/trim.json"]
+    index += [f"assets/interstellar/models/item/gun/part/{pid}.json" for pid in parts]
+    index += [f"assets/interstellar/models/item/gun/frame/{aid}.json" for aid in archs]
+    with open(f"{A}/gunmodels_index.txt", "w") as f:
+        f.write("\n".join(index) + "\n")
+
+    def by_material(kind, pid, slot):
+        """Model for a part made of a known material (block textured), tinted fallback for unknown materials."""
+        return {"type": "minecraft:select", "property": f"{NS}:gun_material", "slot": slot,
+                "cases": [{"when": mid, "model": {"type": "minecraft:model", "model": f"{NS}:item/gun/{kind}_material/{pid}__{mid}"}} for mid in materials],
+                "fallback": tinted(f"{NS}:item/gun/{kind}/{pid}", slot)}
+
     def tinted(model, slot=None, trim=False):
         t = {"type": f"{NS}:gun_material", "default": 0xFFFFFF}
         if slot:
@@ -331,17 +473,20 @@ def guns():
         return {"type": "minecraft:model", "model": model, "tints": [t]}
 
     layers = [{"type": "minecraft:select", "property": f"{NS}:gun_info", "field": "archetype",
-               "cases": [{"when": aid, "model": tinted(f"{NS}:item/gun/frame/{aid}", "receiver")} for aid in archs],
+               "cases": [{"when": aid, "model": by_material("frame", aid, "receiver")} for aid in archs],
                "fallback": {"type": "minecraft:model", "model": f"{NS}:item/gun/base"}}]
     for slot in ["receiver", "barrel", "stock", "grip", "magazine", "sight", "muzzle", "underbarrel", "core"]:
-        cases = [{"when": pid, "model": tinted(f"{NS}:item/gun/part/{pid}", slot)} for pid, p in parts.items() if p["slot"] == slot]
+        cases = [{"when": pid, "model": by_material("part", pid, slot)} for pid, p in parts.items() if p["slot"] == slot]
         if cases:
             layers.append({"type": "minecraft:select", "property": f"{NS}:gun_part", "slot": slot, "cases": cases, "fallback": {"type": "minecraft:empty"}})
     patterns = ["sentry", "dune", "coast", "wild", "ward", "eye", "vex", "tide", "snout", "rib", "spire", "wayfinder", "shaper", "silence", "raiser",
                 "host", "flow", "bolt"]
     layers.append({"type": "minecraft:select", "property": f"{NS}:gun_info", "field": "trim",
                    "cases": [{"when": patterns, "model": tinted(f"{NS}:item/gun/trim", trim=True)}], "fallback": {"type": "minecraft:empty"}})
-    write_json(f"{A}/items/gun.json", {"model": {"type": "minecraft:composite", "models": layers}})
+    # Written compactly: one select case per part and material makes this file large.
+    os.makedirs(f"{A}/items", exist_ok=True)
+    with open(f"{A}/items/gun.json", "w") as f:
+        json.dump({"model": {"type": "minecraft:composite", "models": layers}}, f, separators=(",", ":"))
 
 
 # ---------------------------------------------------------------- entity
@@ -361,7 +506,11 @@ def entity():
 # ---------------------------------------------------------------- data
 def data():
     blocks_ = ["landing_gear", "control_panel", "ship_generator", "life_support", "ship_thruster", "ship_cannon", "passenger_seat", "hull_plating", "gunsmith_table"]
+    blocks_ += ["wheel", "vehicle_pad"] + [f"{m}_block" for m in STORAGE] + [f"{m}_ore" for m in ORES]
     write_json(f"{D}/minecraft/tags/block/mineable/pickaxe.json", {"replace": False, "values": [f"{NS}:{b}" for b in blocks_]})
+    write_json(f"{D}/minecraft/tags/block/needs_iron_tool.json", {"replace": False, "values": [f"{NS}:{m}_ore" for m in ORES]})
+    write_json(f"{D}/{NS}/tags/block/ship/wheels.json", {"values": [f"{NS}:wheel"]})
+    write_json(f"{D}/{NS}/tags/block/ship/vehicle_pads.json", {"values": [f"{NS}:vehicle_pad"]})
     write_json(f"{D}/{NS}/tags/block/ship/landing_gear.json", {"values": [f"{NS}:landing_gear"]})
     write_json(f"{D}/{NS}/tags/block/ship/control_panels.json", {"values": [f"{NS}:control_panel"]})
     write_json(f"{D}/{NS}/tags/block/ship/generators.json", {"values": [f"{NS}:ship_generator"]})
@@ -381,22 +530,58 @@ def data():
     def shaped(name, pattern, key, count=1):
         write_json(f"{D}/{NS}/recipe/{name}.json", {"type": "minecraft:crafting_shaped", "category": "misc", "pattern": pattern, "key": key,
                                                     "result": {"id": f"{NS}:{name}", "count": count}})
-    shaped("hull_plating", ["II", "II"], {"I": "minecraft:iron_ingot"}, 4)
-    shaped("landing_gear", ["III", " P ", "B B"], {"I": "minecraft:iron_block", "P": "minecraft:piston", "B": "minecraft:iron_bars"}, 2)
-    shaped("control_panel", ["GRG", "CXC", "III"], {"G": "minecraft:glass_pane", "R": "minecraft:redstone", "C": "minecraft:comparator",
-                                                    "X": "minecraft:compass", "I": "minecraft:iron_ingot"})
-    shaped("ship_generator", ["IBI", "RNR", "IBI"], {"I": "minecraft:iron_block", "B": "minecraft:blaze_rod", "R": "minecraft:redstone_block",
-                                                     "N": "minecraft:nether_star"})
-    shaped("life_support", ["IGI", "KHK", "IGI"], {"I": "minecraft:iron_ingot", "G": "minecraft:glass", "K": "minecraft:kelp",
-                                                   "H": "minecraft:heart_of_the_sea"})
-    shaped("ship_thruster", ["I I", "IFI", "BBB"], {"I": "minecraft:iron_ingot", "F": "minecraft:fire_charge", "B": "minecraft:blast_furnace"})
-    shaped("ship_cannon", ["III", "TDT", "III"], {"I": "minecraft:iron_block", "T": "minecraft:tnt", "D": "minecraft:dispenser"})
-    shaped("passenger_seat", ["W  ", "WWW", "I I"], {"W": "#minecraft:wool", "I": "minecraft:iron_ingot"})
+    # Spacecraft parts are late-game: built from blocks of metal, gems and rare drops.
+    shaped("hull_plating", ["IOI", "OCO", "IOI"], {"I": "minecraft:iron_block", "O": "minecraft:obsidian", "C": "minecraft:copper_block"}, 8)
+    shaped("landing_gear", ["III", "PSP", "A A"], {"I": "minecraft:iron_block", "P": "minecraft:sticky_piston", "S": "minecraft:slime_block",
+                                                   "A": "minecraft:anvil"}, 2)
+    shaped("control_panel", ["GDG", "CXC", "IRI"], {"G": "minecraft:tinted_glass", "D": "minecraft:diamond_block", "C": "minecraft:comparator",
+                                                    "X": "minecraft:recovery_compass", "I": "minecraft:iron_block", "R": "minecraft:redstone_block"})
+    shaped("ship_generator", ["NBN", "RSR", "NBN"], {"N": "minecraft:netherite_scrap", "B": "minecraft:blaze_rod", "R": "minecraft:redstone_block",
+                                                     "S": "minecraft:nether_star"})
+    shaped("life_support", ["GTG", "OCO", "IDI"], {"G": "minecraft:tinted_glass", "T": "minecraft:totem_of_undying", "O": "minecraft:oxidized_copper",
+                                                   "C": "minecraft:conduit", "I": "minecraft:iron_block", "D": "minecraft:diamond_block"})
+    shaped("ship_thruster", ["IFI", "DGD", "BRB"], {"I": "minecraft:iron_block", "F": "minecraft:fire_charge", "D": "minecraft:diamond",
+                                                    "G": "minecraft:ghast_tear", "B": "minecraft:blast_furnace", "R": "minecraft:redstone_block"})
+    shaped("ship_cannon", ["IOI", "TDT", "IOI"], {"I": "minecraft:iron_block", "O": "minecraft:observer", "T": "minecraft:tnt", "D": "minecraft:dispenser"})
+    shaped("passenger_seat", ["WL ", "WWW", "I I"], {"W": "#minecraft:wool", "L": "minecraft:leather", "I": "minecraft:iron_block"})
+    shaped("wheel", [" K ", "KIK", " K "], {"K": "minecraft:dried_kelp_block", "I": "minecraft:iron_block"}, 2)
+    shaped("vehicle_pad", ["YYY", "SSS", "III"], {"Y": "minecraft:yellow_concrete", "S": "minecraft:smooth_stone", "I": "minecraft:iron_ingot"}, 6)
+    shaped("race_scanner", [" S ", "IGI", "IRI"], {"S": "minecraft:spyglass", "I": "minecraft:iron_ingot", "G": "minecraft:glass_pane",
+                                                   "R": "minecraft:redstone"})
+    # Alien material storage blocks, both ways.
+    for m in STORAGE:
+        shaped(f"{m}_block", ["MMM", "MMM", "MMM"], {"M": f"{NS}:{m}"})
+        write_json(f"{D}/{NS}/recipe/{m}_from_block.json", {"type": "minecraft:crafting_shapeless", "category": "misc",
+                                                            "ingredients": [f"{NS}:{m}_block"], "result": {"id": f"{NS}:{m}", "count": 9}})
     shaped("gunsmith_table", ["SNS", "IAI", "III"], {"S": "minecraft:smithing_table", "N": "minecraft:netherite_ingot", "I": "minecraft:iron_block",
                                                      "A": "minecraft:anvil"})
 
 
 # ---------------------------------------------------------------- lang
+EXTRA_LANG = {
+    "block.interstellar.wheel": "Wheel", "block.interstellar.vehicle_pad": "Vehicle Pad",
+    "item.interstellar.race_scanner": "Race Scanner",
+    "command.interstellar.body.own": "Your body is now %s (saved for every world)",
+    "message.interstellar.scanner.header": "Scan of %s", "message.interstellar.scanner.race": "Race: ",
+    "message.interstellar.scanner.favorite": "Favorite item: ", "message.interstellar.scanner.home": "Home dimension: ",
+    "message.interstellar.scanner.none": "No race data.", "message.interstellar.scanner.nothing": "nothing",
+    "message.interstellar.scanner.anywhere": "anywhere",
+    "message.interstellar.cannon.occupied": "This cannon is already loaded with %s",
+    "message.interstellar.cannon.loaded": "Cannon loaded: %s x%s",
+    "message.interstellar.cannon.holds": "Loaded with %s x%s (shift-right-click with an empty hand to unload)",
+    "message.interstellar.seat.collapsed": "Seat folded away", "message.interstellar.seat.opened": "Seat unfolded",
+    "message.interstellar.ship.problem.not_on_pads": "A land vehicle can only be assembled on vehicle pads: every wheel must stand on one",
+    "message.interstellar.ship.problem.not_on_wheels": "The vehicle must be built on top of its wheels",
+    "message.interstellar.ship.problem.gear_and_wheels": "A craft cannot have both landing gear and wheels",
+    "message.interstellar.ship.drive": "Vehicle ready (%s blocks): forward/back to drive, look to steer, get out over vehicle pads to park",
+    "command.interstellar.ship.saved": "Saved starship design '%s' (%s blocks)",
+    "command.interstellar.ship.no_ship": "Pilot a spacecraft or look at a control panel to save its design",
+    "command.interstellar.ship.invalid": "That craft is not a valid spacecraft",
+    "command.interstellar.ship.list": "Starship designs: %s", "command.interstellar.ship.unknown": "Unknown starship design %s",
+    "command.interstellar.ship.spawned": "Spawned an alien %s",
+}
+
+
 def lang():
     L = {
         "itemGroup.interstellar": "Interstellar",
@@ -450,6 +635,12 @@ def lang():
         "command.interstellar.planets.rebuilt": "Rebuilt all planets", "command.interstellar.gun.unknown": "Unknown gun archetype %s",
         "interstellar.configuration.title": "Interstellar",
     }
+    L.update(EXTRA_LANG)
+    for m in STORAGE:
+        nice = " ".join(w.capitalize() for w in m.split("_"))
+        L[f"block.interstellar.{m}_block"] = f"Block of {nice}"
+        if m in ORES:
+            L[f"block.interstellar.{m}_ore"] = f"{nice} Ore"
     arch_dir = os.path.join(D, NS, "gun", "archetype")
     for f in sorted(os.listdir(arch_dir)):
         aid = f[:-5]

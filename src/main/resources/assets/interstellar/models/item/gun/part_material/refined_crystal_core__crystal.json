@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/refined_crystal_core",
+  "textures": {
+    "metal": "interstellar:block/crystal_lattice_block",
+    "particle": "interstellar:block/crystal_lattice_block"
+  }
+}

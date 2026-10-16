@@ -53,20 +53,6 @@ public final class ShipEvents {
         player.sendSystemMessage(Component.translatable("message.interstellar.space.inventory_saved"));
     }
 
-    /** Interacting with a seated mob while holding a lead takes it out of its seat and onto the lead. */
-    @SubscribeEvent
-    static void onInteract(PlayerInteractEvent.EntityInteract event) {
-        if (!(event.getTarget() instanceof Mob mob) || !event.getItemStack().is(Items.LEAD)) return;
-        Entity vehicle = mob.getVehicle();
-        if (!(vehicle instanceof SeatEntity) && !(vehicle instanceof SpacecraftEntity)) return;
-        if (!event.getLevel().isClientSide() && mob.canBeLeashed()) {
-            mob.stopRiding();
-            mob.setLeashedTo(event.getEntity(), true);
-        }
-        event.setCancellationResult(InteractionResult.SUCCESS);
-        event.setCanceled(true);
-    }
-
     @SubscribeEvent
     static void onServerStarted(ServerStartedEvent event) {
         PlanetManager.get(event.getServer()).ensurePlanets(event.getServer());

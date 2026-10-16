@@ -71,7 +71,15 @@ public class AlienEntity extends Monster {
             @Nullable SpawnGroupData data) {
         SpawnGroupData out = super.finalizeSpawn(level, difficulty, reason, data);
         setDropChance(EquipmentSlot.MAINHAND, InterstellarConfig.SERVER.alienWeaponDropChance.get().floatValue());
+        AlienArmor.equip(this, homeDimension(), getRandom(), 0.25f + difficulty.getSpecialMultiplier() * 0.3f);
         return out;
+    }
+
+    /** The dimension this alien's race comes from (its race's home), else where it was spawned. */
+    public String homeDimension() {
+        var race = com.cstestcs.interstellar.race.RaceEvents.raceOf(this);
+        if (race != null && !race.homeDimension().includes().isEmpty()) return race.homeDimension().includes().get(0);
+        return level().dimension().identifier().toString();
     }
 
     public static boolean checkSpawnRules(EntityType<AlienEntity> type, ServerLevelAccessor level, EntitySpawnReason reason, BlockPos pos, RandomSource random) {

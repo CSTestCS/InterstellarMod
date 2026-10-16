@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/forerunner_receiver",
+  "textures": {
+    "metal": "interstellar:block/hydro_pearl_block",
+    "particle": "interstellar:block/hydro_pearl_block"
+  }
+}

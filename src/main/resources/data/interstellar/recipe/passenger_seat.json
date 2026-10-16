@@ -2,13 +2,14 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "W  ",
+    "WL ",
     "WWW",
     "I I"
   ],
   "key": {
     "W": "#minecraft:wool",
-    "I": "minecraft:iron_ingot"
+    "L": "minecraft:leather",
+    "I": "minecraft:iron_block"
   },
   "result": {
     "id": "interstellar:passenger_seat",

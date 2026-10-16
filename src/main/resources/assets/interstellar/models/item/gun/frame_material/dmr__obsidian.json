@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/dmr",
+  "textures": {
+    "metal": "minecraft:block/obsidian",
+    "particle": "minecraft:block/obsidian"
+  }
+}

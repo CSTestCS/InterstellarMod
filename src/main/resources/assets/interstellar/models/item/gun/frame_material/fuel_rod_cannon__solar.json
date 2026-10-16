@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/fuel_rod_cannon",
+  "textures": {
+    "metal": "interstellar:block/solar_cell_block",
+    "particle": "interstellar:block/solar_cell_block"
+  }
+}

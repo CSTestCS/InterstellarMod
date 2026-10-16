@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "interstellar:block/tech_chip_block"
+    }
+  }
+}

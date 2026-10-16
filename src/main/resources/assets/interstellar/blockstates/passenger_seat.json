@@ -1,18 +1,33 @@
 {
   "variants": {
-    "facing=north": {
+    "collapsed=false,facing=north": {
       "model": "interstellar:block/passenger_seat"
     },
-    "facing=east": {
+    "collapsed=false,facing=east": {
       "model": "interstellar:block/passenger_seat",
       "y": 90
     },
-    "facing=south": {
+    "collapsed=false,facing=south": {
       "model": "interstellar:block/passenger_seat",
       "y": 180
     },
-    "facing=west": {
+    "collapsed=false,facing=west": {
       "model": "interstellar:block/passenger_seat",
+      "y": 270
+    },
+    "collapsed=true,facing=north": {
+      "model": "interstellar:block/passenger_seat_collapsed"
+    },
+    "collapsed=true,facing=east": {
+      "model": "interstellar:block/passenger_seat_collapsed",
+      "y": 90
+    },
+    "collapsed=true,facing=south": {
+      "model": "interstellar:block/passenger_seat_collapsed",
+      "y": 180
+    },
+    "collapsed=true,facing=west": {
+      "model": "interstellar:block/passenger_seat_collapsed",
       "y": 270
     }
   }

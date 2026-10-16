@@ -32,14 +32,42 @@ public final class ModBlocks {
     public static final DeferredBlock<ShipPartBlock> SHIP_GENERATOR = BLOCKS.registerBlock("ship_generator", ShipPartBlock::new, p -> metal(p).lightLevel(s -> 10));
     public static final DeferredBlock<ShipPartBlock> LIFE_SUPPORT = BLOCKS.registerBlock("life_support", ShipPartBlock::new, p -> metal(p).lightLevel(s -> 5));
     public static final DeferredBlock<ShipPartBlock> SHIP_THRUSTER = BLOCKS.registerBlock("ship_thruster", ShipPartBlock::new, p -> metal(p).lightLevel(s -> 9));
-    public static final DeferredBlock<ShipPartBlock> SHIP_CANNON = BLOCKS.registerBlock("ship_cannon", ShipPartBlock::new, p -> metal(p).noOcclusion());
+    public static final DeferredBlock<com.cstestcs.interstellar.ship.CannonBlock> SHIP_CANNON = BLOCKS.registerBlock("ship_cannon",
+            com.cstestcs.interstellar.ship.CannonBlock::new, p -> metal(p).noOcclusion());
     public static final DeferredBlock<PassengerSeatBlock> PASSENGER_SEAT = BLOCKS.registerBlock("passenger_seat", PassengerSeatBlock::new, p -> metal(p).noOcclusion().strength(1.5f));
+    public static final DeferredBlock<com.cstestcs.interstellar.ship.WheelBlock> WHEEL = BLOCKS.registerBlock("wheel",
+            com.cstestcs.interstellar.ship.WheelBlock::new, p -> metal(p).noOcclusion().sound(SoundType.WOOL).strength(2.0f, 6.0f));
+    /** Ground land vehicles are assembled and parked on; never part of the vehicle itself. */
+    public static final DeferredBlock<Block> VEHICLE_PAD = BLOCKS.registerSimpleBlock("vehicle_pad", ModBlocks::metal);
     public static final DeferredBlock<Block> HULL_PLATING = BLOCKS.registerSimpleBlock("hull_plating", ModBlocks::metal);
     public static final DeferredBlock<GunsmithTableBlock> GUNSMITH_TABLE = BLOCKS.registerBlock("gunsmith_table", GunsmithTableBlock::new, p -> metal(p).noOcclusion());
     /** Invisible glowing shell around every planet in space. */
     public static final DeferredBlock<AtmosphereBlock> ATMOSPHERE = BLOCKS.registerBlock("atmosphere", AtmosphereBlock::new,
             p -> p.noCollision().noOcclusion().noLootTable().strength(-1.0f, 3600000.0f).lightLevel(s -> 12)
                     .replaceable().mapColor(MapColor.NONE));
+
+    public static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
+            DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Interstellar.MODID);
+    public static final java.util.function.Supplier<net.minecraft.world.level.block.entity.BlockEntityType<com.cstestcs.interstellar.ship.CannonBlockEntity>> CANNON_ENTITY =
+            BLOCK_ENTITIES.register("ship_cannon", () -> new net.minecraft.world.level.block.entity.BlockEntityType<>(
+                    com.cstestcs.interstellar.ship.CannonBlockEntity::new, SHIP_CANNON.get()));
+
+    /** Alien resources: ores that generate in each foreign world's base stone (tinted to match it), and storage blocks. */
+    public static final java.util.List<String> ORE_MATERIALS = java.util.List.of("plasma_core", "nether_cinder", "void_shard", "crystal_lattice",
+            "bio_gel", "cryo_crystal", "solar_cell", "hydro_pearl", "tech_chip", "sonic_resonator");
+    public static final java.util.List<String> STORAGE_MATERIALS = java.util.List.of("alien_alloy", "plasma_core", "nether_cinder", "void_shard",
+            "crystal_lattice", "bio_gel", "cryo_crystal", "solar_cell", "hydro_pearl", "tech_chip", "sonic_resonator");
+    public static final java.util.Map<String, DeferredBlock<Block>> ALIEN_ORES = new java.util.LinkedHashMap<>();
+    public static final java.util.Map<String, DeferredBlock<Block>> MATERIAL_BLOCKS = new java.util.LinkedHashMap<>();
+
+    static {
+        for (String m : ORE_MATERIALS) {
+            ALIEN_ORES.put(m, BLOCKS.registerBlock(m + "_ore", p -> new net.minecraft.world.level.block.DropExperienceBlock(
+                    net.minecraft.util.valueproviders.UniformInt.of(2, 5), p), p -> p.mapColor(MapColor.STONE).strength(3.0f, 3.0f)
+                    .sound(SoundType.STONE).requiresCorrectToolForDrops()));
+        }
+        for (String m : STORAGE_MATERIALS) MATERIAL_BLOCKS.put(m, BLOCKS.registerSimpleBlock(m + "_block", ModBlocks::metal));
+    }
 
     /** Block tags deciding which ship part a block counts as (packs may add other mods' blocks). */
     public static final class Tags {
@@ -50,6 +78,8 @@ public final class ModBlocks {
         public static final TagKey<Block> SEATS = tag("ship/seats");
         public static final TagKey<Block> WEAPONS = tag("ship/weapons");
         public static final TagKey<Block> THRUSTERS = tag("ship/thrusters");
+        public static final TagKey<Block> WHEELS = tag("ship/wheels");
+        public static final TagKey<Block> VEHICLE_PADS = tag("ship/vehicle_pads");
         /** Blocks a spacecraft can never contain (bedrock, portals, ...). */
         public static final TagKey<Block> UNMOVABLE = tag("ship/unmovable");
 
@@ -64,6 +94,8 @@ public final class ModBlocks {
         if (state.is(Tags.UNMOVABLE) || state.getDestroySpeed(net.minecraft.world.level.EmptyBlockGetter.INSTANCE, net.minecraft.core.BlockPos.ZERO) < 0)
             return ShipScanner.Kind.UNMOVABLE;
         if (state.is(Tags.LANDING_GEAR)) return ShipScanner.Kind.LANDING_GEAR;
+        if (state.is(Tags.WHEELS)) return ShipScanner.Kind.WHEEL;
+        if (state.is(Tags.VEHICLE_PADS)) return ShipScanner.Kind.VEHICLE_PAD;
         if (state.is(Tags.CONTROL_PANELS)) return ShipScanner.Kind.CONTROL_PANEL;
         if (state.is(Tags.GENERATORS)) return ShipScanner.Kind.GENERATOR;
         if (state.is(Tags.LIFE_SUPPORT)) return ShipScanner.Kind.LIFE_SUPPORT;

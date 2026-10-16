@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/acog_scope",
+  "textures": {
+    "metal": "interstellar:block/tech_chip_block",
+    "particle": "interstellar:block/tech_chip_block"
+  }
+}

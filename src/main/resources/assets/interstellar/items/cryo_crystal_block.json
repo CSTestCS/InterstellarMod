@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "interstellar:block/cryo_crystal_block"
+  }
+}

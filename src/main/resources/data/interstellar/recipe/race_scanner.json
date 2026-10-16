@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "IGI",
+    "IRI"
+  ],
+  "key": {
+    "S": "minecraft:spyglass",
+    "I": "minecraft:iron_ingot",
+    "G": "minecraft:glass_pane",
+    "R": "minecraft:redstone"
+  },
+  "result": {
+    "id": "interstellar:race_scanner",
+    "count": 1
+  }
+}

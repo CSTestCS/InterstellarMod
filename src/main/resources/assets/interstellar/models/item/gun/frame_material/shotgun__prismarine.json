@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/shotgun",
+  "textures": {
+    "metal": "minecraft:block/prismarine",
+    "particle": "minecraft:block/prismarine"
+  }
+}

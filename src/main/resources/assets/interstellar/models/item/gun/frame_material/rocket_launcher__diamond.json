@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/rocket_launcher",
+  "textures": {
+    "metal": "minecraft:block/diamond_block",
+    "particle": "minecraft:block/diamond_block"
+  }
+}

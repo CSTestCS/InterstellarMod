@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "MMM",
+    "MMM",
+    "MMM"
+  ],
+  "key": {
+    "M": "interstellar:nether_cinder"
+  },
+  "result": {
+    "id": "interstellar:nether_cinder_block",
+    "count": 1
+  }
+}

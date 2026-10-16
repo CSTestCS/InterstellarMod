@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/acog_scope",
+  "textures": {
+    "metal": "minecraft:block/netherite_block",
+    "particle": "minecraft:block/netherite_block"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "interstellar:sonic_resonator_block"
+  ],
+  "result": {
+    "id": "interstellar:sonic_resonator",
+    "count": 9
+  }
+}

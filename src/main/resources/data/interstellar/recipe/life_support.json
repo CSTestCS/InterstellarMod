@@ -2,15 +2,17 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "IGI",
-    "KHK",
-    "IGI"
+    "GTG",
+    "OCO",
+    "IDI"
   ],
   "key": {
-    "I": "minecraft:iron_ingot",
-    "G": "minecraft:glass",
-    "K": "minecraft:kelp",
-    "H": "minecraft:heart_of_the_sea"
+    "G": "minecraft:tinted_glass",
+    "T": "minecraft:totem_of_undying",
+    "O": "minecraft:oxidized_copper",
+    "C": "minecraft:conduit",
+    "I": "minecraft:iron_block",
+    "D": "minecraft:diamond_block"
   },
   "result": {
     "id": "interstellar:life_support",

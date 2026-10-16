@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/flash_hider",
+  "textures": {
+    "metal": "minecraft:block/gold_block",
+    "particle": "minecraft:block/gold_block"
+  }
+}

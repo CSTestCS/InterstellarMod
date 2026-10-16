@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/laser_sight",
+  "textures": {
+    "metal": "interstellar:block/sonic_resonator_block",
+    "particle": "interstellar:block/sonic_resonator_block"
+  }
+}

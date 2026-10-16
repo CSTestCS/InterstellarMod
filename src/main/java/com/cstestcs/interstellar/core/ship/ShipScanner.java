@@ -11,18 +11,20 @@ import java.util.Map;
  * <p>
  * Starting at the control panel, every connected (6-neighbour) non-air block is collected. Landing gear marks the
  * bottom of the ship: the scan never continues below a landing gear block, so the ground the ship stands on is
- * not included. Anything else touching the ship (terrain, trees) would be included, which normally exceeds the block
+ * not included; wheels do the same for land vehicles, and vehicle pads (the ground vehicles are assembled on) are
+ * never part of a craft. Anything else touching the ship (terrain, trees) would be included, which normally exceeds the block
  * limit and is reported as touching the world.
  */
 public final class ShipScanner {
-    public enum Kind { AIR, SOLID, UNMOVABLE, LANDING_GEAR, GENERATOR, CONTROL_PANEL, LIFE_SUPPORT, SEAT, WEAPON, THRUSTER }
+    public enum Kind { AIR, SOLID, UNMOVABLE, LANDING_GEAR, GENERATOR, CONTROL_PANEL, LIFE_SUPPORT, SEAT, WEAPON, THRUSTER, WHEEL, VEHICLE_PAD }
 
     @FunctionalInterface
     public interface BlockQuery {
         Kind kind(int x, int y, int z);
     }
 
-    public enum Problem { TOO_MANY_BLOCKS, NO_GENERATOR, NO_CONTROL_PANEL, NO_LIFE_SUPPORT, NO_LANDING_GEAR, UNMOVABLE_BLOCK, NOT_ON_LANDING_GEAR }
+    public enum Problem { TOO_MANY_BLOCKS, NO_GENERATOR, NO_CONTROL_PANEL, NO_LIFE_SUPPORT, NO_LANDING_GEAR, UNMOVABLE_BLOCK, NOT_ON_LANDING_GEAR,
+        NOT_ON_WHEELS, GEAR_AND_WHEELS }
 
     public record Result(List<long[]> blocks, Map<Kind, Integer> counts, List<Problem> problems, int minY, long[] unmovable) {
         public boolean ok() {
@@ -31,6 +33,11 @@ public final class ShipScanner {
 
         public int count(Kind k) {
             return counts.getOrDefault(k, 0);
+        }
+
+        /** Land vehicle (built on wheels) rather than a spacecraft (built on landing gear). */
+        public boolean vehicle() {
+            return count(Kind.WHEEL) > 0;
         }
     }
 
@@ -56,7 +63,7 @@ public final class ShipScanner {
             long[] p = queue.poll();
             int x = (int) p[0], y = (int) p[1], z = (int) p[2];
             Kind k = world.kind(x, y, z);
-            if (k == Kind.AIR) continue;
+            if (k == Kind.AIR || k == Kind.VEHICLE_PAD) continue; // vehicle pads are the ground vehicles are built on
             if (k == Kind.UNMOVABLE) {
                 unmovable = p;
                 continue;
@@ -69,22 +76,26 @@ public final class ShipScanner {
                 break;
             }
             for (int[] d : DIRS) {
-                if (k == Kind.LANDING_GEAR && d[1] == -1) continue; // gear is the bottom of the ship
+                if ((k == Kind.LANDING_GEAR || k == Kind.WHEEL) && d[1] == -1) continue; // gear and wheels are the bottom
                 int nx = x + d[0], ny = y + d[1], nz = z + d[2];
                 if (seen.add(pack(nx, ny, nz))) queue.add(new long[] { nx, ny, nz });
             }
         }
         if (overflow) problems.add(Problem.TOO_MANY_BLOCKS);
         if (unmovable != null) problems.add(Problem.UNMOVABLE_BLOCK);
+        int gear = counts.getOrDefault(Kind.LANDING_GEAR, 0), wheels = counts.getOrDefault(Kind.WHEEL, 0);
         if (counts.getOrDefault(Kind.GENERATOR, 0) == 0) problems.add(Problem.NO_GENERATOR);
         if (counts.getOrDefault(Kind.CONTROL_PANEL, 0) == 0) problems.add(Problem.NO_CONTROL_PANEL);
-        if (counts.getOrDefault(Kind.LIFE_SUPPORT, 0) == 0) problems.add(Problem.NO_LIFE_SUPPORT);
-        if (counts.getOrDefault(Kind.LANDING_GEAR, 0) == 0) problems.add(Problem.NO_LANDING_GEAR);
+        // Land vehicles never leave the atmosphere, so only spacecraft need life support.
+        if (wheels == 0 && counts.getOrDefault(Kind.LIFE_SUPPORT, 0) == 0) problems.add(Problem.NO_LIFE_SUPPORT);
+        if (gear > 0 && wheels > 0) problems.add(Problem.GEAR_AND_WHEELS);
+        else if (gear == 0 && wheels == 0) problems.add(Problem.NO_LANDING_GEAR);
         else if (!overflow) {
-            // Every lowest block must be landing gear: the ship has to be built on top of its gear.
+            // Every lowest block must be gear (or wheels): the craft has to be built on top of them.
+            Kind bottom = wheels > 0 ? Kind.WHEEL : Kind.LANDING_GEAR;
             for (long[] b : blocks) {
-                if (b[1] == minY && world.kind((int) b[0], (int) b[1], (int) b[2]) != Kind.LANDING_GEAR) {
-                    problems.add(Problem.NOT_ON_LANDING_GEAR);
+                if (b[1] == minY && world.kind((int) b[0], (int) b[1], (int) b[2]) != bottom) {
+                    problems.add(wheels > 0 ? Problem.NOT_ON_WHEELS : Problem.NOT_ON_LANDING_GEAR);
                     break;
                 }
             }

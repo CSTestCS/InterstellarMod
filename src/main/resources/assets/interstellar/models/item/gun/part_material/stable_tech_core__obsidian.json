@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/stable_tech_core",
+  "textures": {
+    "metal": "minecraft:block/obsidian",
+    "particle": "minecraft:block/obsidian"
+  }
+}

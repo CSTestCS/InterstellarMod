@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/frame/sonic_disruptor",
+  "textures": {
+    "metal": "minecraft:block/diamond_block",
+    "particle": "minecraft:block/diamond_block"
+  }
+}

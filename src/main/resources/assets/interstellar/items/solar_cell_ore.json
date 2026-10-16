@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "interstellar:block/solar_cell_ore",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -7368817
+      }
+    ]
+  }
+}

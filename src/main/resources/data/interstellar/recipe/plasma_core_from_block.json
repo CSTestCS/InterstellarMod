@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "interstellar:plasma_core_block"
+  ],
+  "result": {
+    "id": "interstellar:plasma_core",
+    "count": 9
+  }
+}

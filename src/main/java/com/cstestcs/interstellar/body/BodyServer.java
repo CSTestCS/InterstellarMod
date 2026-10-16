@@ -78,12 +78,26 @@ public final class BodyServer {
     public static void reassign(LivingEntity living, @Nullable RaceDefinition race) {
         String body;
         if (living instanceof Player p) {
-            String choice = OWN_CHOICE.getOrDefault(p.getUUID(), "auto");
-            body = choice.equals("auto") ? choose(living.getUUID(), race) : choice.equals("none") ? "" : choice;
+            body = playerBody(p);
         } else {
             body = choose(living.getUUID(), race);
         }
         if (!body.equals(living.getData(ModAttachments.BODY))) living.setData(ModAttachments.BODY, body);
+    }
+
+    /**
+     * Players use the standard player model unless they picked a body: their saved {@code /race body} choice first,
+     * else the {@code ownBody} setting their client reported.
+     */
+    static String playerBody(Player p) {
+        String choice = p.getData(ModAttachments.BODY_CHOICE);
+        if (choice.isEmpty()) choice = OWN_CHOICE.getOrDefault(p.getUUID(), "none");
+        return choice.isEmpty() || choice.equals("none") || choice.equals("auto") || choice.equals("vanilla") ? "" : choice;
+    }
+
+    /** Bodies some connected client can render (for command suggestions). */
+    public static java.util.Set<String> available() {
+        return union.keySet();
     }
 
     /**

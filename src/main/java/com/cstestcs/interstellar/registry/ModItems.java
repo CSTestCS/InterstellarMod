@@ -36,6 +36,9 @@ public final class ModItems {
     public static final DeferredItem<SpawnEggItem> ALIEN_SPAWN_EGG = ITEMS.registerItem("alien_spawn_egg",
             p -> new SpawnEggItem(p.spawnEgg(ModEntities.ALIEN.get())));
 
+    public static final DeferredItem<com.cstestcs.interstellar.race.ScannerItem> SCANNER = ITEMS.registerItem("race_scanner",
+            com.cstestcs.interstellar.race.ScannerItem::new, p -> p.stacksTo(1));
+
     /** Alien crafting materials, one per alien weapon theme. Dropped by aliens; required for alien gun parts. */
     public static final List<String> ALIEN_MATERIAL_NAMES = List.of("alien_alloy", "plasma_core", "nether_cinder", "void_shard",
             "crystal_lattice", "bio_gel", "cryo_crystal", "solar_cell", "hydro_pearl", "tech_chip", "sonic_resonator");

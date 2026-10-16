@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/unstable_cryo_core",
+  "textures": {
+    "metal": "minecraft:block/amethyst_block",
+    "particle": "minecraft:block/amethyst_block"
+  }
+}

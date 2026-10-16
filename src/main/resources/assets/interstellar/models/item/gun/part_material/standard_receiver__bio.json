@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/standard_receiver",
+  "textures": {
+    "metal": "interstellar:block/bio_gel_block",
+    "particle": "interstellar:block/bio_gel_block"
+  }
+}

@@ -2,16 +2,17 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "GRG",
+    "GDG",
     "CXC",
-    "III"
+    "IRI"
   ],
   "key": {
-    "G": "minecraft:glass_pane",
-    "R": "minecraft:redstone",
+    "G": "minecraft:tinted_glass",
+    "D": "minecraft:diamond_block",
     "C": "minecraft:comparator",
-    "X": "minecraft:compass",
-    "I": "minecraft:iron_ingot"
+    "X": "minecraft:recovery_compass",
+    "I": "minecraft:iron_block",
+    "R": "minecraft:redstone_block"
   },
   "result": {
     "id": "interstellar:control_panel",

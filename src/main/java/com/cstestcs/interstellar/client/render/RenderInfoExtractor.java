@@ -27,6 +27,25 @@ public final class RenderInfoExtractor {
     /** Mobs whose own texture uses the 64x64 biped skin layout, so it can be wrapped onto a custom body. */
     private static Set<EntityType<?>> bipedTextured;
 
+    private static java.util.Map<EntityType<?>, com.cstestcs.interstellar.core.image.SkinConverter.Layout> converted;
+
+    /** Mobs whose texture is converted into the biped layout when they get a custom body. */
+    private static java.util.Map<EntityType<?>, com.cstestcs.interstellar.core.image.SkinConverter.Layout> converted() {
+        if (converted == null) {
+            var v = com.cstestcs.interstellar.core.image.SkinConverter.Layout.VILLAGER;
+            var i = com.cstestcs.interstellar.core.image.SkinConverter.Layout.ILLAGER;
+            var t = com.cstestcs.interstellar.core.image.SkinConverter.Layout.THIN_BIPED;
+            converted = java.util.Map.ofEntries(java.util.Map.entry(EntityTypes.VILLAGER, v), java.util.Map.entry(EntityTypes.WANDERING_TRADER, v),
+                    java.util.Map.entry(EntityTypes.WITCH, v), java.util.Map.entry(EntityTypes.ZOMBIE_VILLAGER, v),
+                    java.util.Map.entry(EntityTypes.PILLAGER, i), java.util.Map.entry(EntityTypes.VINDICATOR, i),
+                    java.util.Map.entry(EntityTypes.EVOKER, i), java.util.Map.entry(EntityTypes.ILLUSIONER, i),
+                    java.util.Map.entry(EntityTypes.SKELETON, t), java.util.Map.entry(EntityTypes.STRAY, t),
+                    java.util.Map.entry(EntityTypes.WITHER_SKELETON, t), java.util.Map.entry(EntityTypes.BOGGED, t),
+                    java.util.Map.entry(EntityTypes.PARCHED, t));
+        }
+        return converted;
+    }
+
     private static Set<EntityType<?>> bipedTextured() {
         if (bipedTextured == null) {
             bipedTextured = Set.of(EntityTypes.PLAYER, EntityTypes.MANNEQUIN, EntityTypes.ZOMBIE, EntityTypes.HUSK, EntityTypes.DROWNED,
@@ -56,11 +75,12 @@ public final class RenderInfoExtractor {
         info.ageInTicks = state.ageInTicks;
         info.walkSpeed = state.walkAnimationSpeed;
         info.bipedTexture = bipedTextured().contains(entity.getType());
+        if (!info.bipedTexture) info.convertLayout = converted().get(entity.getType());
         if (entity instanceof VillagerDataHolder holder) {
             info.villagerLike = true;
             info.outfit = outfit(entity, holder);
         }
-        if (body != null && (info.replacesBody() || info.bipedTexture)) info.body = BodyInstances.update(entity, state, body);
+        if (body != null && (info.replacesBody() || info.bipedTexture || info.convertLayout != null)) info.body = BodyInstances.update(entity, state, body);
         state.setRenderData(RenderInfo.KEY, info);
     }
 
@@ -94,5 +114,12 @@ public final class RenderInfoExtractor {
         if (info == null) return;
         info.mainModel = event.getRenderer().getModel();
         info.texture = ((net.minecraft.client.renderer.entity.LivingEntityRenderer) event.getRenderer()).getTextureLocation(state);
+        if (info.drawsConvertedBody() && info.texture != null) {
+            List<Identifier> sources = new ArrayList<>();
+            sources.add(info.texture);
+            sources.addAll(info.outfit);
+            info.bodySkin = com.cstestcs.interstellar.client.body.BipedSkins.get(info.convertLayout, sources);
+            if (info.bodySkin == null) info.body = null; // conversion failed: fall back to the vanilla model
+        }
     }
 }

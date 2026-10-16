@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "interstellar:block/wheel"
+    },
+    "axis=z": {
+      "model": "interstellar:block/wheel",
+      "y": 90
+    }
+  }
+}

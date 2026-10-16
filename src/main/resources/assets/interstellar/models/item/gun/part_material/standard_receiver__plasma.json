@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/standard_receiver",
+  "textures": {
+    "metal": "interstellar:block/plasma_core_block",
+    "particle": "interstellar:block/plasma_core_block"
+  }
+}

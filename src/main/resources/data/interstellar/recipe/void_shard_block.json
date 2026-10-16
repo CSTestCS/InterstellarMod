@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "MMM",
+    "MMM",
+    "MMM"
+  ],
+  "key": {
+    "M": "interstellar:void_shard"
+  },
+  "result": {
+    "id": "interstellar:void_shard_block",
+    "count": 1
+  }
+}

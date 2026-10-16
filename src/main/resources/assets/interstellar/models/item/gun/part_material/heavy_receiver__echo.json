@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/heavy_receiver",
+  "textures": {
+    "metal": "minecraft:block/sculk",
+    "particle": "minecraft:block/sculk"
+  }
+}

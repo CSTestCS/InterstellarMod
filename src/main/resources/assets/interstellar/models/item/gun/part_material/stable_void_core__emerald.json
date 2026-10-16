@@ -1,0 +1,7 @@
+{
+  "parent": "interstellar:item/gun/part/stable_void_core",
+  "textures": {
+    "metal": "minecraft:block/emerald_block",
+    "particle": "minecraft:block/emerald_block"
+  }
+}
