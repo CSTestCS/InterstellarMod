@@ -21,6 +21,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Create Minecraft artifacts
         run: ./gradlew createMinecraftArtifacts --console=plain || ./gradlew compileJava --console=plain || true
+      - name: Get decompiler
+        run: curl -sSL -o /tmp/vf.jar https://repo1.maven.org/maven2/org/vineflower/vineflower/1.11.1/vineflower-1.11.1.jar
       - name: Dump signatures
         run: |
           ls -la build/moddev/artifacts/ || true
@@ -35,6 +37,9 @@ jobs:
             case "$kind" in
               class) javap -public -cp "$CP" "$arg" 2>&1 | grep -v '^Compiled from' | sed 's/^/API| /' ;;
               list) unzip -l "$MC" "$arg*" | awk '{print $4}' | grep '\.class$' | grep -v '\$' | sed 's/^/API| /' ;;
-              src) if [ -n "$SRC" ]; then unzip -p "$SRC" "$arg" | sed 's/^/SRC| /'; else echo "API| no sources jar"; fi ;;
+              src) rm -rf /tmp/cls /tmp/dec; mkdir -p /tmp/cls /tmp/dec
+                   (cd /tmp/cls && unzip -q -o "$GITHUB_WORKSPACE/$MC" "$arg.class" "$arg\$*.class" 2>/dev/null)
+                   java -jar /tmp/vf.jar -din=0 -rbr=1 -dgs=1 -log=ERROR /tmp/cls /tmp/dec >/dev/null 2>&1
+                   find /tmp/dec -name '*.java' -exec cat {} \; | sed 's/^/SRC| /' ;;
             esac
           done < tools/api-probe.txt
