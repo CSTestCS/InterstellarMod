@@ -36,9 +36,10 @@ public final class ShipWeapons {
                 || stack.is(Items.TRIDENT));
     }
 
-    /** Barrel size 0 (rod) .. 3 (full block). Empty cannons keep the full-size built-in shell cannon. */
+    /** Barrel size 0 (rod) .. 3 (full block). Empty cannons show the thinnest barrel. */
     public static int firepower(ItemStack stack) {
-        if (stack.isEmpty() || stack.is(Items.TNT)) return 3;
+        if (stack.isEmpty()) return 0;
+        if (stack.is(Items.TNT)) return 3;
         if (stack.getItem() instanceof GunItem) {
             GunRegistry.Stats stats = GunItem.stats(stack);
             double dmg = stats == null ? 0 : stats.get(GunData.Stat.DAMAGE) * Math.max(1, stats.get(GunData.Stat.PELLETS));
@@ -67,13 +68,10 @@ public final class ShipWeapons {
      * Fires one shot of {@code load} from {@code muzzle} along {@code dir}.
      *
      * @param scale ship scale (shells and guns shrink with the ship in space)
-     * @return whether a shot left the barrel
+     * @return whether a shot left the barrel (never for an empty cannon)
      */
     public static boolean fire(ServerLevel level, @Nullable LivingEntity shooter, Vec3 muzzle, Vec3 dir, ItemStack load, float scale) {
-        if (load.isEmpty()) {
-            GunProjectile.spawnShipShell(level, shooter, muzzle, dir, 12f * Math.max(0.25f, scale), scale);
-            return true;
-        }
+        if (load.isEmpty()) return false;
         if (load.getItem() instanceof GunItem) {
             GunRegistry.Stats stats = GunItem.stats(load);
             if (stats == null) return false;

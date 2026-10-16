@@ -129,7 +129,7 @@ public final class StarshipLibrary {
             case 'E' -> ModBlocks.SHIP_GENERATOR.get().defaultBlockState();
             case 'L' -> ModBlocks.LIFE_SUPPORT.get().defaultBlockState();
             case 'T' -> ModBlocks.SHIP_THRUSTER.get().defaultBlockState().setValue(ShipPartBlock.FACING, Direction.SOUTH);
-            case 'C' -> ModBlocks.SHIP_CANNON.get().defaultBlockState().setValue(CannonBlock.FACING, Direction.NORTH).setValue(CannonBlock.SIZE, 3);
+            case 'C' -> ModBlocks.SHIP_CANNON.get().defaultBlockState().setValue(CannonBlock.FACING, Direction.NORTH);
             case 'S' -> ModBlocks.PASSENGER_SEAT.get().defaultBlockState().setValue(ShipPartBlock.FACING, Direction.NORTH);
             default -> null;
         };
@@ -141,6 +141,26 @@ public final class StarshipLibrary {
         Block plating = ModBlocks.HULL_PLATING.get();
         for (ShipStructure.Entry e : design.entries) {
             out.add(e.state().is(plating) ? new ShipStructure.Entry(e.pos(), hull, Optional.empty()) : e);
+        }
+        return new ShipStructure(out, design.baseYaw);
+    }
+
+    /** Copy of a design with every cannon loaded with {@code weapon} (ammunition gets a full stack). */
+    public static ShipStructure withCannonLoad(ShipStructure design, net.minecraft.world.item.ItemStack weapon, net.minecraft.core.HolderLookup.Provider registries) {
+        if (weapon.isEmpty()) return design;
+        net.minecraft.world.item.ItemStack load = ShipWeapons.consumesAmmo(weapon) ? weapon.copyWithCount(weapon.getMaxStackSize()) : weapon.copyWithCount(1);
+        var tag = net.minecraft.world.item.ItemStack.OPTIONAL_CODEC.encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), load).result().orElse(null);
+        if (tag == null) return design;
+        List<ShipStructure.Entry> out = new ArrayList<>(design.entries.size());
+        for (ShipStructure.Entry e : design.entries) {
+            if (e.state().getBlock() instanceof CannonBlock) {
+                CompoundTag be = e.blockEntity().map(CompoundTag::copy).orElseGet(CompoundTag::new);
+                if (!be.contains("id")) be.putString("id", "interstellar:ship_cannon");
+                be.put(CannonBlockEntity.WEAPON_KEY, tag.copy());
+                out.add(new ShipStructure.Entry(e.pos(), e.state().setValue(CannonBlock.SIZE, ShipWeapons.firepower(load)), Optional.of(be)));
+            } else {
+                out.add(e);
+            }
         }
         return new ShipStructure(out, design.baseYaw);
     }

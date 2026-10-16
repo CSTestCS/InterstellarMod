@@ -25,7 +25,9 @@ jobs:
         run: curl -sSL -o /tmp/vf.jar https://repo1.maven.org/maven2/org/vineflower/vineflower/1.11.1/vineflower-1.11.1.jar
       - name: Dump signatures
         run: |
+          set +e
           ls -la build/moddev/artifacts/ || true
+          ls -la /tmp/vf.jar
           MC=$(find build/moddev/artifacts -name 'minecraft-patched-*.jar' ! -name '*sources*' | head -1)
           SRC=$(find build/moddev/artifacts ~/.gradle -name '*minecraft*sources*.jar' 2>/dev/null | head -1)
           echo "MC=$MC SRC=$SRC"
@@ -38,8 +40,8 @@ jobs:
               class) javap -public -cp "$CP" "$arg" 2>&1 | grep -v '^Compiled from' | sed 's/^/API| /' ;;
               list) unzip -l "$MC" "$arg*" | awk '{print $4}' | grep '\.class$' | grep -v '\$' | sed 's/^/API| /' ;;
               src) rm -rf /tmp/cls /tmp/dec; mkdir -p /tmp/cls /tmp/dec
-                   (cd /tmp/cls && unzip -q -o "$GITHUB_WORKSPACE/$MC" "$arg.class" "$arg\$*.class" 2>/dev/null)
-                   java -jar /tmp/vf.jar -din=0 -rbr=1 -dgs=1 -log=ERROR /tmp/cls /tmp/dec >/dev/null 2>&1
+                   (cd /tmp/cls && unzip -q -o "$GITHUB_WORKSPACE/$MC" "$arg.class" "$arg\$*.class" 2>/dev/null) || true
+                   java -jar /tmp/vf.jar -din=0 -rbr=1 -dgs=1 -log=ERROR /tmp/cls /tmp/dec >/dev/null 2>&1 || true
                    find /tmp/dec -name '*.java' -exec cat {} \; | sed 's/^/SRC| /' ;;
             esac
           done < tools/api-probe.txt

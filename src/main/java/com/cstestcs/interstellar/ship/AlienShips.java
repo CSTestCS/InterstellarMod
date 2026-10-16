@@ -63,6 +63,8 @@ public final class AlienShips {
         if (design == null || design.entries.isEmpty()) return null;
         BlockState hull = BuiltInRegistries.BLOCK.getOptional(Identifier.parse(ForeignWorlds.hullBlock(world))).orElse(Blocks.STONE).defaultBlockState();
         ShipStructure structure = StarshipLibrary.withHull(design, hull);
+        // The crew loads every cannon with one of their own weapons.
+        if (race != null) structure = StarshipLibrary.withCannonLoad(structure, RaceEvents.cannonWeapon(race, random), level.registryAccess());
         SpacecraftEntity ship = SpacecraftEntity.create(level, structure, pos, SpacecraftEntity.MODE_FLYING);
         ship.setYRot(random.nextFloat() * 360f);
         ship.setAlienCrewed(true);

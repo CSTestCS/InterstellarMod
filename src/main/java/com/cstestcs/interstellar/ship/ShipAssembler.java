@@ -37,7 +37,7 @@ public final class ShipAssembler {
             // Land vehicles are only assembled (and parked) on vehicle pads.
             for (long[] b : result.blocks()) {
                 BlockPos p = new BlockPos((int) b[0], (int) b[1], (int) b[2]);
-                if (ModBlocks.kindOf(level.getBlockState(p)) == ShipScanner.Kind.WHEEL && !level.getBlockState(p.below()).is(ModBlocks.Tags.VEHICLE_PADS)) {
+                if (b[1] == result.minY() && ModBlocks.kindOf(level.getBlockState(p)) == ShipScanner.Kind.WHEEL && !level.getBlockState(p.below()).is(ModBlocks.Tags.VEHICLE_PADS)) {
                     player.sendSystemMessage(Component.translatable("message.interstellar.ship.problem.not_on_pads").withStyle(ChatFormatting.RED));
                     return false;
                 }

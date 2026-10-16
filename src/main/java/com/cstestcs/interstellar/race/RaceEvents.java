@@ -224,6 +224,22 @@ public final class RaceEvents {
         if (!weapon.isEmpty()) mob.setItemSlot(EquipmentSlot.MAINHAND, weapon);
     }
 
+    /**
+     * A weapon a ship cannon can be loaded with for a race's crew: one of the race's ranged weapons, else a gun of
+     * the race's theme and tier.
+     */
+    public static ItemStack cannonWeapon(RaceDefinition race, net.minecraft.util.RandomSource random) {
+        SplittableRandom rng = new SplittableRandom(random.nextLong());
+        List<String> kinds = new java.util.ArrayList<>(race.weapons());
+        java.util.Collections.shuffle(kinds, new java.util.Random(rng.nextLong()));
+        kinds.add("gun");
+        for (String kind : kinds) {
+            ItemStack w = weaponFor(kind, race, true, rng);
+            if (!w.isEmpty() && com.cstestcs.interstellar.ship.ShipWeapons.canLoad(w)) return w;
+        }
+        return ItemStack.EMPTY;
+    }
+
     private static ItemStack weaponFor(String kind, RaceDefinition race, boolean alien, SplittableRandom rng) {
         if (kind.equals("gun") || kind.startsWith("gun:")) {
             GunBuild build = GunDataManager.registry().roll(kind.startsWith("gun:") ? kind.substring(4) : race.weaponTheme(), race.weaponTier(),

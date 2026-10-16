@@ -69,6 +69,23 @@ class ShipPlanetGunTest {
     }
 
     @Test
+    void vehicleBodiesMaySitFlushWithTheirWheels() {
+        Map<Long, Kind> w = new HashMap<>();
+        for (int x = -3; x <= 3; x++) for (int z = -3; z <= 3; z++) w.put(ShipScanner.pack(x, 0, z), Kind.VEHICLE_PAD);
+        for (int x = -2; x <= 2; x++) for (int z = -1; z <= 1; z++) w.put(ShipScanner.pack(x, 1, z), Kind.SOLID);
+        for (int x = -2; x <= 2; x += 4) for (int z = -1; z <= 1; z += 2) w.put(ShipScanner.pack(x, 1, z), Kind.WHEEL);
+        w.put(ShipScanner.pack(0, 2, 0), Kind.CONTROL_PANEL);
+        w.put(ShipScanner.pack(1, 2, 0), Kind.GENERATOR);
+        ShipScanner.Result r = ShipScanner.scan(0, 2, 0, 100, (x, y, z) -> w.getOrDefault(ShipScanner.pack(x, y, z), Kind.AIR));
+        assertTrue(r.ok(), r.problems().toString());
+        assertEquals(17, r.blocks().size());
+        // Without wheels in the lowest layer it is not a valid vehicle.
+        w.put(ShipScanner.pack(0, 0, 0), Kind.SOLID);
+        r = ShipScanner.scan(0, 2, 0, 100, (x, y, z) -> w.getOrDefault(ShipScanner.pack(x, y, z), Kind.AIR));
+        assertTrue(r.problems().contains(ShipScanner.Problem.NOT_ON_WHEELS));
+    }
+
+    @Test
     void planetsDoNotOverlapAndAreStable() {
         Map<String, Integer> sizes = new LinkedHashMap<>();
         for (String d : List.of("minecraft:overworld", "minecraft:the_nether", "minecraft:the_end", "othermod:moon", "othermod:mars", "othermod:moon_b"))

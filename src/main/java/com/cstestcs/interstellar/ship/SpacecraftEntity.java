@@ -620,7 +620,10 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
 
     private boolean wheelsOnPads(ServerLevel level, BlockPos origin, Rotation rot) {
         if (structure.wheels.isEmpty()) return false;
+        int bottom = Integer.MAX_VALUE;
+        for (ShipStructure.Entry e : structure.entries) bottom = Math.min(bottom, e.pos().getY());
         for (BlockPos w : structure.wheels) {
+            if (w.getY() != bottom) continue; // only the wheels the vehicle stands on
             BlockPos below = origin.offset(w.rotate(rot)).below();
             if (!level.getBlockState(below).is(ModBlocks.Tags.VEHICLE_PADS)) return false;
         }

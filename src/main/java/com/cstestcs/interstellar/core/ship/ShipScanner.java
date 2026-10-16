@@ -91,12 +91,21 @@ public final class ShipScanner {
         if (gear > 0 && wheels > 0) problems.add(Problem.GEAR_AND_WHEELS);
         else if (gear == 0 && wheels == 0) problems.add(Problem.NO_LANDING_GEAR);
         else if (!overflow) {
-            // Every lowest block must be gear (or wheels): the craft has to be built on top of them.
-            Kind bottom = wheels > 0 ? Kind.WHEEL : Kind.LANDING_GEAR;
-            for (long[] b : blocks) {
-                if (b[1] == minY && world.kind((int) b[0], (int) b[1], (int) b[2]) != bottom) {
-                    problems.add(wheels > 0 ? Problem.NOT_ON_WHEELS : Problem.NOT_ON_LANDING_GEAR);
-                    break;
+            if (wheels > 0) {
+                // Vehicles are built on vehicle pads, so the body may sit flush with its wheels: the lowest layer
+                // just has to include wheels.
+                boolean wheelAtBottom = false;
+                for (long[] b : blocks) {
+                    if (b[1] == minY && world.kind((int) b[0], (int) b[1], (int) b[2]) == Kind.WHEEL) wheelAtBottom = true;
+                }
+                if (!wheelAtBottom) problems.add(Problem.NOT_ON_WHEELS);
+            } else {
+                // Every lowest block of a spacecraft must be landing gear: the craft is built on top of it.
+                for (long[] b : blocks) {
+                    if (b[1] == minY && world.kind((int) b[0], (int) b[1], (int) b[2]) != Kind.LANDING_GEAR) {
+                        problems.add(Problem.NOT_ON_LANDING_GEAR);
+                        break;
+                    }
                 }
             }
         }
