@@ -114,6 +114,18 @@ class BodyPipelineTest {
         assertEquals(1f, m.weight[0] + m.weight[1], 1e-5);
         // Buff limbs are thicker than vanilla.
         assertTrue(body.rig.chain(HumanoidRig.Limb.RIGHT_ARM).sx > 1.1);
+        // Plates cover the whole limb: boots reach the ground (feet at y=24), sleeves reach the end of the arm.
+        for (String name : new String[] { "classic", "buff", "slim", "minifig", "storymode" }) {
+            BodyModel b = load(name);
+            b.rig.map(HumanoidRig.Limb.RIGHT_LEG, 0, 12, 0, false, m);
+            assertEquals(24, m.pos.y, 1.0, name + " leg bottom");
+            b.rig.map(HumanoidRig.Limb.RIGHT_ARM, -1, 10, 0, false, m);
+            double handEnd = Double.MAX_VALUE;
+            for (int v = 0; v < b.vertexCount; v++) handEnd = Math.min(handEnd, b.pos[v * 3]);
+            assertEquals(handEnd, m.pos.x, 1.5, name + " sleeve end");
+            b.rig.map(HumanoidRig.Limb.BODY, 0, 0, 0, false, m);
+            assertEquals(0, m.pos.y, 1.0, name + " chestplate top");
+        }
     }
 
     @Test

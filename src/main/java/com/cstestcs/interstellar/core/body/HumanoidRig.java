@@ -9,9 +9,8 @@ import org.joml.Vector3d;
  * overlays, any HumanoidModel layer) onto the custom body so it bends with the limbs.
  * <p>
  * Each limb is a two-segment chain J0 -> J1 -> J2 (shoulder/elbow/wrist, hip/knee/ankle, neck/mid-spine/hips).
- * A vanilla vertex at height y along the part maps to {@code s = y / length}; s in [0, 0.5] runs along the upper
- * segment, [0.5, 1] along the lower one, and the cross-section offset is scaled to the custom limb's measured
- * thickness. The resulting bind-pose point is skinned with weights that blend across the joint, exactly like the mesh.
+ * A vanilla vertex's height along its part maps onto the measured extent of the custom limb's mesh along the chain,
+ * and its cross-section offset onto the measured cross-section of the segment it lands on. The resulting bind-pose point is skinned with weights that blend across the joint, exactly like the mesh.
  */
 public final class HumanoidRig {
     public enum Limb { HEAD, BODY, RIGHT_ARM, LEFT_ARM, RIGHT_LEG, LEFT_LEG }
@@ -24,20 +23,28 @@ public final class HumanoidRig {
             /* RIGHT_LEG */ { "RightUpLeg", "RightLeg", "RightFoot" },
             /* LEFT_LEG */ { "LeftUpLeg", "LeftLeg", "LeftFoot" } };
 
-    /** Vanilla nominal part geometry, part-local (relative to pivot): length along +y, centre x, half widths. */
+    /**
+     * Vanilla nominal part geometry, part-local (relative to pivot, pixels): top and bottom y along the part, centre x,
+     * half width, half depth.
+     */
     private static final float[][] NOMINAL = {
-            /* HEAD */ { 8, 0, 4, 4 },
-            /* BODY */ { 12, 0, 4, 2 },
-            /* RIGHT_ARM */ { 10, -1, 2, 2 },
-            /* LEFT_ARM */ { 10, 1, 2, 2 },
-            /* RIGHT_LEG */ { 12, 0, 2, 2 },
-            /* LEFT_LEG */ { 12, 0, 2, 2 } };
+            /* HEAD */ { -8, 0, 0, 4, 4 },
+            /* BODY */ { 0, 12, 0, 4, 2 },
+            /* RIGHT_ARM */ { -2, 10, -1, 2, 2 },
+            /* LEFT_ARM */ { -2, 10, 1, 2, 2 },
+            /* RIGHT_LEG */ { 0, 12, 0, 2, 2 },
+            /* LEFT_LEG */ { 0, 12, 0, 2, 2 } };
 
     public static final class Chain {
         public int a = -1, b = -1, c = -1;      // bones owning upper segment, lower segment, end (hand/foot/hips)
         public final Vector3d j0 = new Vector3d(), j1 = new Vector3d(), j2 = new Vector3d(); // MC bind positions
         public final Quaterniond qa = new Quaterniond(), qb = new Quaterniond();          // vanilla +Y -> segment dir
+        /** Overall thickness relative to vanilla (upper segment), for diagnostics. */
         public double sx = 1, sz = 1;
+        /** Segment lengths and the measured extent of the limb's mesh along the chain (arc length from j0). */
+        public double len1 = 1, len2 = 1, tMin = 0, tMax = 2;
+        /** Per segment: cross-section centre (side, front) and half extents (side, front), in the segment frame. */
+        public final double[][] cross = { { 0, 0, 2, 2 }, { 0, 0, 2, 2 } };
         public boolean valid;
     }
 
@@ -127,14 +134,21 @@ public final class HumanoidRig {
         return ch;
     }
 
-    /** Measures the custom limb's cross-section from vertices dominated by the chain's bones. */
+    /**
+     * Measures the custom limb from the vertices its bones dominate: how far the mesh extends along the chain (so
+     * plates cover the limb from end to end, wherever the joints sit inside it) and each segment's cross-section.
+     */
     private void measure(Chain ch, Limb limb) {
-        Vector3d side = ch.qa.transform(new Vector3d(1, 0, 0));
-        Vector3d front = ch.qa.transform(new Vector3d(0, 0, 1));
-        Vector3d axis = new Vector3d(ch.j1).sub(ch.j0).normalize();
-        double minS = Double.MAX_VALUE, maxS = -Double.MAX_VALUE, minF = Double.MAX_VALUE, maxF = -Double.MAX_VALUE;
-        Vector3d p = new Vector3d();
-        int n = 0;
+        ch.len1 = ch.j0.distance(ch.j1);
+        ch.len2 = ch.j1.distance(ch.j2);
+        Vector3d d1 = new Vector3d(ch.j1).sub(ch.j0).normalize(), d2 = new Vector3d(ch.j2).sub(ch.j1).normalize();
+        Vector3d[] side = { ch.qa.transform(new Vector3d(1, 0, 0)), ch.qb.transform(new Vector3d(1, 0, 0)) };
+        Vector3d[] front = { ch.qa.transform(new Vector3d(0, 0, 1)), ch.qb.transform(new Vector3d(0, 0, 1)) };
+        double tMin = Double.MAX_VALUE, tMax = -Double.MAX_VALUE;
+        double[][] mm = { { Double.MAX_VALUE, -Double.MAX_VALUE, Double.MAX_VALUE, -Double.MAX_VALUE },
+                { Double.MAX_VALUE, -Double.MAX_VALUE, Double.MAX_VALUE, -Double.MAX_VALUE } };
+        int[] count = new int[2];
+        Vector3d p = new Vector3d(), r = new Vector3d();
         for (int v = 0; v < body.vertexCount; v++) {
             int dom = -1;
             float best = 0;
@@ -145,20 +159,50 @@ public final class HumanoidRig {
                     dom = body.joints[v * 4 + k];
                 }
             }
-            if (dom != ch.a && !(limb == Limb.BODY && dom == ch.b)) continue;
-            p.set(body.pos[v * 3], body.pos[v * 3 + 1], body.pos[v * 3 + 2]).sub(ch.j0);
-            p.fma(-p.dot(axis), axis); // remove the along-axis component
-            double s = p.dot(side), f = p.dot(front);
-            minS = Math.min(minS, s);
-            maxS = Math.max(maxS, s);
-            minF = Math.min(minF, f);
-            maxF = Math.max(maxF, f);
-            n++;
+            if (dom < 0 || (dom != ch.a && dom != ch.b && dom != ch.c)) continue;
+            p.set(body.pos[v * 3], body.pos[v * 3 + 1], body.pos[v * 3 + 2]);
+            double u1 = new Vector3d(p).sub(ch.j0).dot(d1), u2 = new Vector3d(p).sub(ch.j1).dot(d2);
+            // Segment: by owning bone, falling back to the nearer projection for shared bones.
+            int seg = dom == ch.a && dom != ch.b ? 0 : 1;
+            if (dom == ch.a && dom == ch.b) seg = u1 < ch.len1 ? 0 : 1;
+            double t = seg == 0 ? u1 : ch.len1 + u2;
+            if (seg == 0 && u1 > ch.len1) t = ch.len1;
+            tMin = Math.min(tMin, t);
+            tMax = Math.max(tMax, t);
+            if (seg == 0) r.set(p).sub(ch.j0).fma(-u1, d1);
+            else r.set(p).sub(ch.j1).fma(-u2, d2);
+            double s = r.dot(side[seg]), f = r.dot(front[seg]);
+            mm[seg][0] = Math.min(mm[seg][0], s);
+            mm[seg][1] = Math.max(mm[seg][1], s);
+            mm[seg][2] = Math.min(mm[seg][2], f);
+            mm[seg][3] = Math.max(mm[seg][3], f);
+            count[seg]++;
         }
-        if (n < 4) return;
         float[] nom = NOMINAL[limb.ordinal()];
-        ch.sx = clamp((maxS - minS) / (2 * nom[2]), 0.35, 4);
-        ch.sz = clamp((maxF - minF) / (2 * nom[3]), 0.35, 4);
+        if (count[0] + count[1] >= 4 && tMax - tMin > 1) {
+            ch.tMin = tMin;
+            ch.tMax = tMax;
+        } else {
+            ch.tMin = 0;
+            ch.tMax = ch.len1 + ch.len2;
+        }
+        for (int seg = 0; seg < 2; seg++) {
+            int src = count[seg] >= 4 ? seg : count[1 - seg] >= 4 ? 1 - seg : -1;
+            if (src < 0) {
+                ch.cross[seg][0] = 0;
+                ch.cross[seg][1] = 0;
+                ch.cross[seg][2] = nom[3];
+                ch.cross[seg][3] = nom[4];
+                continue;
+            }
+            double[] m = mm[src];
+            ch.cross[seg][0] = (m[0] + m[1]) / 2;
+            ch.cross[seg][1] = (m[2] + m[3]) / 2;
+            ch.cross[seg][2] = clamp((m[1] - m[0]) / 2, nom[3] * 0.35, nom[3] * 4);
+            ch.cross[seg][3] = clamp((m[3] - m[2]) / 2, nom[4] * 0.35, nom[4] * 4);
+        }
+        ch.sx = ch.cross[0][2] / nom[3];
+        ch.sz = ch.cross[0][3] / nom[4];
     }
 
     private static double clamp(double v, double lo, double hi) {
@@ -187,30 +231,51 @@ public final class HumanoidRig {
             set(out, b, 1, -1, 0, -1, 0);
             return;
         }
-        double cx = nom[1];
-        if (slim && (limb == Limb.RIGHT_ARM || limb == Limb.LEFT_ARM)) cx *= 0.5;
-        double s = y / nom[0];
-        Vector3d base = new Vector3d();
-        Quaterniond q;
-        if (s < 0.5) {
-            new Vector3d(ch.j0).lerp(ch.j1, s / 0.5, base);
-            q = ch.qa;
-        } else {
-            new Vector3d(ch.j1).lerp(ch.j2, (s - 0.5) / 0.5, base);
-            q = ch.qb;
+        double cx = nom[2], hw = nom[3], hd = nom[4];
+        if (slim && (limb == Limb.RIGHT_ARM || limb == Limb.LEFT_ARM)) {
+            cx *= 0.5;
+            hw = 1.5;
         }
-        Vector3d off = q.transform(new Vector3d((x - cx) * ch.sx, 0, z * ch.sz));
+        // Along the limb: the vanilla part's length maps onto the mesh's extent; anything beyond it (armour
+        // inflation) keeps its absolute size.
+        double coreY = Math.max(nom[0], Math.min(nom[1], y));
+        double t = ch.tMin + (coreY - nom[0]) / (nom[1] - nom[0]) * (ch.tMax - ch.tMin) + (y - coreY);
+        boolean upper = t < ch.len1;
+        Vector3d base = new Vector3d();
+        if (upper) {
+            new Vector3d(ch.j1).sub(ch.j0).normalize().mul(t, base).add(ch.j0);
+        } else {
+            new Vector3d(ch.j2).sub(ch.j1).normalize().mul(t - ch.len1, base).add(ch.j1);
+        }
+        // Across: the vanilla cross-section is scaled onto the segment's measured one (blended near the joint).
+        double total = Math.max(1e-6, ch.tMax - ch.tMin);
+        double blend = Math.max(0, Math.min(1, (t - (ch.len1 - total * 0.12)) / (total * 0.24)));
+        double cs = lerp(ch.cross[0][0], ch.cross[1][0], blend), cf = lerp(ch.cross[0][1], ch.cross[1][1], blend);
+        double hs = lerp(ch.cross[0][2], ch.cross[1][2], blend), hf = lerp(ch.cross[0][3], ch.cross[1][3], blend);
+        double dx = x - cx, coreX = Math.max(-hw, Math.min(hw, dx));
+        double coreZ = Math.max(-hd, Math.min(hd, z));
+        double side = cs + coreX / hw * hs + (dx - coreX);
+        double front = cf + coreZ / hd * hf + (z - coreZ);
+        Vector3d off = (upper ? ch.qa : ch.qb).transform(new Vector3d(side, 0, front));
         out.pos.set(base).add(off);
         // Weights: upper bone, blend across the middle joint, lower bone, slight blend into the end bone.
-        if (s <= 0.4) set(out, ch.a, 1, -1, 0, -1, 0);
-        else if (s < 0.6) {
-            float t = (float) ((s - 0.4) / 0.2);
-            set(out, ch.a, 1 - t, ch.b, t, -1, 0);
-        } else if (s < 0.92 || ch.c < 0) set(out, ch.b, 1, -1, 0, -1, 0);
-        else {
-            float t = (float) Math.min(0.5, (s - 0.92) / 0.16);
-            set(out, ch.b, 1 - t, ch.c, t, -1, 0);
+        double w = total * 0.1;
+        if (t <= ch.len1 - w) set(out, ch.a, 1, -1, 0, -1, 0);
+        else if (t < ch.len1 + w) {
+            float k = (float) ((t - (ch.len1 - w)) / (2 * w));
+            set(out, ch.a, 1 - k, ch.b, k, -1, 0);
+        } else {
+            double end = ch.len1 + ch.len2;
+            if (ch.c < 0 || t < end - w) set(out, ch.b, 1, -1, 0, -1, 0);
+            else {
+                float k = (float) Math.min(0.5, (t - (end - w)) / (2 * w));
+                set(out, ch.b, 1 - k, ch.c, k, -1, 0);
+            }
         }
+    }
+
+    private static double lerp(double a, double b, double t) {
+        return a + (b - a) * t;
     }
 
     private static void set(Mapped o, int b0, float w0, int b1, float w1, int b2, float w2) {
