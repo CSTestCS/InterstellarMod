@@ -131,15 +131,17 @@ thrown off and nobody sits there until a player right-clicks it open again. Seat
 takes off. A passenger sneaking in flight gets a confirmation prompt first. If the pilot dies, the next player
 passenger takes the controls. The block limit and speeds are in the server config.
 
-**Cannons** are placed facing the way you look (sneak to face them back at you) and fire straight out of their
+**Cannons** are placed facing you, like a dispenser (sneak to aim them the way you look), and fire straight out of their
 barrel. Load one by right-clicking it: a gun from the Gunsmith Table fires that gun's projectiles with its stats;
 a bow or crossbow fires arrows; a trident fires tridents; arrows, fire charges, TNT, snowballs, eggs, wind charges,
 fireworks and splash potions are fired one per shot until used up. Shift-right-click with an empty hand takes the
 load out. The barrel is as thick as the firepower: a thin rod for arrows and snowballs, up to a full block for TNT
-and big guns. An empty cannon fires the ship's built-in shells.
+and big guns. An empty cannon does not fire. A cannon placed in the world (not built into a ship) fires one shot
+per redstone pulse.
 
 **Land vehicles** use **Wheels** instead of landing gear and need no life support. They are assembled and parked
-on **Vehicle Pads** (the pads are never part of the vehicle): every wheel must stand on a pad to start. Drive like
+on **Vehicle Pads** (the pads are never part of the vehicle): the lowest layer must include wheels, and those
+wheels must stand on pads to start. The body may sit flush with the wheels. Drive like
 a horse that cannot jump: forward/back keys, steer by looking, cannons fire with *attack*, one-block steps are
 climbed. When the driver gets out over vehicle pads, the vehicle turns back into blocks; anywhere else it stays a
 vehicle until someone drives it back.
@@ -156,7 +158,8 @@ the ship to that dimension at X=0, Z=0, 200 blocks above the build limit, at nor
 
 **Alien starships** fly through space near players: crews from the foreign worlds in the built-in designs and in
 every design saved with `/interstellar ship save <name>` (fly the ship, or look at its control panel). Their hull
-plating is replaced by their world's foremost metal or stone; they fire their cannons at players in range.
+plating is replaced by their world's foremost metal or stone, and every cannon is loaded with one of the crew
+race's weapons; they fire them at players in range.
 
 Players who die in space have their inventory stored. Restore it with
 `/interstellar spaceinventory restore <player>` (operators only).
