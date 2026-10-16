@@ -16,4 +16,8 @@ public final class ModWorldgen {
 
     /** Procedural planet terrain (see {@link PlanetChunkGenerator}). */
     public static final Supplier<MapCodec<PlanetChunkGenerator>> PLANET = CHUNK_GENERATORS.register("planet", () -> PlanetChunkGenerator.CODEC);
+
+    /** The space dimension: empty, with procedural planets written in as chunks generate. */
+    public static final Supplier<MapCodec<com.cstestcs.interstellar.space.planet.SpaceChunkGenerator>> SPACE = CHUNK_GENERATORS.register("space",
+            () -> com.cstestcs.interstellar.space.planet.SpaceChunkGenerator.CODEC);
 }

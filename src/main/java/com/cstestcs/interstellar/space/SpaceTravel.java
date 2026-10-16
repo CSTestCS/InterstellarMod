@@ -70,8 +70,7 @@ public final class SpaceTravel {
         PlanetManager planets = PlanetManager.get(server);
         AABB box = ship.getBoundingBox();
         for (PlanetLayout.Planet p : planets.all()) {
-            int[] a = p.atmosphere();
-            if (box.intersects(a[0], a[1], a[2], a[3], a[4], a[5])) {
+            if (p.shape().touchesAtmosphere(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ)) {
                 ServerLevel target = server.getLevel(ResourceKey.create(Registries.DIMENSION, Identifier.parse(p.dimension())));
                 if (target == null) continue;
                 double y = target.getMaxY() + InterstellarConfig.SERVER.planetArrivalHeight.get();

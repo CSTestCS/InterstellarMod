@@ -1,7 +1,7 @@
 {
   "type": "interstellar:space",
   "generator": {
-    "type": "minecraft:flat",
+    "type": "interstellar:space",
     "settings": {
       "biome": "interstellar:space",
       "features": false,

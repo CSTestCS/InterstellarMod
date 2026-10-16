@@ -21,7 +21,7 @@ public final class PlanetBuilder {
     private PlanetBuilder() {}
 
     /** Bumped whenever planets should look different; existing planets are rebuilt once. */
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     /** Dyed blocks are looked up by id (26.3 no longer exposes every colour as a Blocks constant). */
     private static final String[] MODDED_PALETTE = { "terracotta", "red_terracotta", "orange_terracotta", "yellow_terracotta", "lime_terracotta",
@@ -31,6 +31,28 @@ public final class PlanetBuilder {
         int n = planet.size();
         int x0 = planet.minX(), y0 = planet.minY(), z0 = planet.minZ();
         int flags = Block.UPDATE_CLIENTS;
+        var shape = planet.shape();
+        if (shape.blob()) {
+            // An irregular rock (the End): clear the cube an older version built here, then build the rock and an
+            // atmosphere that follows its surface.
+            int g = PlanetLayout.ATMOSPHERE_GAP;
+            BlockState air = Blocks.AIR.defaultBlockState();
+            for (int x = x0 - g; x < x0 + n + g; x++) for (int y = y0 - g; y < y0 + n + g; y++) for (int z = z0 - g; z < z0 + n + g; z++) {
+                BlockPos p = new BlockPos(x, y, z);
+                if (!space.getBlockState(p).isAir()) space.setBlock(p, air, flags);
+            }
+            long seed = planet.dimension().hashCode() * 0x9E3779B97F4A7C15L;
+            int[] a = shape.atmosphere();
+            BlockState atmosphere = ModBlocks.ATMOSPHERE.get().defaultBlockState();
+            for (int x = a[0]; x < a[3]; x++) for (int y = a[1]; y < a[4]; y++) for (int z = a[2]; z < a[5]; z++) {
+                if (shape.solidAt(x, y, z)) {
+                    space.setBlock(new BlockPos(x, y, z), surface(planet.dimension(), x - x0, y - y0, z - z0, n, seed), flags);
+                } else if (shape.atmosphereShellAt(x, y, z)) {
+                    space.setBlock(new BlockPos(x, y, z), atmosphere, flags);
+                }
+            }
+            return;
+        }
         long seed = planet.dimension().hashCode() * 0x9E3779B97F4A7C15L;
         for (int x = 0; x < n; x++) {
             for (int y = 0; y < n; y++) {

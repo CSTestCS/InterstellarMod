@@ -474,7 +474,7 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
         if (structure.vehicle) return;
         if (!space && getY() > level.getMaxY() + InterstellarConfig.SERVER.spaceEntryHeight.get()) {
             SpaceTravel.enterSpace(this);
-        } else if (space && (!alienCrewed || countPlayerPassengers() > 0)) {
+        } else if (space && (!alienCrewed || crashing || countPlayerPassengers() > 0)) {
             SpaceTravel.checkPlanetEntry(this);
         }
     }
@@ -482,7 +482,11 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
     private void tickFlying(ServerLevel level, Player pilot, boolean space) {
         double min = InterstellarConfig.SERVER.shipMinSpeed.get(), max = InterstellarConfig.SERVER.shipMaxSpeed.get();
         float speed = entityData.get(SPEED);
-        if (pilot == null && alienCrewed) {
+        if (crashing && !space) {
+            setMode(MODE_LANDING); // arrived on the planet it was falling towards
+            return;
+        }
+        if (pilot == null && alienCrewed && alienPilot() != null) {
             tickAlienPilot(level, space);
             return;
         }
@@ -602,6 +606,10 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
             int[] a = p.atmosphere();
             AABB near = new AABB(a[0], a[1], a[2], a[3], a[4], a[5]).inflate(4);
             if (getBoundingBox().intersects(near)) return position().subtract(near.getCenter());
+        }
+        for (var g : com.cstestcs.interstellar.core.space.PlanetGenome.near(getX(), getZ(), 32)) {
+            AABB b = getBoundingBox().inflate(4);
+            if (g.touchesAtmosphere(b.minX, b.minY, b.minZ, b.maxX, b.maxY, b.maxZ)) return position().subtract(g.centerX(), g.centerY(), g.centerZ());
         }
         return null;
     }

@@ -160,7 +160,7 @@ def main(vanilla, worlds_file):
         "attributes": dict(spawns([], []), **{"minecraft:visual/sky_color": "#000000", "minecraft:visual/fog_color": "#03030a"}),
         "carvers": [], "downfall": 0.0, "effects": {"water_color": "#3f76e4"}, "features": [[] for _ in range(11)],
         "has_precipitation": False, "temperature": 0.5})
-    write("dimension/space.json", {"type": "interstellar:space", "generator": {"type": "minecraft:flat", "settings": {
+    write("dimension/space.json", {"type": "interstellar:space", "generator": {"type": "interstellar:space", "settings": {
         "biome": "interstellar:space", "features": False, "lakes": False, "layers": [], "structure_overrides": []}}})
 
     # ---- planet dimension types (see PlanetTypes.java)

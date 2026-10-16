@@ -19,6 +19,7 @@ public final class PlanetLayout {
     public static final int PLANE_Y = 128;
     public static final int ATMOSPHERE_GAP = 2;
     public static final int SPACING = 28;
+    private static final java.util.Map<Planet, PlanetShape> SHAPES = new java.util.concurrent.ConcurrentHashMap<>();
 
     public record Planet(String dimension, int size, int x, int y, int z, boolean moon) {
         /** Lowest corner of the planet cube. */
@@ -26,15 +27,19 @@ public final class PlanetLayout {
         public int minY() { return y - size / 2; }
         public int minZ() { return z - size / 2; }
 
-        /** Half-open bounds of the atmosphere shell (inclusive min, exclusive max). */
+        /** Half-open bounds of the atmosphere (inclusive min, exclusive max). */
         public int[] atmosphere() {
-            int g = ATMOSPHERE_GAP;
-            return new int[] { minX() - g, minY() - g, minZ() - g, minX() + size + g, minY() + size + g, minZ() + size + g };
+            return shape().atmosphere();
         }
 
         public boolean insideAtmosphere(double px, double py, double pz) {
-            int[] a = atmosphere();
-            return px >= a[0] && py >= a[1] && pz >= a[2] && px < a[3] && py < a[4] && pz < a[5];
+            return shape().touchesAtmosphere(px, py, pz, px, py, pz);
+        }
+
+        /** The End is an irregular rock, like the end-like procedural planets; other planets are cubes. */
+        public PlanetShape shape() {
+            if (SHAPES.size() > 1024) SHAPES.clear();
+            return SHAPES.computeIfAbsent(this, p -> new PlanetShape(p.minX(), p.minY(), p.minZ(), p.size, isEndLike(p.dimension), p.dimension.hashCode()));
         }
     }
 
@@ -70,6 +75,11 @@ public final class PlanetLayout {
         double ang = n * 2.399963;
         int r = host.size() / 2 + ATMOSPHERE_GAP * 2 + 6 + n * 3;
         return new int[] { host.x() + (int) Math.round(Math.cos(ang) * r), PLANE_Y + (n % 2 == 0 ? 4 : -4), host.z() + (int) Math.round(Math.sin(ang) * r) };
+    }
+
+    /** Dimensions whose planet is an irregular rock rather than a cube. */
+    public static boolean isEndLike(String dim) {
+        return dim.equals("minecraft:the_end") || dim.toLowerCase(Locale.ROOT).contains("asteroid");
     }
 
     public static boolean isMoonName(String dim) {

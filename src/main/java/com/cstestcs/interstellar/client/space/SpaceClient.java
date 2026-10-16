@@ -63,65 +63,61 @@ public final class SpaceClient {
         // Procedural planets are computed here from their cells, exactly as the server builds them.
         for (com.cstestcs.interstellar.core.space.PlanetGenome g : nearby(cam.x, cam.z, maxDist)) {
             int color = visible(com.cstestcs.interstellar.core.space.PlanetTypes.get(g.dimensionType()).skyColor());
-            if (g.blob()) glowBlob(event, pose, cam, maxDist, g, color);
+            if (g.blob()) glowBlob(event, pose, cam, maxDist, g.dimensionPath(), g.shape(), color);
             else glow(event, pose, cam, maxDist, g.asPlanet(), color);
         }
     }
 
-    /** Outer faces of the glow shells around an irregular planet, in world coordinates (x, y, z per corner, 4 corners per face). */
+    /**
+     * Glow around an irregular planet: smooth shells that follow its surface (a sphere mesh whose radius in every
+     * direction is the rock's radius plus the shell's distance), cached per planet in world coordinates.
+     */
     private static final java.util.Map<String, float[][]> BLOB_GLOW = new java.util.concurrent.ConcurrentHashMap<>();
+    private static final int LON = 24, LAT = 14;
 
-    private static float[][] blobGlow(com.cstestcs.interstellar.core.space.PlanetGenome g) {
+    private static float[][] blobGlow(String key, com.cstestcs.interstellar.core.space.PlanetShape shape) {
         if (BLOB_GLOW.size() > 256) BLOB_GLOW.clear();
-        return BLOB_GLOW.computeIfAbsent(g.dimensionPath(), k -> {
-            float scale = Math.max(0.6f, g.size() / 8f);
+        return BLOB_GLOW.computeIfAbsent(key, k -> {
+            float scale = Math.max(0.6f, shape.size() / 8f);
             float[][] layers = new float[GLOW.length][];
-            for (int i = 0; i < GLOW.length; i++) {
-                double t = GLOW[i][0] * scale + 0.3;
-                int v = i < 3 ? 1 : 2; // coarser voxels for the faint outer shells
-                layers[i] = shellFaces(g, t, v);
+            for (int l = 0; l < GLOW.length; l++) {
+                double t = 0.6 + GLOW[l][0] * scale;
+                float[] grid = new float[(LAT + 1) * (LON + 1) * 3];
+                for (int i = 0; i <= LAT; i++) {
+                    double phi = Math.PI * i / LAT;
+                    for (int j = 0; j <= LON; j++) {
+                        double theta = 2 * Math.PI * j / LON;
+                        double ux = Math.sin(phi) * Math.cos(theta), uy = Math.cos(phi), uz = Math.sin(phi) * Math.sin(theta);
+                        double r = shape.radius(ux, uy, uz) + t;
+                        int o = (i * (LON + 1) + j) * 3;
+                        grid[o] = (float) (shape.centerX() + ux * r);
+                        grid[o + 1] = (float) (shape.centerY() + uy * r);
+                        grid[o + 2] = (float) (shape.centerZ() + uz * r);
+                    }
+                }
+                float[] quads = new float[LAT * LON * 12];
+                int q = 0;
+                for (int i = 0; i < LAT; i++) {
+                    for (int j = 0; j < LON; j++) {
+                        int[] corners = { i * (LON + 1) + j, (i + 1) * (LON + 1) + j, (i + 1) * (LON + 1) + j + 1, i * (LON + 1) + j + 1 };
+                        for (int c : corners) {
+                            quads[q++] = grid[c * 3];
+                            quads[q++] = grid[c * 3 + 1];
+                            quads[q++] = grid[c * 3 + 2];
+                        }
+                    }
+                }
+                layers[l] = quads;
             }
             return layers;
         });
     }
 
-    /** Faces of the voxel region within {@code t} blocks of the planet's surface that face outwards. */
-    private static float[] shellFaces(com.cstestcs.interstellar.core.space.PlanetGenome g, double t, int v) {
-        double r = g.size() * 0.65 + t + 2 * v;
-        int n = (int) Math.ceil(2 * r / v) + 2;
-        double ox = g.centerX() - r, oy = g.centerY() - r, oz = g.centerZ() - r;
-        boolean[] in = new boolean[n * n * n];
-        for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) for (int k = 0; k < n; k++) {
-            in[(i * n + j) * n + k] = g.surfaceDistance(ox + (i + 0.5) * v, oy + (j + 0.5) * v, oz + (k + 0.5) * v) <= t;
-        }
-        it.unimi.dsi.fastutil.floats.FloatArrayList out = new it.unimi.dsi.fastutil.floats.FloatArrayList();
-        int[][] dirs = { { 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 0, 1 }, { 0, 0, -1 } };
-        for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) for (int k = 0; k < n; k++) {
-            if (!in[(i * n + j) * n + k]) continue;
-            for (int[] d : dirs) {
-                int a = i + d[0], b = j + d[1], c = k + d[2];
-                boolean outside = a < 0 || b < 0 || c < 0 || a >= n || b >= n || c >= n || !in[(a * n + b) * n + c];
-                if (!outside) continue;
-                float x0 = (float) (ox + i * v), y0 = (float) (oy + j * v), z0 = (float) (oz + k * v), s = v;
-                float[] q = switch (d[0] * 1 + d[1] * 2 + d[2] * 3) {
-                    case 1 -> new float[] { x0 + s, y0, z0, x0 + s, y0 + s, z0, x0 + s, y0 + s, z0 + s, x0 + s, y0, z0 + s };
-                    case -1 -> new float[] { x0, y0, z0, x0, y0, z0 + s, x0, y0 + s, z0 + s, x0, y0 + s, z0 };
-                    case 2 -> new float[] { x0, y0 + s, z0, x0, y0 + s, z0 + s, x0 + s, y0 + s, z0 + s, x0 + s, y0 + s, z0 };
-                    case -2 -> new float[] { x0, y0, z0, x0 + s, y0, z0, x0 + s, y0, z0 + s, x0, y0, z0 + s };
-                    case 3 -> new float[] { x0, y0, z0 + s, x0 + s, y0, z0 + s, x0 + s, y0 + s, z0 + s, x0, y0 + s, z0 + s };
-                    default -> new float[] { x0, y0, z0, x0, y0 + s, z0, x0 + s, y0 + s, z0, x0 + s, y0, z0 };
-                };
-                out.addElements(out.size(), q);
-            }
-        }
-        return out.toFloatArray();
-    }
-
-    private static void glowBlob(SubmitCustomGeometryEvent event, PoseStack pose, Vec3 cam, double maxDist,
-            com.cstestcs.interstellar.core.space.PlanetGenome g, int color) {
-        if (cam.distanceToSqr(g.centerX(), g.centerY(), g.centerZ()) > maxDist * maxDist) return;
+    private static void glowBlob(SubmitCustomGeometryEvent event, PoseStack pose, Vec3 cam, double maxDist, String key,
+            com.cstestcs.interstellar.core.space.PlanetShape shape, int color) {
+        if (cam.distanceToSqr(shape.centerX(), shape.centerY(), shape.centerZ()) > maxDist * maxDist) return;
         float r = ((color >> 16) & 255) / 255f, gr = ((color >> 8) & 255) / 255f, b = (color & 255) / 255f;
-        float[][] layers = blobGlow(g);
+        float[][] layers = blobGlow(key, shape);
         float cx = (float) cam.x, cy = (float) cam.y, cz = (float) cam.z;
         event.getSubmitNodeCollector().submitCustomGeometry(pose, RenderTypes.lightning(), (last, vc) -> {
             Matrix4f m = last.pose();
@@ -160,6 +156,10 @@ public final class SpaceClient {
     }
 
     private static void glow(SubmitCustomGeometryEvent event, PoseStack pose, Vec3 cam, double maxDist, PlanetLayout.Planet p, int color) {
+        if (p.shape().blob()) {
+            glowBlob(event, pose, cam, maxDist, p.dimension(), p.shape(), color);
+            return;
+        }
         if (cam.distanceToSqr(p.x() + 0.5, p.y() + 0.5, p.z() + 0.5) > maxDist * maxDist) return;
         float r = ((color >> 16) & 255) / 255f, g = ((color >> 8) & 255) / 255f, b = (color & 255) / 255f;
         double x0 = p.minX() - cam.x, y0 = p.minY() - cam.y, z0 = p.minZ() - cam.z;

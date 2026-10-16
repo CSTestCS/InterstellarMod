@@ -69,17 +69,17 @@ public record PlanetGenome(
         return "interstellar:" + path;
     }
 
-    /** Half-open bounds of the atmosphere shell around the planet cube (same gap as known planets). */
+    private static final java.util.Map<Long, PlanetShape> SHAPES = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** The planet's shape in space (cached). */
+    public PlanetShape shape() {
+        if (SHAPES.size() > 4096) SHAPES.clear();
+        return SHAPES.computeIfAbsent(seed, k -> new PlanetShape(x - size / 2, y - size / 2, z - size / 2, size, blob(), seed));
+    }
+
+    /** Half-open bounds of the atmosphere around the planet. */
     public int[] atmosphere() {
-        int g = PlanetLayout.ATMOSPHERE_GAP;
-        if (blob()) {
-            // Bounding box of the shell around the irregular shape (radius at most 1.3 times the cube's half size).
-            int r = (int) Math.ceil(size * 0.65) + g + 1;
-            int cx = (int) Math.floor(centerX()), cy = (int) Math.floor(centerY()), cz = (int) Math.floor(centerZ());
-            return new int[] { cx - r, cy - r, cz - r, cx + r + 1, cy + r + 1, cz + r + 1 };
-        }
-        int min = -size / 2;
-        return new int[] { x + min - g, y + min - g, z + min - g, x + min + size + g, y + min + size + g, z + min + size + g };
+        return shape().atmosphere();
     }
 
     /** End-like planets are irregular rocks rather than cubes, with an atmosphere that follows their surface. */
@@ -88,84 +88,31 @@ public record PlanetGenome(
     }
 
     public double centerX() {
-        return x - size / 2 + size / 2.0;
+        return shape().centerX();
     }
 
     public double centerY() {
-        return y - size / 2 + size / 2.0;
+        return shape().centerY();
     }
 
     public double centerZ() {
-        return z - size / 2 + size / 2.0;
+        return shape().centerZ();
     }
 
-    /** Lobes of the irregular shape: unit direction and strength, from the planet's seed. */
-    private static final java.util.Map<Long, double[][]> LOBES = new java.util.concurrent.ConcurrentHashMap<>();
-
-    private double[][] lobes() {
-        if (LOBES.size() > 4096) LOBES.clear();
-        return LOBES.computeIfAbsent(seed, PlanetGenome::makeLobes);
-    }
-
-    private static double[][] makeLobes(long seed) {
-        Random r = new Random(seed ^ 0xB10BL);
-        int n = 4 + r.nextInt(4);
-        double[][] out = new double[n][4];
-        double total = 0;
-        for (int i = 0; i < n; i++) {
-            double ux = r.nextGaussian(), uy = r.nextGaussian(), uz = r.nextGaussian();
-            double len = Math.max(1e-6, Math.sqrt(ux * ux + uy * uy + uz * uz));
-            out[i] = new double[] { ux / len, uy / len, uz / len, r.nextDouble() * 2 - 1 };
-            total += Math.abs(out[i][3]);
-        }
-        for (double[] l : out) l[3] *= 0.3 / Math.max(total, 1e-6) * 2.2; // lumps up to about +-30 %
-        return out;
-    }
-
-    /**
-     * Approximate distance (blocks) of a point from the planet's surface: negative inside. Cubes use the box distance,
-     * irregular planets a radius that varies with direction.
-     */
     public double surfaceDistance(double px, double py, double pz) {
-        double dx = px - centerX(), dy = py - centerY(), dz = pz - centerZ();
-        double half = size / 2.0;
-        if (!blob()) return Math.max(Math.abs(dx), Math.max(Math.abs(dy), Math.abs(dz))) - half;
-        double len = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        if (len < 1e-6) return -half;
-        double ux = dx / len, uy = dy / len, uz = dz / len, f = 1;
-        for (double[] l : lobes()) {
-            double dot = ux * l[0] + uy * l[1] + uz * l[2];
-            f += l[3] * dot * dot * dot;
-        }
-        f = Math.max(0.7, Math.min(1.3, f));
-        return len - half * f;
+        return shape().surfaceDistance(px, py, pz);
     }
 
-    /** Whether the block at these coordinates is part of the planet. */
     public boolean solidAt(int bx, int by, int bz) {
-        return surfaceDistance(bx + 0.5, by + 0.5, bz + 0.5) <= 0;
+        return shape().solidAt(bx, by, bz);
     }
 
-    /** Whether the block is part of the invisible atmosphere shell, one block thick, {@code ATMOSPHERE_GAP} out. */
     public boolean atmosphereShellAt(int bx, int by, int bz) {
-        double d = surfaceDistance(bx + 0.5, by + 0.5, bz + 0.5);
-        int g = PlanetLayout.ATMOSPHERE_GAP;
-        if (!blob()) {
-            int[] a = atmosphere();
-            boolean inBox = bx >= a[0] && by >= a[1] && bz >= a[2] && bx < a[3] && by < a[4] && bz < a[5];
-            return inBox && (bx == a[0] || by == a[1] || bz == a[2] || bx == a[3] - 1 || by == a[4] - 1 || bz == a[5] - 1);
-        }
-        return d > g - 1 && d <= g;
+        return shape().atmosphereShellAt(bx, by, bz);
     }
 
-    /** Whether a box (a ship) touches the atmosphere or anything inside it. */
     public boolean touchesAtmosphere(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-        int[] a = atmosphere();
-        if (maxX <= a[0] || minX >= a[3] || maxY <= a[1] || minY >= a[4] || maxZ <= a[2] || minZ >= a[5]) return false;
-        if (!blob()) return true;
-        // The point of the box closest to the centre decides.
-        double px = Math.max(minX, Math.min(centerX(), maxX)), py = Math.max(minY, Math.min(centerY(), maxY)), pz = Math.max(minZ, Math.min(centerZ(), maxZ));
-        return surfaceDistance(px, py, pz) <= PlanetLayout.ATMOSPHERE_GAP;
+        return shape().touchesAtmosphere(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
     public PlanetLayout.Planet asPlanet() {
@@ -184,8 +131,20 @@ public record PlanetGenome(
         return at(coord(m.group(1)), coord(m.group(2)));
     }
 
-    /** The planet of a cell, if the cell has one. */
+    private static final java.util.Map<Long, Optional<PlanetGenome>> CELLS = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** The planet of a cell, if the cell has one (cached: asked every tick by ships and every frame by the sky). */
     public static Optional<PlanetGenome> at(int cellX, int cellZ) {
+        long key = ((long) cellX << 32) ^ (cellZ & 0xFFFFFFFFL);
+        Optional<PlanetGenome> cached = CELLS.get(key);
+        if (cached != null) return cached;
+        if (CELLS.size() > 8192) CELLS.clear();
+        Optional<PlanetGenome> made = compute(cellX, cellZ);
+        CELLS.put(key, made);
+        return made;
+    }
+
+    private static Optional<PlanetGenome> compute(int cellX, int cellZ) {
         double cx = (cellX + 0.5) * CELL, cz = (cellZ + 0.5) * CELL;
         if (cx * cx + cz * cz < (double) RESERVED_RADIUS * RESERVED_RADIUS) return Optional.empty();
         long seed = mix(GALAXY ^ (cellX * 0x9E3779B97F4A7C15L) ^ (cellZ * 0xC2B2AE3D27D4EB4FL));
