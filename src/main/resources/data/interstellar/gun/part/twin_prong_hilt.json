@@ -1,0 +1,33 @@
+{
+  "slot": "receiver",
+  "tier": 5,
+  "alien": true,
+  "archetypes": [
+    "energy_sword"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.3
+    },
+    "range": {
+      "add": 0,
+      "mul": 1.2
+    }
+  },
+  "themes": [
+    "tech",
+    "void",
+    "crystal"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 14
+    },
+    {
+      "item": "minecraft:nether_star",
+      "count": 1
+    }
+  ]
+}

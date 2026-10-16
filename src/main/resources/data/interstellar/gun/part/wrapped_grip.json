@@ -1,0 +1,24 @@
+{
+  "slot": "grip",
+  "tier": 1,
+  "alien": false,
+  "archetypes": [
+    "laser_sword"
+  ],
+  "modifiers": {
+    "fire_rate": {
+      "add": 0,
+      "mul": 1.1
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:leather",
+      "count": 4
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 2
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "slot": "receiver",
+  "tier": 4,
+  "alien": false,
+  "archetypes": [
+    "laser_sword"
+  ],
+  "modifiers": {
+    "fire_rate": {
+      "add": 0,
+      "mul": 1.25
+    },
+    "damage": {
+      "add": 0,
+      "mul": 0.9
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:diamond",
+      "count": 4
+    },
+    {
+      "item": "minecraft:gold_block",
+      "count": 1
+    },
+    {
+      "item": "minecraft:lightning_rod",
+      "count": 1
+    }
+  ]
+}

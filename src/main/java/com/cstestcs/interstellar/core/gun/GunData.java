@@ -59,7 +59,8 @@ public final class GunData {
         }
     }
 
-    public enum FireMode { SEMI, AUTO, BURST, CHARGE }
+    /** MELEE: a blade (laser and energy swords) that strikes instead of shooting; the magazine is its blade charge. */
+    public enum FireMode { SEMI, AUTO, BURST, CHARGE, MELEE }
 
     public enum AmmoType { BALLISTIC, ENERGY, PLASMA, EXPLOSIVE, NEEDLE }
 

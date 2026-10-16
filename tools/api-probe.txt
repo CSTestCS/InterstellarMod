@@ -1,8 +1,0 @@
-src net/minecraft/client/renderer/special/SpecialModelRenderer
-src net/minecraft/client/renderer/item/SpecialModelWrapper
-src net/minecraft/client/renderer/special/ShieldSpecialRenderer
-class net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent
-class net.neoforged.neoforge.event.ItemAttributeModifierEvent
-class net.neoforged.neoforge.event.entity.living.LivingDamageEvent$Post
-class net.minecraft.world.entity.ai.attributes.AttributeModifier
-class net.minecraft.world.entity.EquipmentSlotGroup

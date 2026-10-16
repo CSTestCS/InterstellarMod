@@ -76,8 +76,11 @@ public final class GunActions {
             case ModPayloads.GunsmithAction.NEW_FRAME -> {
                 GunData.Archetype arch = reg.archetype(action.a());
                 if (arch == null || !gun.isEmpty()) return;
+                GunData.Material frameMat = material(player, menu, reg);
+                if (frameMat == null) return;
                 if (!pay(player, GunDataManager.cost("archetype", arch.id()))) return;
-                menu.setGunSlot(GunItem.create(new GunBuild(arch.id(), Map.of(), null, Map.of()), false));
+                menu.materialSlot().shrink(1);
+                menu.setGunSlot(GunItem.create(new GunBuild(arch.id(), Map.of(), null, Map.of(), frameMat.id()), false));
             }
             case ModPayloads.GunsmithAction.INSTALL_PART -> {
                 GunBuild build = gun.get(ModComponents.GUN_BUILD.get());
@@ -87,12 +90,12 @@ public final class GunActions {
                 if (!reg.partsFor(build.archetype(), slot).contains(part)) return;
                 GunData.Archetype arch = reg.archetype(build.archetype());
                 if (arch == null || !arch.slots().contains(slot)) return;
+                GunData.Material mat = material(player, menu, reg);
+                if (mat == null) return;
                 if (!pay(player, GunDataManager.cost("part", part.id()))) return;
-                ItemStack matStack = menu.materialSlot();
-                GunData.Material mat = matStack.isEmpty() ? null : reg.materialForItem(BuiltInRegistries.ITEM.getKey(matStack.getItem()).toString());
-                if (mat != null) matStack.shrink(1);
+                menu.materialSlot().shrink(1);
                 ItemStack updated = gun.copy();
-                updated.set(ModComponents.GUN_BUILD.get(), build.with(slot, new GunBuild.Choice(part.id(), mat == null ? null : mat.id())));
+                updated.set(ModComponents.GUN_BUILD.get(), build.with(slot, new GunBuild.Choice(part.id(), mat.id())));
                 menu.setGunSlot(updated);
             }
             case ModPayloads.GunsmithAction.REMOVE_PART -> {
@@ -129,6 +132,20 @@ public final class GunActions {
         }
         player.level().playSound(null, player.blockPosition(), SoundEvents.SMITHING_TABLE_USE, SoundSource.BLOCKS, 0.8f, 1.1f);
         menu.broadcastChanges();
+    }
+
+    /**
+     * The material in the material slot: frames and parts are always made of one. Tells the player when the slot is
+     * empty or holds something that is not a gunsmithing material. @return null if there is none
+     */
+    static GunData.Material material(ServerPlayer player, GunsmithMenu menu, GunRegistry reg) {
+        ItemStack matStack = menu.materialSlot();
+        GunData.Material mat = matStack.isEmpty() ? null : reg.materialForItem(BuiltInRegistries.ITEM.getKey(matStack.getItem()).toString());
+        if (mat == null) {
+            player.sendOverlayMessage(Component.translatable(matStack.isEmpty() ? "message.interstellar.gunsmith.need_material"
+                    : "message.interstellar.gunsmith.not_material", matStack.getHoverName()));
+        }
+        return mat;
     }
 
     /** Takes the cost from the player's inventory (nothing in creative). @return false if they cannot afford it. */

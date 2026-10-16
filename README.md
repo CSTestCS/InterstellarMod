@@ -201,14 +201,20 @@ there directly.
 
 There is a single **gun** item, a single **magazine** item, and 11 alien materials. Everything else is data:
 
-* `data/<ns>/gun/archetype/*.json`: 22 families inspired by Halo, Destiny and Call of Duty (pistol, hand cannon,
-  SMG, assault, battle, pulse and scout rifles, DMR, sniper, shotgun, LMG, rocket launcher; plasma pistol and
-  rifle, needler, fusion rifle, beam rifle, fuel rod cannon, shard launcher, void lance, sonic disruptor, bio spitter).
-* `gun/part/*.json`: 83 parts across 9 slots (receiver, barrel, stock, grip, magazine, sight, muzzle,
+* `data/<ns>/gun/archetype/*.json`: 24 families inspired by Halo, Destiny, Call of Duty and Star Wars (pistol, hand
+  cannon, SMG, assault, battle, pulse and scout rifles, DMR, sniper, shotgun, LMG, rocket launcher; plasma pistol and
+  rifle, needler, fusion rifle, beam rifle, fuel rod cannon, shard launcher, void lance, sonic disruptor, bio spitter;
+  and two blades, the laser sword and the alien energy sword).
+* `gun/part/*.json`: 92 parts across 9 slots (receiver, barrel, stock, grip, magazine, sight, muzzle,
   underbarrel, alien core). Each has stat modifiers, fire-mode/ammo overrides, effects and a model.
-* `gun/material/*.json`: 23 materials. A part takes the material in the table's material slot, which adds its
-  colour, stat changes and on-hit effects (ignite, freeze, poison, chain, pierce, shatter, levitate…).
+* `gun/material/*.json`: 23 materials. New frames and every installed part need a material in the table's
+  material slot (one is used up each time); it adds its look, stat changes and on-hit effects (ignite, freeze, poison, chain, pierce, shatter, levitate…).
 * Trims: an armour-trim template plus a trim material recolours the gun's trim layer.
+
+**Blades** (laser sword, energy sword) are built like guns (hilt, focus crystal or alien core, grip) but strike
+instead of shooting: their damage and swing speed come from their stats, every hit uses one charge of the blade and
+applies the material effects, and an empty blade is reloaded with energy cells like a gun. The blade glows in the
+colour of its core's material, with the same soft glow as planet atmospheres, and its length is the range stat.
 
 Each installed part changes the model, and each part shows the block of its material (gold block for gold parts,
 diamond block for diamond; alien materials have their own storage blocks). Parts are covered with the block's

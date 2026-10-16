@@ -1,0 +1,22 @@
+{
+  "slot": "receiver",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "laser_sword"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 2
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "count": 1
+    },
+    {
+      "item": "minecraft:lightning_rod",
+      "count": 1
+    }
+  ]
+}

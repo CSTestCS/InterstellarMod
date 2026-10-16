@@ -70,6 +70,7 @@ public final class InterstellarClient {
         modBus.addListener(GunItemModels::registerSelectProperties);
         modBus.addListener(GunItemModels::registerTints);
         modBus.addListener(GunItemModels::registerItemModels);
+        modBus.addListener(GunItemModels::registerSpecialRenderers);
         modBus.addListener(com.cstestcs.interstellar.client.space.SpaceClient::registerSky);
         modBus.addListener(OreTint::register);
         modBus.addListener(com.cstestcs.interstellar.client.gun.GunModelPack::onAddPackFinders);

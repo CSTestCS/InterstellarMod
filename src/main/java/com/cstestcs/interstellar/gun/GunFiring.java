@@ -99,6 +99,13 @@ public final class GunFiring {
         boolean hurt = target.hurtServer(level, source, damage);
         if (!hurt || !(target instanceof LivingEntity living)) return;
         living.setInvulnerableTime(0); // automatic weapons would otherwise lose most of their damage
+        applyEffects(level, shooter, living, at, stats, damage, source);
+    }
+
+    /** On-hit effects of the weapon's parts and materials (fire, freezing, poison, chain lightning...). */
+    public static void applyEffects(ServerLevel level, LivingEntity shooter, LivingEntity living, Vec3 at, GunRegistry.Stats stats, float damage,
+            DamageSource source) {
+        Entity target = living;
         int power = 1 + (int) stats.get(GunData.Stat.EFFECT_POWER);
         List<String> fx = stats.effects();
         if (fx.contains("ignite")) living.igniteForSeconds(2f + power);

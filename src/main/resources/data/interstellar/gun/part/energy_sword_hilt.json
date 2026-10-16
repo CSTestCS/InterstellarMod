@@ -1,0 +1,18 @@
+{
+  "slot": "receiver",
+  "tier": 3,
+  "alien": true,
+  "archetypes": [
+    "energy_sword"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 8
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 2
+    }
+  ]
+}

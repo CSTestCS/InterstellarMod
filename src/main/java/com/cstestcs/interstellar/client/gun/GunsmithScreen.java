@@ -23,8 +23,8 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 /**
  * Gunsmith table screen. With an empty gun slot it lists gun frames (archetypes) to build; with a gun it shows tabs
- * for the archetype's slots and the parts that fit the selected slot. Parts are made from whatever material is in
- * the material slot (its colour, stats and effects carry over). Magazines are crafted from the bottom row, and a trim
+ * for the archetype's slots and the parts that fit the selected slot. New frames and parts are made from the
+ * material in the material slot, which is required (its look, stats and effects carry over). Magazines are crafted from the bottom row, and a trim
  * template plus trim material applies a trim.
  */
 public class GunsmithScreen extends AbstractContainerScreen<GunsmithMenu> {

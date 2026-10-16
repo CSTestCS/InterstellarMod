@@ -174,7 +174,7 @@ public final class SpaceClient {
         });
     }
 
-    private static void box(VertexConsumer vc, Matrix4f m, double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b,
+    public static void box(VertexConsumer vc, Matrix4f m, double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b,
             float a) {
         float ax = (float) x0, ay = (float) y0, az = (float) z0, bx = (float) x1, by = (float) y1, bz = (float) z1;
         quad(vc, m, ax, ay, az, bx, ay, az, bx, by, az, ax, by, az, r, g, b, a); // north

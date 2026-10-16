@@ -113,6 +113,12 @@ public final class GunRegistry {
                 tier = Math.max(tier, mat.tier());
             }
         }
+        GunData.Material frameMat = build.frame() == null ? null : materials.get(build.frame());
+        if (frameMat != null) {
+            frameMat.modifiers().forEach((s, m) -> mods.merge(s, m, GunData.Modifier::combine));
+            for (String fx : frameMat.effects()) if (!effects.contains(fx)) effects.add(fx);
+            tier = Math.max(tier, frameMat.tier());
+        }
         if (build.trim() != null) {
             // Trims are mostly cosmetic: a small handling bonus.
             mods.merge(GunData.Stat.RECOIL, new GunData.Modifier(0, 0.95), GunData.Modifier::combine);
@@ -137,12 +143,23 @@ public final class GunRegistry {
     public GunBuild roll(String theme, int tier, boolean alien, RandomGenerator rng) {
         List<GunData.Archetype> pool = new ArrayList<>();
         for (GunData.Archetype a : archetypes.values()) {
+            if (a.fireMode() == GunData.FireMode.MELEE) continue; // mobs are armed with guns
             if (a.alien() == alien && a.tier() <= Math.max(1, tier + 1) && (a.themes().isEmpty() || a.themes().contains(theme))) pool.add(a);
         }
-        if (pool.isEmpty()) for (GunData.Archetype a : archetypes.values()) if (a.alien() == alien) pool.add(a);
-        if (pool.isEmpty()) pool.addAll(archetypes.values());
+        if (pool.isEmpty()) for (GunData.Archetype a : archetypes.values()) if (a.alien() == alien && a.fireMode() != GunData.FireMode.MELEE) pool.add(a);
+        if (pool.isEmpty()) for (GunData.Archetype a : archetypes.values()) if (a.fireMode() != GunData.FireMode.MELEE) pool.add(a);
         if (pool.isEmpty()) return null;
-        GunData.Archetype arch = pool.get(rng.nextInt(pool.size()));
+        return build(pool.get(rng.nextInt(pool.size())), theme, tier, alien, rng);
+    }
+
+    /** A random complete example of one archetype (any kind, blades included). */
+    public GunBuild example(String archetypeId, int tier, RandomGenerator rng) {
+        GunData.Archetype arch = archetypes.get(archetypeId);
+        if (arch == null) return null;
+        return build(arch, arch.themes().isEmpty() ? "human" : arch.themes().get(0), tier, arch.alien(), rng);
+    }
+
+    private GunBuild build(GunData.Archetype arch, String theme, int tier, boolean alien, RandomGenerator rng) {
         Map<GunData.Slot, GunBuild.Choice> chosen = new EnumMap<>(GunData.Slot.class);
         List<GunData.Material> mats = new ArrayList<>();
         for (GunData.Material m : materials.values()) if (m.tier() <= tier + 1 && (m.themes().isEmpty() || m.themes().contains(theme) || !alien)) mats.add(m);
@@ -165,7 +182,8 @@ public final class GunRegistry {
                 GunData.Stat.SPREAD, GunData.Stat.RECOIL, GunData.Stat.RANGE, GunData.Stat.MAGAZINE }) {
             rolls.put(s, 1 + (rng.nextDouble() * 2 - 1) * spread);
         }
-        return new GunBuild(arch.id(), chosen, null, rolls);
+        String frame = mats.isEmpty() ? null : mats.get(rng.nextInt(mats.size())).id();
+        return new GunBuild(arch.id(), chosen, null, rolls, frame);
     }
 
     // ------------------------------------------------------------------ JSON

@@ -40,7 +40,12 @@ ARCHETYPES = {
     "void_lance":      (True, 4, "charge", "energy", "void_cell", dict(damage=22, fire_rate=80, magazine=6, reload_time=2.8, spread=0.2, range=160, velocity=8, charge_time=1.2, armor_pierce=0.8), ["receiver", "core", "barrel", "sight"], ["receiver", "core"], ["void", "sonic"]),
     "sonic_disruptor": (True, 3, "auto",  "energy", "energy_cell", dict(damage=4, fire_rate=300, magazine=30, pellets=3, reload_time=2.0, spread=6, range=24, velocity=5, effect_power=2), ["receiver", "core", "muzzle"], ["receiver", "core"], ["sonic", "tech"]),
     "bio_spitter":     (True, 2, "auto",  "plasma", "bio_sac", dict(damage=3, fire_rate=360, magazine=40, reload_time=1.6, spread=5, range=28, velocity=1.2, effect_power=2), ["receiver", "core", "magazine"], ["receiver", "core"], ["bio", "toxic"]),
+    # ---- blades: strike instead of shooting. damage = hit damage, fire_rate = swings per minute, magazine = blade
+    # charge (hits per energy cell), range = blade length in blocks. The blade glows in its core's material colour.
+    "laser_sword":     (False, 4, "melee", "energy", "energy_cell", dict(damage=9, fire_rate=96, magazine=64, reload_time=1.5, range=1.3, spread=0), ["receiver", "core", "grip"], ["receiver", "core"], HUMAN),
+    "energy_sword":    (True, 3, "melee", "plasma", "energy_cell", dict(damage=11, fire_rate=84, magazine=48, reload_time=1.2, range=1.1, spread=0, effect_power=1), ["receiver", "core", "grip"], ["receiver", "core"], ["plasma", "nether", "solar", "tech", "crystal", "void", "cryo", "bio", "toxic", "hydro", "sonic"]),
 }
+BLADES = ["laser_sword", "energy_sword"]
 
 def part(slot, tier=1, alien=False, archetypes=(), mods=None, effects=(), fire_mode=None, ammo=None, themes=(), cost=()):
     d = {"slot": slot, "tier": tier, "alien": alien}
@@ -54,8 +59,10 @@ def part(slot, tier=1, alien=False, archetypes=(), mods=None, effects=(), fire_m
     return d
 
 M = lambda add=0, mul=1: {"add": add, "mul": mul}
-HUMAN_ARCH = [k for k, v in ARCHETYPES.items() if not v[0]]
-ALIEN_ARCH = [k for k, v in ARCHETYPES.items() if v[0]]
+# Gun parts fit guns only; blades have their own hilts and grips (alien cores power both).
+HUMAN_ARCH = [k for k, v in ARCHETYPES.items() if not v[0] and k not in BLADES]
+ALIEN_ARCH = [k for k, v in ARCHETYPES.items() if v[0] and k not in BLADES]
+ALIEN_CORE_ARCH = ALIEN_ARCH + ["energy_sword"]
 
 PARTS = {
     # receivers
@@ -83,7 +90,7 @@ PARTS = {
     # grips
     "vertical_grip":       part("grip", 1, archetypes=HUMAN_ARCH, mods={"recoil": M(mul=0.8)}, cost=[("minecraft:iron_ingot", 3)]),
     "angled_grip":         part("grip", 2, archetypes=HUMAN_ARCH, mods={"spread": M(mul=0.85), "reload_time": M(mul=0.9)}, cost=[("minecraft:iron_ingot", 3), ("minecraft:copper_ingot", 3)]),
-    "alien_grip":          part("grip", 2, alien=True, archetypes=ALIEN_ARCH, mods={"recoil": M(mul=0.7), "charge_time": M(mul=0.8)}, cost=[("interstellar:alien_alloy", 2)]),
+    "alien_grip":          part("grip", 2, alien=True, archetypes=ALIEN_ARCH + ["energy_sword"], mods={"recoil": M(mul=0.7), "charge_time": M(mul=0.8)}, cost=[("interstellar:alien_alloy", 2)]),
     # magazines
     "extended_mag":        part("magazine", 2, archetypes=HUMAN_ARCH, mods={"magazine": M(mul=1.5), "reload_time": M(mul=1.15)}, cost=[("minecraft:iron_block", 1), ("minecraft:redstone", 6)]),
     "drum_mag":            part("magazine", 3, archetypes=["smg", "assault_rifle", "lmg", "shotgun"], mods={"magazine": M(mul=2.5), "reload_time": M(mul=1.5)}, cost=[("minecraft:iron_block", 2), ("minecraft:diamond", 1)]),
@@ -106,6 +113,16 @@ PARTS = {
     "laser_sight":         part("underbarrel", 2, archetypes=HUMAN_ARCH, mods={"spread": M(mul=0.75)}, cost=[("minecraft:redstone_block", 1), ("minecraft:glass_pane", 1)]),
     "bayonet":             part("underbarrel", 1, archetypes=HUMAN_ARCH, effects=["bayonet"], cost=[("minecraft:iron_sword", 1)]),
     # alien cores (one per theme)
+    # blades
+    "saber_hilt":          part("receiver", 3, archetypes=["laser_sword"], cost=[("minecraft:iron_block", 2), ("minecraft:redstone_block", 1), ("minecraft:lightning_rod", 1)]),
+    "crossguard_hilt":     part("receiver", 4, archetypes=["laser_sword"], mods={"damage": M(mul=1.2), "fire_rate": M(mul=0.85)}, cost=[("minecraft:netherite_ingot", 1), ("minecraft:iron_block", 2), ("minecraft:lightning_rod", 2)]),
+    "duelist_hilt":        part("receiver", 4, archetypes=["laser_sword"], mods={"fire_rate": M(mul=1.25), "damage": M(mul=0.9)}, cost=[("minecraft:diamond", 4), ("minecraft:gold_block", 1), ("minecraft:lightning_rod", 1)]),
+    "amethyst_focus":      part("core", 2, archetypes=["laser_sword"], cost=[("minecraft:amethyst_shard", 8), ("minecraft:redstone_block", 2)]),
+    "diamond_focus":       part("core", 3, archetypes=["laser_sword"], mods={"damage": M(mul=1.15)}, cost=[("minecraft:diamond", 4), ("minecraft:redstone_block", 2)]),
+    "echo_focus":          part("core", 4, archetypes=["laser_sword"], mods={"armor_pierce": M(add=0.4), "range": M(mul=1.15)}, cost=[("minecraft:echo_shard", 4), ("minecraft:nether_star", 1)]),
+    "wrapped_grip":        part("grip", 1, archetypes=["laser_sword"], mods={"fire_rate": M(mul=1.1)}, cost=[("minecraft:leather", 4), ("minecraft:iron_ingot", 2)]),
+    "energy_sword_hilt":   part("receiver", 3, alien=True, archetypes=["energy_sword"], cost=[("interstellar:alien_alloy", 8), ("minecraft:ender_eye", 2)]),
+    "twin_prong_hilt":     part("receiver", 5, alien=True, archetypes=["energy_sword"], mods={"damage": M(mul=1.3), "range": M(mul=1.2)}, themes=["tech", "void", "crystal"], cost=[("interstellar:alien_alloy", 14), ("minecraft:nether_star", 1)]),
 }
 THEME_CORES = {
     "plasma":  ("interstellar:plasma_core", {"damage": M(mul=1.1)}, ["ignite"]),
@@ -124,7 +141,7 @@ for theme, (item, mods, fx) in THEME_CORES.items():
     for tier, (prefix, mul) in enumerate([("unstable", 0.9), ("stable", 1.0), ("refined", 1.15), ("ancient", 1.3)], start=1):
         m = dict(mods)
         m["damage"] = M(mul=m.get("damage", M())["mul"] * mul)
-        PARTS[f"{prefix}_{theme}_core"] = part("core", tier + 1 if tier > 1 else 1, alien=True, archetypes=ALIEN_ARCH, mods=m, effects=fx, themes=[theme],
+        PARTS[f"{prefix}_{theme}_core"] = part("core", tier + 1 if tier > 1 else 1, alien=True, archetypes=ALIEN_CORE_ARCH, mods=m, effects=fx, themes=[theme],
                                               cost=[(item, 2 * tier), ("interstellar:alien_alloy", 2 * tier)] + ([("minecraft:nether_star", 1)] if tier == 4 else []))
 
 # materials: item -> colour, tier, modifiers, effects

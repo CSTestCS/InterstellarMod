@@ -1,0 +1,18 @@
+{
+  "slot": "core",
+  "tier": 2,
+  "alien": false,
+  "archetypes": [
+    "laser_sword"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:amethyst_shard",
+      "count": 8
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "count": 2
+    }
+  ]
+}

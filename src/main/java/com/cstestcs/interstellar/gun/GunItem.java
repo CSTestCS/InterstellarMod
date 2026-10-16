@@ -69,6 +69,7 @@ public class GunItem extends Item {
             if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable("message.interstellar.gun.incomplete"));
             return InteractionResult.FAIL;
         }
+        if (stats.fireMode() == GunData.FireMode.MELEE) return InteractionResult.PASS; // blades strike with attack
         GunCodecs.GunState state = state(stack);
         if (state.reloadUntil() > level.getGameTime()) return InteractionResult.FAIL;
         if (state.ammo() <= 0) {
@@ -119,6 +120,7 @@ public class GunItem extends Item {
 
     /** Fires one shot (all pellets). @return false if the gun is empty or reloading. */
     public static boolean fire(Level level, LivingEntity shooter, ItemStack stack, GunRegistry.Stats stats) {
+        if (stats.fireMode() == GunData.FireMode.MELEE) return false;
         GunCodecs.GunState state = state(stack);
         boolean infinite = !(shooter instanceof Player) || ((Player) shooter).getAbilities().instabuild;
         if (state.reloadUntil() > level.getGameTime()) return false;
@@ -208,13 +210,8 @@ public class GunItem extends Item {
     public static void addCreativeExamples(CreativeModeTab.Output out) {
         SplittableRandom rng = new SplittableRandom(1414);
         for (GunData.Archetype a : GunDataManager.registry().archetypes()) {
-            for (int tries = 0; tries < 20; tries++) {
-                GunBuild b = GunDataManager.registry().roll(a.themes().isEmpty() ? "human" : a.themes().get(0), 5, a.alien(), rng);
-                if (b != null && b.archetype().equals(a.id())) {
-                    out.accept(create(new GunBuild(b.archetype(), b.parts(), null, Map.of()), true));
-                    break;
-                }
-            }
+            GunBuild b = GunDataManager.registry().example(a.id(), 5, rng);
+            if (b != null) out.accept(create(new GunBuild(b.archetype(), b.parts(), null, Map.of(), b.frame()), true));
         }
     }
 }

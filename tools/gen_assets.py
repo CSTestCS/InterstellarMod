@@ -357,6 +357,19 @@ GUN_DISPLAY = {
     "fixed": {"rotation": [0, 0, 0], "translation": [0, 0, 0], "scale": [1, 1, 1]},
 }
 
+# Blades (laser and energy swords) stand upright along +Y: the hilt in the model, the glowing blade (special renderer
+# interstellar:laser_blade) rising from y=11 for its stat-driven length.
+SWORD_DISPLAY = {
+    "thirdperson_righthand": {"rotation": [0, -90, 10], "translation": [0, 4, 1], "scale": [0.85, 0.85, 0.85]},
+    "thirdperson_lefthand": {"rotation": [0, 90, -10], "translation": [0, 4, 1], "scale": [0.85, 0.85, 0.85]},
+    "firstperson_righthand": {"rotation": [0, -90, -15], "translation": [1.13, 2, 1.13], "scale": [0.68, 0.68, 0.68]},
+    "firstperson_lefthand": {"rotation": [0, 90, 15], "translation": [1.13, 2, 1.13], "scale": [0.68, 0.68, 0.68]},
+    "ground": {"rotation": [0, 0, 0], "translation": [0, 2, 0], "scale": [0.5, 0.5, 0.5]},
+    "gui": {"rotation": [0, 0, -45], "translation": [-3, -3, 0], "scale": [0.45, 0.45, 0.45]},
+    "fixed": {"rotation": [0, 0, -45], "translation": [-2, -2, 0], "scale": [0.5, 0.5, 0.5]},
+}
+BLADES = ["laser_sword", "energy_sword"]
+
 
 def box(fr, to, tex="#metal", tint=0):
     return {"from": fr, "to": to, "faces": {d: {"texture": tex, "tintindex": tint, "uv": [0, 0, max(1, to[0] - fr[0]) if d in ("north", "south", "up", "down") else max(1, to[2] - fr[2]),
@@ -435,9 +448,18 @@ def guns():
         texture = f"{NS}:item/gun/alien" if a.get("alien") else f"{NS}:item/gun/metal"
         length = {"pistol": 2, "hand_cannon": 3, "smg": 4, "shotgun": 6, "lmg": 7, "sniper_rifle": 7, "rocket_launcher": 8}.get(aid, 5)
         els = [box([3, 7, 7], [3 + length, 9, 9])]
+        display = GUN_DISPLAY
         if aid in ("rocket_launcher", "fuel_rod_cannon"):
             els = [box([0, 7, 6], [16, 11, 10])]
-        write_json(f"{A}/models/item/gun/frame/{aid}.json", {"textures": {"metal": texture, "particle": texture}, "display": GUN_DISPLAY, "elements": els})
+        if aid in BLADES:
+            # Upright hilt: pommel, grip, guard and emitter. The blade is drawn by interstellar:laser_blade.
+            els = [box([6.75, 0, 6.75], [9.25, 1, 9.25]), box([7.25, 1, 7.25], [8.75, 8, 8.75]), box([6.5, 8, 6.5], [9.5, 9, 9.5]),
+                   box([7, 9, 7], [9, 11, 9])]
+            if aid == "energy_sword":
+                els = [box([7, 0, 6.5], [9, 7, 9.5]), box([5, 7, 6.75], [11, 9, 9.25]), box([4.5, 9, 7.25], [6, 11, 8.75]),
+                       box([10, 9, 7.25], [11.5, 11, 8.75])]
+            display = SWORD_DISPLAY
+        write_json(f"{A}/models/item/gun/frame/{aid}.json", {"textures": {"metal": texture, "particle": texture}, "display": display, "elements": els})
     write_json(f"{A}/models/item/gun/trim.json", {"textures": {"metal": f"{NS}:item/gun/trim", "particle": f"{NS}:item/gun/trim"}, "display": GUN_DISPLAY,
                                                   "elements": [box([3.5, 9.9, 6.4], [9.5, 10.2, 9.6]), box([3.5, 7, 6.3], [9.5, 7.5, 6.5])]})
 
@@ -456,7 +478,9 @@ def guns():
 
     def by_material(kind, pid, slot):
         """Model for a part made of a known material (block textured), tinted fallback for unknown materials."""
-        return {"type": "minecraft:select", "property": f"{NS}:gun_material", "slot": slot,
+        # Frames have their own material (older guns without one show their receiver's).
+        sel = {"property": f"{NS}:gun_info", "field": "frame_material"} if kind == "frame" else {"property": f"{NS}:gun_material", "slot": slot}
+        return {"type": "minecraft:select", **sel,
                 "cases": [{"when": mid, "model": {"type": f"{NS}:block_textured", "model": f"{NS}:item/gun/{kind}/{pid}", "block": MATERIAL_BLOCK[mid]}}
                           for mid in materials],
                 "fallback": tinted(f"{NS}:item/gun/{kind}/{pid}", slot)}
@@ -480,10 +504,17 @@ def guns():
                 "host", "flow", "bolt"]
     layers.append({"type": "minecraft:select", "property": f"{NS}:gun_info", "field": "trim",
                    "cases": [{"when": patterns, "model": tinted(f"{NS}:item/gun/trim", trim=True)}], "fallback": {"type": "minecraft:empty"}})
+    # Blades: the hilt (in its frame material) and the glowing blade; their parts change stats, not looks.
+    blade_cases = [{"when": aid, "model": {"type": "minecraft:composite", "models": [
+        by_material("frame", aid, "receiver"),
+        {"type": "minecraft:special", "base": f"{NS}:item/gun/frame/{aid}", "model": {"type": f"{NS}:laser_blade"}}]}}
+        for aid in BLADES if aid in archs]
+    model = {"type": "minecraft:select", "property": f"{NS}:gun_info", "field": "archetype", "cases": blade_cases,
+             "fallback": {"type": "minecraft:composite", "models": layers}}
     # Written compactly: one select case per part and material makes this file large.
     os.makedirs(f"{A}/items", exist_ok=True)
     with open(f"{A}/items/gun.json", "w") as f:
-        json.dump({"model": {"type": "minecraft:composite", "models": layers}}, f, separators=(",", ":"))
+        json.dump({"model": model}, f, separators=(",", ":"))
 
 
 # ---------------------------------------------------------------- entity
@@ -618,6 +649,9 @@ def lang():
         "message.interstellar.gun.incomplete": "This gun is missing required parts.",
         "message.interstellar.gun.no_magazine": "No loaded %s magazine.",
         "message.interstellar.gunsmith.missing": "Missing %s x %s",
+        "message.interstellar.gunsmith.need_material": "Put a material (iron, gold, diamond, an alien material...) in the material slot first",
+        "message.interstellar.gunsmith.not_material": "%s is not a gunsmithing material",
+        "message.interstellar.gun.blade_off": "The blade is out of charge: reload it with an energy cell",
         "tooltip.interstellar.gun.ammo": "Ammo: %s / %s (%s)", "tooltip.interstellar.gun.empty": "An unfinished gun frame",
         "tooltip.interstellar.magazine.rounds": "%s / %s rounds",
         "stat.interstellar.gun.damage": "Damage", "stat.interstellar.gun.fire_rate": "Fire rate", "stat.interstellar.gun.range": "Range",

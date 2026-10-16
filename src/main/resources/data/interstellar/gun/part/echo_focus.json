@@ -1,0 +1,28 @@
+{
+  "slot": "core",
+  "tier": 4,
+  "alien": false,
+  "archetypes": [
+    "laser_sword"
+  ],
+  "modifiers": {
+    "armor_pierce": {
+      "add": 0.4,
+      "mul": 1
+    },
+    "range": {
+      "add": 0,
+      "mul": 1.15
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:echo_shard",
+      "count": 4
+    },
+    {
+      "item": "minecraft:nether_star",
+      "count": 1
+    }
+  ]
+}

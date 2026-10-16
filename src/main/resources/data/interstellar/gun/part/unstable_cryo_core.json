@@ -12,7 +12,8 @@
     "shard_launcher",
     "void_lance",
     "sonic_disruptor",
-    "bio_spitter"
+    "bio_spitter",
+    "energy_sword"
   ],
   "modifiers": {
     "fire_rate": {

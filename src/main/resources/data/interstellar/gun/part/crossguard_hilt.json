@@ -1,0 +1,32 @@
+{
+  "slot": "receiver",
+  "tier": 4,
+  "alien": false,
+  "archetypes": [
+    "laser_sword"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.2
+    },
+    "fire_rate": {
+      "add": 0,
+      "mul": 0.85
+    }
+  },
+  "cost": [
+    {
+      "item": "minecraft:netherite_ingot",
+      "count": 1
+    },
+    {
+      "item": "minecraft:iron_block",
+      "count": 2
+    },
+    {
+      "item": "minecraft:lightning_rod",
+      "count": 2
+    }
+  ]
+}

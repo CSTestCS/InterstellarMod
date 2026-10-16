@@ -81,7 +81,10 @@ public final class GunItemModels {
         }
     }
 
-    /** Gun-wide value: {@code "field": "archetype"} (selects the frame) or {@code "trim"} (trim pattern, "" if none). */
+    /**
+     * Gun-wide value: {@code "field": "archetype"} (selects the frame), {@code "trim"} (trim pattern, "" if none) or
+     * {@code "frame_material"} (material of the frame, "" if none).
+     */
     public record InfoProperty(String field) implements SelectItemModelProperty<String> {
         public static final MapCodec<InfoProperty> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                 Codec.STRING.optionalFieldOf("field", "archetype").forGetter(InfoProperty::field)).apply(i, InfoProperty::new));
@@ -92,6 +95,7 @@ public final class GunItemModels {
             GunBuild build = stack.get(ModComponents.GUN_BUILD.get());
             if (build == null) return "";
             if (field.equals("trim")) return build.trim() == null ? "" : build.trim().pattern();
+            if (field.equals("frame_material")) return build.frameMaterial() == null ? "" : build.frameMaterial();
             return build.archetype();
         }
 
@@ -139,6 +143,10 @@ public final class GunItemModels {
 
     public static void registerItemModels(net.neoforged.neoforge.client.event.RegisterItemModelsEvent event) {
         event.register(Interstellar.id("block_textured"), BlockTexturedItemModel.Unbaked.MAP_CODEC);
+    }
+
+    public static void registerSpecialRenderers(net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent event) {
+        event.register(Interstellar.id("laser_blade"), LaserBladeRenderer.Unbaked.MAP_CODEC);
     }
 
     public static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {

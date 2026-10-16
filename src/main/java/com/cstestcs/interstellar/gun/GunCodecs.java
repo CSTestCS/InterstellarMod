@@ -38,8 +38,9 @@ public final class GunCodecs {
             Codec.STRING.fieldOf("archetype").forGetter(GunBuild::archetype),
             Codec.unboundedMap(SLOT, CHOICE).optionalFieldOf("parts", Map.of()).forGetter(GunBuild::parts),
             TRIM.optionalFieldOf("trim").forGetter(b -> Optional.ofNullable(b.trim())),
-            Codec.unboundedMap(STAT, Codec.DOUBLE).optionalFieldOf("rolls", Map.of()).forGetter(GunBuild::rolls)
-    ).apply(i, (a, p, t, r) -> new GunBuild(a, enumMap(GunData.Slot.class, p), t.orElse(null), enumMap(GunData.Stat.class, r))));
+            Codec.unboundedMap(STAT, Codec.DOUBLE).optionalFieldOf("rolls", Map.of()).forGetter(GunBuild::rolls),
+            Codec.STRING.optionalFieldOf("frame_material").forGetter(b -> Optional.ofNullable(b.frame()))
+    ).apply(i, (a, p, t, r, f) -> new GunBuild(a, enumMap(GunData.Slot.class, p), t.orElse(null), enumMap(GunData.Stat.class, r), f.orElse(null))));
 
     public static final StreamCodec<ByteBuf, GunBuild> BUILD_STREAM = ByteBufCodecs.fromCodec(BUILD);
 
