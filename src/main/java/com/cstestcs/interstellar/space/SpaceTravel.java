@@ -83,8 +83,7 @@ public final class SpaceTravel {
         // Procedural planets: their dimension is created the first time a ship arrives.
         for (com.cstestcs.interstellar.core.space.PlanetGenome g : com.cstestcs.interstellar.core.space.PlanetGenome.near(ship.getX(), ship.getZ(),
                 box.getXsize() + 32)) {
-            int[] a = g.atmosphere();
-            if (!box.intersects(a[0], a[1], a[2], a[3], a[4], a[5])) continue;
+            if (!g.touchesAtmosphere(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ)) continue;
             if (!ARRIVING.add(ship.getUUID())) return; // already on its way
             for (Entity e : ship.getPassengers()) {
                 if (e instanceof Player pl) pl.sendOverlayMessage(Component.translatable("message.interstellar.space.approaching", g.name()));

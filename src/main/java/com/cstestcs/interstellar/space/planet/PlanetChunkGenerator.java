@@ -87,8 +87,9 @@ public class PlanetChunkGenerator extends NoiseBasedChunkGenerator {
     public void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunk, StructureManager structureManager) {
         super.applyBiomeDecoration(level, chunk, structureManager);
         if (genome == null) return;
-        Extras ex = extras(level.registryAccess());
         ChunkPos pos = chunk.getPos();
+        if (genome.terrain() == PlanetGenome.Terrain.NETHER) openRoof(level, chunk);
+        Extras ex = extras(level.registryAccess());
         RandomSource random = RandomSource.create(level.getSeed() ^ genome.seed() ^ (pos.x() * 341873128712L + pos.z() * 132897987541L));
         int x0 = pos.getMinBlockX(), z0 = pos.getMinBlockZ();
         for (Vein v : ex.veins()) {
@@ -103,6 +104,40 @@ public class PlanetChunkGenerator extends NoiseBasedChunkGenerator {
             int y = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
             if (y <= level.getMinY() + 1) continue;
             place(level, deco.value(), random, new BlockPos(x, y, z));
+        }
+    }
+
+    /** Radius of the opening in a nether-like planet's roof above X=0 Z=0, where ships arrive. */
+    public static final int ROOF_HOLE = 24;
+
+    /**
+     * Nether-like planets are sealed by a bedrock roof; cut a ragged shaft through it (and the rock below it) above
+     * the arrival point, down to the first open cavern, so ships can fly in and out.
+     */
+    private void openRoof(WorldGenLevel level, ChunkAccess chunk) {
+        ChunkPos pos = chunk.getPos();
+        int x0 = pos.getMinBlockX(), z0 = pos.getMinBlockZ();
+        if (x0 > ROOF_HOLE + 4 || x0 + 15 < -ROOF_HOLE - 4 || z0 > ROOF_HOLE + 4 || z0 + 15 < -ROOF_HOLE - 4) return;
+        int top = getMinY() + getGenDepth() - 1;
+        BlockState air = net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        for (int x = x0; x < x0 + 16; x++) {
+            for (int z = z0; z < z0 + 16; z++) {
+                double angle = Math.atan2(z, x);
+                double edge = ROOF_HOLE + 3 * Math.sin(angle * 5 + genome.seed() % 7) + 2 * Math.cos(angle * 3);
+                if (x * x + z * z > edge * edge) continue;
+                boolean opened = false;
+                for (int y = top; y > Math.max(getMinY(), top - 96); y--) {
+                    BlockState here = chunk.getBlockState(p.set(x, y, z));
+                    if (!here.getFluidState().isEmpty()) break; // a lava or water sea fills the cavern here
+                    if (here.isAir()) {
+                        if (opened) break; // reached the cavern below the roof
+                        continue;
+                    }
+                    opened = true;
+                    chunk.setBlockState(p, air);
+                }
+            }
         }
     }
 

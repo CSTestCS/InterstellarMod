@@ -32,6 +32,11 @@ public final class RenderInfo {
     /** Converted biped skin the custom body wears when {@link #convertLayout} is set (filled once the texture is known). */
     public @Nullable Identifier bodySkin;
     public float ageInTicks, walkSpeed;
+    /**
+     * Size of a baby relative to an adult (from the hitboxes), applied to race-replaced bodies. Babies otherwise keep
+     * their own vanilla baby model and texture (with the race's head model, if it has one).
+     */
+    public float ageScale = 1f;
 
     /** The race replaces the whole model with a biped wearing RACENAME_skin. */
     public boolean replacesBody() {

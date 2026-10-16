@@ -60,6 +60,20 @@ public final class BodyInstances {
             return new Matrix4f().scale(1 / 16f).mul(skin[head]).translate((float) bind.x, (float) bind.y, (float) bind.z).scale(16f);
         }
 
+        /**
+         * Block-space transform that places vanilla arm geometry (shoulder-pivot relative, arm hanging down) so that
+         * its hand, 10 pixels down the arm, sits in the body's hand: held items follow the body's own arms.
+         */
+        public Matrix4f handTransform(boolean right) {
+            var chain = body.rig.chain(right ? com.cstestcs.interstellar.core.body.HumanoidRig.Limb.RIGHT_ARM
+                    : com.cstestcs.interstellar.core.body.HumanoidRig.Limb.LEFT_ARM);
+            int bone = chain.c >= 0 ? chain.c : chain.b >= 0 ? chain.b : chain.a;
+            if (bone < 0 || !chain.valid) return null;
+            var q = chain.qb;
+            return new Matrix4f().scale(1 / 16f).mul(skin[bone]).translate((float) chain.j2.x, (float) chain.j2.y, (float) chain.j2.z)
+                    .rotate(new org.joml.Quaternionf((float) q.x, (float) q.y, (float) q.z, (float) q.w)).translate(0, -10, 0).scale(16f);
+        }
+
         /** Block-space transform for things attached to the lower back (tails), in vanilla body-part coordinates. */
         public Matrix4f bodyTransform() {
             int bone = body.rig.spine >= 0 ? body.rig.spine : body.rig.hips;

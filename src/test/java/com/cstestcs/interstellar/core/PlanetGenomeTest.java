@@ -47,12 +47,35 @@ class PlanetGenomeTest {
             names.add(g.name());
             terrains.add(g.terrain());
             int[] a = g.atmosphere();
-            assertEquals(g, PlanetGenome.atmosphereAt(a[0] + 0.5, a[1] + 0.5, a[2] + 0.5).orElseThrow());
+            if (!g.blob()) assertEquals(g, PlanetGenome.atmosphereAt(a[0] + 0.5, a[1] + 0.5, a[2] + 0.5).orElseThrow());
+            assertEquals(g, PlanetGenome.atmosphereAt(g.centerX(), g.centerY(), g.centerZ()).orElseThrow());
         }
         assertTrue(names.size() > far.size() * 0.9);
         assertTrue(terrains.size() >= 5, terrains.toString());
         assertTrue(PlanetGenome.parse("minecraft:overworld").isEmpty());
         assertTrue(PlanetGenome.parse("interstellar:planet_m3_17").isPresent() || PlanetGenome.at(-3, 17).isEmpty());
         assertEquals(PlanetTypes.COUNT, PlanetTypes.all().size());
+    }
+
+    @Test
+    void endPlanetsAreIrregularRocksWithAHuggingAtmosphere() {
+        PlanetGenome blob = PlanetGenome.near(9000, 9000, 3000).stream().filter(PlanetGenome::blob).findFirst().orElseThrow();
+        int[] a = blob.atmosphere();
+        int solid = 0, shell = 0, cube = blob.size() * blob.size() * blob.size();
+        for (int x = a[0]; x < a[3]; x++) for (int y = a[1]; y < a[4]; y++) for (int z = a[2]; z < a[5]; z++) {
+            if (blob.solidAt(x, y, z)) {
+                solid++;
+                assertFalse(blob.atmosphereShellAt(x, y, z));
+            }
+            if (blob.atmosphereShellAt(x, y, z)) {
+                shell++;
+                assertTrue(blob.touchesAtmosphere(x + 0.5, y + 0.5, z + 0.5, x + 0.5, y + 0.5, z + 0.5));
+            }
+        }
+        // about as much rock as the cube it replaces, and no solid block outside the bounds
+        assertTrue(solid > cube * 0.3 && solid < cube * 1.6, solid + " vs " + cube);
+        assertTrue(shell > 0);
+        // corners of the bounding box are outside the atmosphere (it hugs the rock, not the box)
+        assertFalse(blob.touchesAtmosphere(a[0], a[1], a[2], a[0] + 0.1, a[1] + 0.1, a[2] + 0.1));
     }
 }

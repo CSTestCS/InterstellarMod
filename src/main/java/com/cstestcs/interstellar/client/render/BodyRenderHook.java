@@ -60,4 +60,41 @@ public final class BodyRenderHook {
         }
         return false;
     }
+
+    /**
+     * Places held items for a mob drawn as a race biped or a custom body: in the hand of what is actually drawn,
+     * not of the hidden vanilla arm. @return true if handled
+     */
+    public static boolean translateToHand(HumanoidModel<?> model, net.minecraft.client.renderer.entity.state.HumanoidRenderState state,
+            net.minecraft.world.entity.HumanoidArm arm, PoseStack poseStack) {
+        RenderInfo info = state.getRenderData(RenderInfo.KEY);
+        if (info == null || model != info.mainModel) return false;
+        boolean right = arm == net.minecraft.world.entity.HumanoidArm.RIGHT;
+        if (info.body != null && (info.drawsBody() || info.drawsConvertedBody())) {
+            org.joml.Matrix4f hand = info.body.handTransform(right);
+            if (hand == null) return false;
+            if (info.replacesBody()) RaceLayerAccess.ageScale(poseStack, info);
+            poseStack.mulPose(hand);
+            return true;
+        }
+        if (info.replacesBody()) {
+            RaceLayerAccess.ageScale(poseStack, info);
+            com.cstestcs.interstellar.client.race.RaceLayer.translateToRaceHand(info, state, arm, poseStack);
+            return true;
+        }
+        return false;
+    }
+
+    /** Shrinks race-replaced babies around their feet to the size of their hitbox. */
+    public static final class RaceLayerAccess {
+        private RaceLayerAccess() {}
+
+        public static void ageScale(PoseStack poseStack, RenderInfo info) {
+            float s = info.ageScale;
+            if (s == 1f) return;
+            poseStack.translate(0, 1.501f, 0);
+            poseStack.scale(s, s, s);
+            poseStack.translate(0, -1.501f, 0);
+        }
+    }
 }

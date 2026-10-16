@@ -58,6 +58,12 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
         RaceModels.RaceBiped biped = biped(race.def.slimArms(), info.hasRaceHead());
         HumanoidRenderState hs = humanoid(state);
         boolean bodyDrawn = info.body != null && info.replacesBody();
+        // Race-replaced babies: the race's own look, shrunk to the baby's size.
+        boolean scaled = info.replacesBody() && info.ageScale != 1f;
+        if (scaled) {
+            poseStack.pushPose();
+            com.cstestcs.interstellar.client.render.BodyRenderHook.RaceLayerAccess.ageScale(poseStack, info);
+        }
 
         // ---- body
         if (info.replacesBody()) {
@@ -124,6 +130,16 @@ public class RaceLayer<S extends LivingEntityRenderState, M extends EntityModel<
                 poseStack.popPose();
             }
         }
+        if (scaled) poseStack.popPose();
+    }
+
+    /** Moves the pose to the hand of the race biped drawn for this entity (for held items). */
+    public static void translateToRaceHand(RenderInfo info, net.minecraft.client.renderer.entity.state.EntityRenderState state,
+            net.minecraft.world.entity.HumanoidArm arm, PoseStack poseStack) {
+        RaceModels.RaceBiped biped = biped(info.race.def.slimArms(), info.hasRaceHead());
+        HumanoidRenderState hs = humanoid((LivingEntityRenderState) state);
+        biped.setupAnim(hs);
+        biped.translateToHand(hs, arm, poseStack);
     }
 
     /**

@@ -76,6 +76,14 @@ public final class RenderInfoExtractor {
         info.walkSpeed = state.walkAnimationSpeed;
         info.bipedTexture = bipedTextured().contains(entity.getType());
         if (!info.bipedTexture) info.convertLayout = converted().get(entity.getType());
+        if (entity.isBaby()) {
+            // Babies keep their own baby model and texture; mob skins are adult layouts and do not fit them.
+            info.bipedTexture = false;
+            info.convertLayout = null;
+            float adult = entity.getType().getDimensions().height() * (float) entity.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.SCALE);
+            float now = entity.getDimensions(net.minecraft.world.entity.Pose.STANDING).height();
+            info.ageScale = adult > 0 ? net.minecraft.util.Mth.clamp(now / adult, 0.2f, 1f) : 0.5f;
+        }
         if (entity instanceof VillagerDataHolder holder) {
             info.villagerLike = true;
             info.outfit = outfit(entity, holder);

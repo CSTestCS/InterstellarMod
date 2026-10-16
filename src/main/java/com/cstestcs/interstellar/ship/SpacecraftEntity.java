@@ -87,6 +87,11 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
     /** Flown by an alien crew (spawned in space): an AI pilot instead of a player. */
     private boolean alienCrewed;
     private int aiTurnTimer, idleTicks;
+    /** Lost its pilot in space with nobody to take over: heading for the nearest planet to crash-land there. */
+    private boolean crashing;
+    private @org.jspecify.annotations.Nullable Vec3 crashTarget;
+    private int crashRetarget;
+    private double fallSpeed;
     private float aiYaw, aiPitch;
 
     public SpacecraftEntity(EntityType<? extends SpacecraftEntity> type, Level level) {
@@ -193,6 +198,7 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
         entityData.set(SCALE, in.getFloatOr("scale", 1f));
         initFromStructure();
         alienCrewed = in.getBooleanOr("alien_crew", false);
+        crashing = in.getBooleanOr("crashing", false);
         in.read("collapsed_seats", Codec.INT.listOf()).ifPresent(l -> {
             collapsedSeats.clear();
             collapsedSeats.addAll(l);
@@ -206,6 +212,7 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
         out.putFloat("scale", shipScale());
         out.store("collapsed_seats", Codec.INT.listOf(), new ArrayList<>(collapsedSeats));
         out.putBoolean("alien_crew", alienCrewed);
+        if (crashing) out.putBoolean("crashing", true);
     }
 
     @Override
@@ -481,11 +488,25 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
         }
         if (pilot == null) {
             if (!space) {
-                setMode(MODE_LANDING); // nobody at the controls: descend safely
+                setMode(MODE_LANDING); // nobody at the controls: descend (or crash, see tickLanding)
                 return;
             }
-            speed *= 0.9f;
+            // Adrift in space with nobody to take the controls: fall towards the nearest planet.
+            crashing = true;
+            if (crashTarget == null || --crashRetarget <= 0) {
+                crashRetarget = 40;
+                crashTarget = nearestPlanet(level);
+            }
+            if (crashTarget != null) {
+                aim(crashTarget.subtract(position()));
+                setYRot(Mth.approachDegrees(getYRot(), aiYaw, 3f));
+                setXRot(Mth.approach(getXRot(), Mth.clamp(aiPitch, -80, 80), 3f));
+                speed += (float) Mth.clamp(max - speed, -0.08, 0.02);
+            } else {
+                speed *= 0.9f;
+            }
         } else {
+            crashing = false;
             // Turn towards where the pilot looks (rate-limited so big ships feel heavy).
             float yaw = Mth.approachDegrees(getYRot(), pilot.getYRot(), 6f);
             float pitch = Mth.approach(getXRot(), Mth.clamp(pilot.getXRot(), -80, 80), 4f);
@@ -630,7 +651,57 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
         return true;
     }
 
+    /** Centre of the nearest planet (of a real dimension or procedural), or null if none is in reach. */
+    private @org.jspecify.annotations.Nullable Vec3 nearestPlanet(ServerLevel level) {
+        Vec3 best = null;
+        double bestDist = Double.MAX_VALUE;
+        for (var p : com.cstestcs.interstellar.space.PlanetManager.get(level.getServer()).all()) {
+            Vec3 c = new Vec3(p.x() + 0.5, p.y() + 0.5, p.z() + 0.5);
+            double d = c.distanceToSqr(position());
+            if (d < bestDist) {
+                bestDist = d;
+                best = c;
+            }
+        }
+        for (var g : com.cstestcs.interstellar.core.space.PlanetGenome.near(getX(), getZ(), 1200)) {
+            Vec3 c = new Vec3(g.centerX(), g.centerY(), g.centerZ());
+            double d = c.distanceToSqr(position());
+            if (d < bestDist) {
+                bestDist = d;
+                best = c;
+            }
+        }
+        return best;
+    }
+
+    /** Crashing ship hit the ground: an explosion where it struck, then whatever is left becomes blocks. */
+    private void crash(ServerLevel level) {
+        crashing = false;
+        fallSpeed = 0;
+        AABB box = getBoundingBox();
+        float power = 3f + Math.min(4f, structure.entries.size() / 40f);
+        level.explode(this, box.getCenter().x, box.minY, box.getCenter().z, power, Level.ExplosionInteraction.TNT);
+        BlockPos origin = BlockPos.containing(getX(), Math.round(getY()), getZ());
+        for (int up = 0; up <= 4; up++) {
+            if (disassemble(level, false, origin.above(up))) return;
+        }
+        setMode(MODE_LANDING); // could not settle in the crater: keep descending normally
+    }
+
     private void tickLanding(ServerLevel level) {
+        if (crashing) {
+            setXRot(Mth.approach(getXRot(), 25f, 2f));
+            fallSpeed = Math.min(2.5, fallSpeed + 0.06);
+            if (clearanceBelow(level, 1)) {
+                crash(level);
+                return;
+            }
+            Vec3 motion = new Vec3(0, -fallSpeed, 0);
+            setDeltaMovement(motion);
+            move(MoverType.SELF, motion);
+            if (verticalCollision) crash(level);
+            return;
+        }
         setXRot(Mth.approach(getXRot(), 0, 4f));
         double speed = InterstellarConfig.SERVER.landingSpeed.get();
         if (clearanceBelow(level, 2)) {
@@ -755,7 +826,7 @@ public class SpacecraftEntity extends Entity implements IEntityWithComplexSpawn 
             ItemStack load = cannonLoad[i];
             if (ShipWeapons.fire(level, shooter, muzzle, dir, load, shipScale())) {
                 cannonCooldown[i] = ShipWeapons.cooldown(load);
-                if (!load.isEmpty() && ShipWeapons.consumesAmmo(load)) {
+                if (!load.isEmpty() && ShipWeapons.consumesAmmo(load) && !inSpace()) { // ammunition is unlimited in space
                     load.shrink(1);
                     if (load.isEmpty()) cannonLoad[i] = ItemStack.EMPTY;
                     writeLoad(i);

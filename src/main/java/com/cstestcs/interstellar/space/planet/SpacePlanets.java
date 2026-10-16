@@ -76,6 +76,29 @@ public final class SpacePlanets {
         BlockState sea = seaLook(g, space);
         ForeignWorlds.Theme theme = ForeignWorlds.all().get(g.species()).theme();
         BlockState top = block(theme.topBlock), accent = block(theme.accentBlock);
+        int flagsBlob = Block.UPDATE_CLIENTS;
+        if (g.blob()) {
+            // End-like planets: an irregular rock, wrapped in an atmosphere that follows its surface.
+            int[] a = g.atmosphere();
+            BlockState atmosphere = ModBlocks.ATMOSPHERE.get().defaultBlockState();
+            BlockPos.MutableBlockPos q = new BlockPos.MutableBlockPos();
+            for (int x = Math.max(a[0], cx0); x < Math.min(a[3], cx0 + 16); x++) {
+                for (int z = Math.max(a[2], cz0); z < Math.min(a[5], cz0 + 16); z++) {
+                    for (int y = a[1]; y < a[4]; y++) {
+                        if (g.solidAt(x, y, z)) {
+                            boolean surface = !g.solidAt(x + 1, y, z) || !g.solidAt(x - 1, y, z) || !g.solidAt(x, y + 1, z) || !g.solidAt(x, y - 1, z)
+                                    || !g.solidAt(x, y, z + 1) || !g.solidAt(x, y, z - 1);
+                            int h = hash(x, y, z, g.seed());
+                            BlockState s = !surface ? stone : h % 11 == 0 ? accent : h % 4 == 0 ? top : stone;
+                            space.setBlock(q.set(x, y, z), s, flagsBlob);
+                        } else if (g.atmosphereShellAt(x, y, z) && space.getBlockState(q.set(x, y, z)).isAir()) {
+                            space.setBlock(q, atmosphere, flagsBlob);
+                        }
+                    }
+                }
+            }
+            return;
+        }
         int n = g.size(), x0 = g.x() - n / 2, y0 = g.y() - n / 2, z0 = g.z() - n / 2;
         // More sea the higher the planet's sea level (none for planets without seas).
         double seaShare = sea == null ? -1 : (g.seaLevel() - 40) / 160.0;
