@@ -229,17 +229,11 @@ disables custom bodies instead of crashing.
 
 ## Verification
 
-* ✅ `core` compiles and its 23 unit tests pass: race parsing, inheritance and selection; Blockbench model
-  interpretation; FBX round trip; body normalisation; vanilla-driven posing; Mixamo retargeting; armour mapping;
-  ship scanning; planet layout; gun stats, rolls and the shipped gun data.
-* ✅ Default bodies were rendered offline to check proportions and UVs (`docs/default-bodies-preview.png`).
-* ✅ The whole mod compiles against NeoForge 26.3 on GitHub Actions (`.github/workflows/build.yml`), and the
-  unit tests run there too.
-* ✅ A dedicated server boots with the mod: it creates the space dimension and the 12 foreign worlds, loads the
-  54 races and their assets, and loads 22 gun archetypes, 83 parts and 23 materials, with no errors.
-* ✅ The client starts with the mod (tested on CI with software rendering): bodies load, resources and textures load,
-  and an integrated server loads the mod's data. The first release crashed at startup (custom bodies were loaded
-  before the client existed); that is fixed.
-* ⚠️ Rendering inside a world (race heads and tails, custom bodies and armour deformation via `ModelMixin`,
-  spacecraft, gunsmith GUI) has not been seen in game yet.
-* ⚠️ Gun display transforms and placeholder textures will need tuning in game.
+* ✅ `core` compiles and its unit tests pass (race parsing and selection, model interpretation, FBX round trip, body
+  pipeline, armour fitting over whole limbs, mob texture conversion, ship and vehicle scanning, planet layout, guns).
+* ✅ The whole mod compiles against NeoForge 26.3 on GitHub Actions, and a dedicated server starts with it: every
+  dimension (including the new night-sky space settings and the foreign worlds' ore features), race file, recipe,
+  loot table and gun data loads without errors.
+* ✅ The client starts with the mod and loads its resources (tested with software rendering on CI).
+* ⚠️ Not yet seen in game: anything drawn in a world (bodies and armour bending, converted villager/illager skins,
+  the atmosphere glow, cannon sizes, gun material textures) and the feel of vehicles and alien ship AI.
