@@ -124,7 +124,6 @@ public class RangedItemGoal extends Goal {
         Vec3 aim = target.getEyePosition().subtract(0, target.getBbHeight() * 0.3, 0).add(0, Math.sqrt(dist) * 0.06, 0);
         Vec3 dir = aim.subtract(eye).normalize();
         mob.stopUsingItem();
-        mob.swing(InteractionHand.MAIN_HAND);
         ShipWeapons.fire(level, mob, eye.add(dir.scale(0.6)), dir, weapon, 1f);
         drawing = -1;
         cooldown = Math.max(10, ShipWeapons.cooldown(weapon)) + mob.getRandom().nextInt(10);
