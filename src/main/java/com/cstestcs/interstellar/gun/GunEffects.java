@@ -22,7 +22,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
@@ -165,7 +164,9 @@ public final class GunEffects {
             level.sendParticles(ParticleTypes.PORTAL, at.x, at.y, at.z, 20, 0.3, 0.5, 0.3, 0.3);
         }
         if (stats.has("lightning") && rng.nextInt(6) == 0) {
-            LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
+            EntityType<?> type = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE
+                    .getOptional(net.minecraft.resources.Identifier.withDefaultNamespace("lightning_bolt")).orElse(null);
+            Entity bolt = type == null ? null : type.create(level, EntitySpawnReason.TRIGGERED);
             if (bolt != null) {
                 bolt.setPos(living.position());
                 level.addFreshEntity(bolt);
