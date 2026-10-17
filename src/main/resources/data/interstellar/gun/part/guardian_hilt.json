@@ -1,0 +1,30 @@
+{
+  "slot": "receiver",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive"
+  ],
+  "modifiers": {
+    "range": {
+      "add": 0,
+      "mul": 1.1
+    }
+  },
+  "effects": [
+    "steadfast"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 3
+    },
+    {
+      "item": "minecraft:shield",
+      "count": 1
+    }
+  ]
+}

@@ -6,7 +6,8 @@
     "assault_rifle",
     "battle_rifle",
     "lmg",
-    "shotgun"
+    "shotgun",
+    "carbine"
   ],
   "effects": [
     "grenade"

@@ -24,6 +24,7 @@
   "themes": [
     "human"
   ],
+  "blade": "saber",
   "cost": [
     {
       "item": "minecraft:iron_block",

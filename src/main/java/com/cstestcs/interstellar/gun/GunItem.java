@@ -11,6 +11,7 @@ import java.util.SplittableRandom;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -127,14 +128,14 @@ public class GunItem extends Item {
         if (state.ammo() <= 0 && !infinite) return false;
         if (level instanceof ServerLevel server) {
             GunFiring.shoot(server, shooter, stats, GunFiring.color(stats));
-            if (!infinite) stack.set(ModComponents.GUN_STATE.get(), new GunCodecs.GunState(state.ammo() - 1, 0));
+            if (!infinite && !GunEffects.saveAmmo(stats, shooter)) stack.set(ModComponents.GUN_STATE.get(), new GunCodecs.GunState(state.ammo() - 1, 0));
             if (shooter instanceof Player p && stats.fireMode() != GunData.FireMode.AUTO) {
                 int burst = stats.fireMode() == GunData.FireMode.BURST ? (int) Math.round(stats.get(GunData.Stat.BURST)) * 3 : 0;
                 p.getCooldowns().addCooldown(stack, Math.max(stats.cooldownTicks(), burst));
             }
         } else if (shooter instanceof Player p) {
             // Recoil kick on the client; the server is authoritative for everything else.
-            float recoil = (float) stats.get(GunData.Stat.RECOIL) * (p.isCrouching() ? 0.5f : 1f);
+            float recoil = (float) stats.get(GunData.Stat.RECOIL) * (p.isCrouching() ? 0.5f : 1f) * (stats.has("steadfast") ? 0.5f : 1f);
             p.setXRot(p.getXRot() - recoil * 0.6f);
             p.setYRot(p.getYRot() + (p.getRandom().nextFloat() - 0.5f) * recoil * 0.3f);
         }
@@ -181,7 +182,11 @@ public class GunItem extends Item {
         line(out, "range", stats.get(GunData.Stat.RANGE), "%.0f");
         line(out, "reload_time", stats.get(GunData.Stat.RELOAD_TIME), "%.1fs");
         line(out, "spread", stats.get(GunData.Stat.SPREAD), "%.1f°");
-        if (!stats.effects().isEmpty()) out.accept(Component.literal("✦ " + String.join(", ", stats.effects())).withStyle(ChatFormatting.GOLD));
+        for (String fx : stats.effects()) {
+            MutableComponent l = Component.literal("✦ ").append(effectName(fx)).withStyle(ChatFormatting.GOLD);
+            if (flag.isAdvanced() || showDetails) l.append(Component.literal(" – ").append(effectDescription(fx)).withStyle(ChatFormatting.GRAY));
+            out.accept(l);
+        }
         if (flag.isAdvanced() || com.cstestcs.interstellar.gun.GunItem.showDetails) {
             for (Map.Entry<GunData.Slot, GunBuild.Choice> e : build.parts().entrySet()) {
                 String mat = e.getValue().material() == null ? "" : " (" + pretty(e.getValue().material()) + ")";
@@ -193,6 +198,14 @@ public class GunItem extends Item {
 
     private static void line(Consumer<Component> out, String stat, double v, String fmt) {
         out.accept(Component.translatable("stat.interstellar.gun." + stat).append(": " + String.format(Locale.ROOT, fmt, v)).withStyle(ChatFormatting.GRAY));
+    }
+
+    public static Component effectName(String fx) {
+        return Component.translatableWithFallback("effect.interstellar.gun." + fx, pretty(fx));
+    }
+
+    public static Component effectDescription(String fx) {
+        return Component.translatableWithFallback("effect.interstellar.gun." + fx + ".desc", "");
     }
 
     public static String pretty(String id) {

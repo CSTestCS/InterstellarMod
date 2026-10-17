@@ -1,7 +1,8 @@
 {
   "textures": {
     "metal": "interstellar:item/gun/alien",
-    "particle": "interstellar:item/gun/alien"
+    "particle": "interstellar:item/gun/alien",
+    "power": "interstellar:item/gun/power"
   },
   "display": {
     "thirdperson_righthand": {
@@ -127,14 +128,14 @@
   "elements": [
     {
       "from": [
-        5,
-        8,
-        5.5
+        5.25,
+        6.75,
+        10.0
       ],
       "to": [
-        9,
-        11,
-        10.5
+        7.75,
+        9.25,
+        12.5
       ],
       "faces": {
         "north": {
@@ -143,8 +144,8 @@
           "uv": [
             0,
             0,
-            4,
-            3
+            2.5,
+            2.5
           ]
         },
         "south": {
@@ -153,8 +154,8 @@
           "uv": [
             0,
             0,
-            4,
-            3
+            2.5,
+            2.5
           ]
         },
         "east": {
@@ -163,8 +164,8 @@
           "uv": [
             0,
             0,
-            5.0,
-            3
+            2.5,
+            2.5
           ]
         },
         "west": {
@@ -173,8 +174,8 @@
           "uv": [
             0,
             0,
-            5.0,
-            3
+            2.5,
+            2.5
           ]
         },
         "up": {
@@ -183,8 +184,8 @@
           "uv": [
             0,
             0,
-            4,
-            5.0
+            2.5,
+            2.5
           ]
         },
         "down": {
@@ -193,22 +194,22 @@
           "uv": [
             0,
             0,
-            4,
-            5.0
+            2.5,
+            2.5
           ]
         }
       }
     },
     {
       "from": [
-        6,
-        11,
-        6.5
+        7.75,
+        8,
+        10.75
       ],
       "to": [
-        8,
-        12,
-        9.5
+        8.75,
+        8.75,
+        11.5
       ],
       "faces": {
         "north": {
@@ -217,7 +218,7 @@
           "uv": [
             0,
             0,
-            2,
+            1,
             1
           ]
         },
@@ -227,7 +228,7 @@
           "uv": [
             0,
             0,
-            2,
+            1,
             1
           ]
         },
@@ -237,7 +238,7 @@
           "uv": [
             0,
             0,
-            3.0,
+            1,
             1
           ]
         },
@@ -247,7 +248,7 @@
           "uv": [
             0,
             0,
-            3.0,
+            1,
             1
           ]
         },
@@ -257,8 +258,8 @@
           "uv": [
             0,
             0,
-            2,
-            3.0
+            1,
+            1
           ]
         },
         "down": {
@@ -267,8 +268,304 @@
           "uv": [
             0,
             0,
-            2,
-            3.0
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5.75,
+        9.25,
+        11.5
+      ],
+      "to": [
+        6.5,
+        10.5,
+        12.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1.25
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1.25
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1.25
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1.25
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4.5,
+        7,
+        11.0
+      ],
+      "to": [
+        5.25,
+        7.75,
+        11.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8.25,
+        9.75,
+        13.0
+      ],
+      "to": [
+        9.0,
+        10.5,
+        13.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4.0,
+        10,
+        8.75
+      ],
+      "to": [
+        4.5,
+        10.5,
+        9.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
           ]
         }
       }

@@ -1,0 +1,47 @@
+{
+  "slot": "sight",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "revolver",
+    "hand_cannon",
+    "smg",
+    "carbine",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "railgun",
+    "shotgun",
+    "lmg",
+    "flamethrower",
+    "grenade_launcher",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "zoom": {
+      "add": 1.5,
+      "mul": 1
+    }
+  },
+  "effects": [
+    "darkness"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:spyglass",
+      "count": 1
+    },
+    {
+      "item": "minecraft:magma_block",
+      "count": 2
+    },
+    {
+      "item": "minecraft:redstone",
+      "count": 4
+    }
+  ]
+}

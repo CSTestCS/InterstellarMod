@@ -1,0 +1,24 @@
+{
+  "slot": "grip",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive"
+  ],
+  "effects": [
+    "pull"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:chain",
+      "count": 6
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 2
+    }
+  ]
+}

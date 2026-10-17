@@ -1,0 +1,44 @@
+{
+  "slot": "barrel",
+  "tier": 4,
+  "alien": true,
+  "archetypes": [
+    "plasma_pistol",
+    "plasma_rifle",
+    "needler",
+    "spiker",
+    "arc_caster",
+    "fusion_rifle",
+    "beam_rifle",
+    "gravity_rifle",
+    "fuel_rod_cannon",
+    "shard_launcher",
+    "void_lance",
+    "sonic_disruptor",
+    "bio_spitter"
+  ],
+  "modifiers": {
+    "velocity": {
+      "add": 0,
+      "mul": 0.8
+    }
+  },
+  "effects": [
+    "gravity_well"
+  ],
+  "themes": [
+    "void",
+    "cryo",
+    "crystal"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 6
+    },
+    {
+      "item": "interstellar:void_shard",
+      "count": 2
+    }
+  ]
+}

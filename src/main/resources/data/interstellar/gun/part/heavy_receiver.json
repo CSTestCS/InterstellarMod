@@ -8,7 +8,9 @@
     "sniper_rifle",
     "hand_cannon",
     "lmg",
-    "shotgun"
+    "shotgun",
+    "revolver",
+    "railgun"
   ],
   "modifiers": {
     "damage": {
@@ -24,6 +26,9 @@
       "mul": 1.3
     }
   },
+  "effects": [
+    "stagger"
+  ],
   "cost": [
     {
       "item": "minecraft:netherite_ingot",

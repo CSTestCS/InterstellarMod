@@ -1,0 +1,46 @@
+{
+  "alien": false,
+  "tier": 4,
+  "fire_mode": "melee",
+  "ammo": "energy",
+  "magazine": "energy_cell",
+  "stats": {
+    "damage": 10,
+    "fire_rate": 80,
+    "magazine": 56,
+    "reload_time": 1.8,
+    "range": 1.0,
+    "spread": 0
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "grip"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "human"
+  ],
+  "blade": "glaive",
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 6
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 4
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "count": 1
+    },
+    {
+      "item": "minecraft:netherite_ingot",
+      "count": 1
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "slot": "magazine",
+  "tier": 3,
+  "alien": true,
+  "archetypes": [
+    "needler",
+    "shard_launcher",
+    "bio_spitter"
+  ],
+  "modifiers": {
+    "magazine": {
+      "add": 0,
+      "mul": 1.3
+    }
+  },
+  "effects": [
+    "cluster"
+  ],
+  "themes": [
+    "bio",
+    "toxic"
+  ],
+  "color": "#8cff3a",
+  "cost": [
+    {
+      "item": "interstellar:bio_gel",
+      "count": 4
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "slot": "muzzle",
+  "tier": 2,
+  "alien": false,
+  "archetypes": [
+    "shotgun",
+    "flamethrower",
+    "smg"
+  ],
+  "modifiers": {
+    "spread": {
+      "add": 0,
+      "mul": 1.4
+    },
+    "pellets": {
+      "add": 2,
+      "mul": 1
+    }
+  },
+  "effects": [
+    "spray"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 6
+    },
+    {
+      "item": "minecraft:hopper",
+      "count": 1
+    }
+  ]
+}

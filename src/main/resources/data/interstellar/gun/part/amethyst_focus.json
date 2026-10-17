@@ -3,8 +3,16 @@
   "tier": 2,
   "alien": false,
   "archetypes": [
-    "laser_sword"
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive",
+    "railgun"
   ],
+  "effects": [
+    "shatter"
+  ],
+  "color": "#c77dff",
   "cost": [
     {
       "item": "minecraft:amethyst_shard",

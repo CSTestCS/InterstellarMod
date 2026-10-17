@@ -23,6 +23,9 @@
       "mul": 3
     }
   },
+  "effects": [
+    "launch"
+  ],
   "cost": [
     {
       "item": "minecraft:diamond",

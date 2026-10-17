@@ -6,14 +6,20 @@
     "plasma_pistol",
     "plasma_rifle",
     "needler",
+    "spiker",
+    "arc_caster",
     "fusion_rifle",
     "beam_rifle",
+    "gravity_rifle",
     "fuel_rod_cannon",
     "shard_launcher",
     "void_lance",
     "sonic_disruptor",
     "bio_spitter",
-    "energy_sword"
+    "energy_sword",
+    "energy_dagger",
+    "plasma_scythe",
+    "gravity_hammer"
   ],
   "modifiers": {
     "damage": {
@@ -22,11 +28,13 @@
     }
   },
   "effects": [
-    "ignite"
+    "concussive",
+    "echo"
   ],
   "themes": [
     "plasma"
   ],
+  "color": "#2fb8ff",
   "cost": [
     {
       "item": "interstellar:plasma_core",

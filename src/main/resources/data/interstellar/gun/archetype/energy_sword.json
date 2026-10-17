@@ -35,6 +35,7 @@
     "hydro",
     "sonic"
   ],
+  "blade": "prongs",
   "cost": [
     {
       "item": "interstellar:alien_alloy",

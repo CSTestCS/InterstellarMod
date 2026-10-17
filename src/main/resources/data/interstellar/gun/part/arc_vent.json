@@ -1,0 +1,38 @@
+{
+  "slot": "muzzle",
+  "tier": 3,
+  "alien": true,
+  "archetypes": [
+    "plasma_pistol",
+    "plasma_rifle",
+    "needler",
+    "spiker",
+    "arc_caster",
+    "fusion_rifle",
+    "beam_rifle",
+    "gravity_rifle",
+    "fuel_rod_cannon",
+    "shard_launcher",
+    "void_lance",
+    "sonic_disruptor",
+    "bio_spitter"
+  ],
+  "effects": [
+    "chain"
+  ],
+  "themes": [
+    "tech",
+    "hydro",
+    "sonic"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:tech_chip",
+      "count": 2
+    },
+    {
+      "item": "minecraft:lightning_rod",
+      "count": 1
+    }
+  ]
+}

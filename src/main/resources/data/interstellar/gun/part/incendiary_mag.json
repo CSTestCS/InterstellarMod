@@ -1,0 +1,44 @@
+{
+  "slot": "magazine",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "revolver",
+    "hand_cannon",
+    "smg",
+    "carbine",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "railgun",
+    "shotgun",
+    "lmg",
+    "flamethrower",
+    "grenade_launcher",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 0.9
+    }
+  },
+  "effects": [
+    "ignite"
+  ],
+  "color": "#ff6a1a",
+  "cost": [
+    {
+      "item": "minecraft:blaze_powder",
+      "count": 6
+    },
+    {
+      "item": "minecraft:iron_block",
+      "count": 1
+    }
+  ]
+}

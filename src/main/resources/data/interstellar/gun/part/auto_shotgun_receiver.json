@@ -15,6 +15,9 @@
       "mul": 0.85
     }
   },
+  "effects": [
+    "spray"
+  ],
   "fire_mode": "auto",
   "cost": [
     {

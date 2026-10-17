@@ -35,6 +35,12 @@ public class GunProjectile extends Projectile {
     private int life = 100;
     private boolean homing;
     private float explosion;
+    /** Path effects: entities it may still pass through, block bounces left, and the rest. */
+    private int pierceLeft, bounces, age;
+    private boolean split, accelerate, arc, phase;
+    private float damageMul = 1;
+    private double startSpeed;
+    private final java.util.Set<Integer> struck = new java.util.HashSet<>();
 
     public GunProjectile(EntityType<? extends GunProjectile> type, Level level) {
         super(type, level);
@@ -45,15 +51,45 @@ public class GunProjectile extends Projectile {
         GunProjectile p = new GunProjectile(ModEntities.GUN_PROJECTILE.get(), level);
         p.setOwner(shooter);
         p.stats = stats;
-        p.homing = stats.ammo() == GunData.AmmoType.NEEDLE;
+        p.homing = stats.ammo() == GunData.AmmoType.NEEDLE || stats.has("homing");
         p.explosion = stats.ammo() == GunData.AmmoType.EXPLOSIVE ? (float) Math.min(4, 1 + stats.get(GunData.Stat.EFFECT_POWER)) : 0;
+        p.pierceLeft = stats.has("pierce") ? 3 : 0;
+        p.bounces = stats.has("ricochet") ? 3 : 0;
+        p.split = stats.has("split");
+        p.accelerate = stats.has("accelerate");
+        p.arc = stats.has("arc");
+        p.phase = stats.has("phase");
         double speed = stats.get(GunData.Stat.VELOCITY);
+        if (p.accelerate) speed *= 0.5; // starts slow, speeds up
+        p.startSpeed = speed;
         p.life = (int) Math.min(200, stats.get(GunData.Stat.RANGE) / Math.max(0.2, speed)) + 2;
         p.setPos(pos);
         p.setDeltaMovement(dir.scale(speed));
         p.entityData.set(COLOR, color);
-        p.entityData.set(SIZE, p.explosion > 0 ? 0.35f : 0.18f);
+        p.entityData.set(SIZE, p.explosion > 0 ? 0.35f : p.phase ? 0.26f : 0.18f);
         level.addFreshEntity(p);
+    }
+
+    /** A smaller copy flying off at an angle (split rounds). */
+    private void spawnChild(ServerLevel level, Vec3 dir) {
+        GunProjectile c = new GunProjectile(ModEntities.GUN_PROJECTILE.get(), level);
+        c.setOwner(getOwner());
+        c.stats = stats;
+        c.homing = homing;
+        c.explosion = explosion * 0.5f;
+        c.pierceLeft = pierceLeft;
+        c.bounces = bounces;
+        c.accelerate = accelerate;
+        c.arc = arc;
+        c.phase = phase;
+        c.damageMul = damageMul * 0.45f;
+        c.startSpeed = startSpeed;
+        c.life = life;
+        c.setPos(position());
+        c.setDeltaMovement(dir.scale(getDeltaMovement().length()));
+        c.entityData.set(COLOR, color());
+        c.entityData.set(SIZE, size() * 0.7f);
+        level.addFreshEntity(c);
     }
 
     /** Spacecraft cannon shell: fixed stats, damage scaled with the ship. */
@@ -104,13 +140,35 @@ public class GunProjectile extends Projectile {
                 discard();
                 return;
             }
+            age++;
             if (homing) steer();
-            HitResult hit = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
+            if (arc) setDeltaMovement(getDeltaMovement().add(0, -0.045, 0));
+            if (accelerate && getDeltaMovement().length() < startSpeed * 4) setDeltaMovement(getDeltaMovement().scale(1.09));
+            if (split && age == 5) {
+                split = false;
+                Vec3 d = getDeltaMovement().normalize();
+                Vec3 side = d.cross(new Vec3(0, 1, 0));
+                if (side.lengthSqr() < 1e-4) side = new Vec3(1, 0, 0);
+                side = side.normalize().scale(0.22);
+                spawnChild(server, d.add(side).normalize());
+                spawnChild(server, d.subtract(side).normalize());
+                damageMul *= 0.6f;
+            }
+            motion = getDeltaMovement();
+            HitResult hit;
+            if (phase) {
+                // Phasing rounds pass through blocks: only entities stop them.
+                Vec3 from = position(), to = from.add(motion);
+                hit = ProjectileUtil.getEntityHitResult(server, this, from, to, getBoundingBox().expandTowards(motion).inflate(1), this::canHitEntity, 0.3f);
+                if (hit == null) hit = net.minecraft.world.phys.BlockHitResult.miss(to, net.minecraft.core.Direction.UP, blockPosition());
+            } else hit = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
             if (hit.getType() != HitResult.Type.MISS) {
                 onHit(hit);
                 if (isRemoved()) return;
+                motion = getDeltaMovement();
             }
-            server.sendParticles(new DustParticleOptions(color(), 0.8f), getX(), getY(), getZ(), 1, 0, 0, 0, 0);
+            server.sendParticles(new DustParticleOptions(color(), phase ? 1.2f : 0.8f), getX(), getY(), getZ(), 1, 0, 0, 0, 0);
+            if (accelerate && age % 2 == 0) server.sendParticles(net.minecraft.core.particles.ParticleTypes.FIREWORK, getX(), getY(), getZ(), 1, 0, 0, 0, 0);
         }
         setPos(getX() + motion.x, getY() + motion.y, getZ() + motion.z);
     }
@@ -132,24 +190,48 @@ public class GunProjectile extends Projectile {
     protected boolean canHitEntity(Entity target) {
         Entity owner = getOwner();
         return super.canHitEntity(target) && target != owner && !(owner != null && owner.isPassengerOfSameVehicle(target))
-                && !(target instanceof GunProjectile);
+                && !(target instanceof GunProjectile) && !struck.contains(target.getId());
     }
 
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (level() instanceof ServerLevel server && stats != null) {
             LivingEntity shooter = getOwner() instanceof LivingEntity l ? l : null;
-            if (shooter != null) GunFiring.applyHit(server, shooter, result.getEntity(), result.getLocation(), stats, 1f);
-            else result.getEntity().hurtServer(server, damageSources().magic(), (float) stats.get(GunData.Stat.DAMAGE));
-            explode(server, result.getLocation());
+            // Accelerating rounds hit harder the farther they flew.
+            float mul = damageMul * (accelerate ? Math.min(1.8f, 1 + age * 0.04f) : 1);
+            if (shooter != null) GunFiring.applyHit(server, shooter, result.getEntity(), result.getLocation(), stats, mul);
+            else result.getEntity().hurtServer(server, damageSources().magic(), (float) stats.get(GunData.Stat.DAMAGE) * mul);
+            struck.add(result.getEntity().getId());
+            if (pierceLeft-- > 0) return; // flies on through
+            land(server, result.getLocation(), shooter);
         }
         discard();
     }
 
     @Override
     protected void onHitBlock(BlockHitResult result) {
-        if (level() instanceof ServerLevel server) explode(server, result.getLocation());
+        if (phase) return;
+        if (level() instanceof ServerLevel server) {
+            if (bounces-- > 0) {
+                // Ricochet: mirror the motion off the face it hit and lose a little speed.
+                Vec3 m = getDeltaMovement();
+                net.minecraft.core.Direction.Axis axis = result.getDirection().getAxis();
+                m = new Vec3(axis == net.minecraft.core.Direction.Axis.X ? -m.x : m.x, axis == net.minecraft.core.Direction.Axis.Y ? -m.y : m.y,
+                        axis == net.minecraft.core.Direction.Axis.Z ? -m.z : m.z).scale(0.85);
+                setDeltaMovement(m);
+                setPos(result.getLocation().add(m.normalize().scale(0.05)));
+                struck.clear();
+                server.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT, getX(), getY(), getZ(), 4, 0.05, 0.05, 0.05, 0.1);
+                return;
+            }
+            land(server, result.getLocation(), getOwner() instanceof LivingEntity l ? l : null);
+        }
         discard();
+    }
+
+    private void land(ServerLevel server, Vec3 at, @Nullable LivingEntity shooter) {
+        explode(server, at);
+        if (shooter != null && stats != null) GunEffects.impact(server, shooter, at, stats, color());
     }
 
     private void explode(ServerLevel level, Vec3 at) {

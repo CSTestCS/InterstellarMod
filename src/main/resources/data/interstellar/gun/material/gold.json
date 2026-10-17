@@ -12,7 +12,9 @@
       "mul": 1.1
     }
   },
-  "effects": [],
+  "effects": [
+    "ammo_saver"
+  ],
   "alien": false,
   "themes": []
 }

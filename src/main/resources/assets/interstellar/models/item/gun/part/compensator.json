@@ -1,7 +1,8 @@
 {
   "textures": {
     "metal": "interstellar:item/gun/metal",
-    "particle": "interstellar:item/gun/metal"
+    "particle": "interstellar:item/gun/metal",
+    "power": "interstellar:item/gun/power"
   },
   "display": {
     "thirdperson_righthand": {
@@ -132,7 +133,7 @@
         7
       ],
       "to": [
-        21.5,
+        22,
         9.75,
         9
       ],
@@ -143,7 +144,7 @@
           "uv": [
             0,
             0,
-            1.5,
+            2,
             2.0
           ]
         },
@@ -153,7 +154,7 @@
           "uv": [
             0,
             0,
-            1.5,
+            2,
             2.0
           ]
         },
@@ -183,7 +184,7 @@
           "uv": [
             0,
             0,
-            1.5,
+            2,
             2
           ]
         },
@@ -193,8 +194,82 @@
           "uv": [
             0,
             0,
-            1.5,
+            2,
             2
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        20.5,
+        9.75,
+        7.5
+      ],
+      "to": [
+        21.5,
+        10.25,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
           ]
         }
       }

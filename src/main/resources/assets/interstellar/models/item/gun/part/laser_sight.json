@@ -1,7 +1,8 @@
 {
   "textures": {
     "metal": "interstellar:item/gun/metal",
-    "particle": "interstellar:item/gun/metal"
+    "particle": "interstellar:item/gun/metal",
+    "power": "interstellar:item/gun/power"
   },
   "display": {
     "thirdperson_righthand": {
@@ -128,13 +129,13 @@
     {
       "from": [
         11,
-        6.5,
-        7.5
+        6.75,
+        7.75
       ],
       "to": [
         13,
         7.5,
-        8.5
+        8.25
       ],
       "faces": {
         "north": {
@@ -194,6 +195,80 @@
             0,
             0,
             2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        6.9,
+        7.9
+      ],
+      "to": [
+        13.5,
+        7.35,
+        8.1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
             1
           ]
         }

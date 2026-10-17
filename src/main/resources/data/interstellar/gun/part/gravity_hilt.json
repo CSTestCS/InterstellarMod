@@ -1,0 +1,35 @@
+{
+  "slot": "receiver",
+  "tier": 4,
+  "alien": true,
+  "archetypes": [
+    "energy_sword",
+    "energy_dagger",
+    "plasma_scythe",
+    "gravity_hammer"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.15
+    }
+  },
+  "effects": [
+    "slam"
+  ],
+  "themes": [
+    "void",
+    "cryo",
+    "sonic"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 10
+    },
+    {
+      "item": "interstellar:void_shard",
+      "count": 2
+    }
+  ]
+}

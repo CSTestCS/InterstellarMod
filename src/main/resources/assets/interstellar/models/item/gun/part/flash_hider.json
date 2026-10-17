@@ -1,7 +1,8 @@
 {
   "textures": {
     "metal": "interstellar:item/gun/metal",
-    "particle": "interstellar:item/gun/metal"
+    "particle": "interstellar:item/gun/metal",
+    "power": "interstellar:item/gun/power"
   },
   "display": {
     "thirdperson_righthand": {
@@ -128,12 +129,234 @@
     {
       "from": [
         20,
+        9.25,
+        7.75
+      ],
+      "to": [
+        22.5,
+        9.75,
+        8.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        20,
         7.75,
+        7.75
+      ],
+      "to": [
+        22.5,
+        8.25,
+        8.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        20,
+        8.5,
         7
       ],
       "to": [
-        21.5,
-        9.75,
+        22.5,
+        9,
+        7.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        20,
+        8.5,
+        8.5
+      ],
+      "to": [
+        22.5,
+        9,
         9
       ],
       "faces": {
@@ -143,8 +366,8 @@
           "uv": [
             0,
             0,
-            1.5,
-            2.0
+            2.5,
+            1
           ]
         },
         "south": {
@@ -153,8 +376,8 @@
           "uv": [
             0,
             0,
-            1.5,
-            2.0
+            2.5,
+            1
           ]
         },
         "east": {
@@ -163,8 +386,8 @@
           "uv": [
             0,
             0,
-            2,
-            2.0
+            1,
+            1
           ]
         },
         "west": {
@@ -173,8 +396,8 @@
           "uv": [
             0,
             0,
-            2,
-            2.0
+            1,
+            1
           ]
         },
         "up": {
@@ -183,8 +406,8 @@
           "uv": [
             0,
             0,
-            1.5,
-            2
+            2.5,
+            1
           ]
         },
         "down": {
@@ -193,8 +416,8 @@
           "uv": [
             0,
             0,
-            1.5,
-            2
+            2.5,
+            1
           ]
         }
       }

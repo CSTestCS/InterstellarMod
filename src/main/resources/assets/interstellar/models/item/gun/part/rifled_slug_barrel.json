@@ -1,7 +1,8 @@
 {
   "textures": {
     "metal": "interstellar:item/gun/metal",
-    "particle": "interstellar:item/gun/metal"
+    "particle": "interstellar:item/gun/metal",
+    "power": "interstellar:item/gun/power"
   },
   "display": {
     "thirdperson_righthand": {
@@ -128,13 +129,13 @@
     {
       "from": [
         10,
-        8,
-        7.25
+        7.75,
+        7
       ],
       "to": [
-        17,
-        9.5,
-        8.75
+        16,
+        9.75,
+        9
       ],
       "faces": {
         "north": {
@@ -143,8 +144,8 @@
           "uv": [
             0,
             0,
-            7,
-            1.5
+            6,
+            2.0
           ]
         },
         "south": {
@@ -153,8 +154,8 @@
           "uv": [
             0,
             0,
-            7,
-            1.5
+            6,
+            2.0
           ]
         },
         "east": {
@@ -163,8 +164,8 @@
           "uv": [
             0,
             0,
-            1.5,
-            1.5
+            2,
+            2.0
           ]
         },
         "west": {
@@ -173,8 +174,8 @@
           "uv": [
             0,
             0,
-            1.5,
-            1.5
+            2,
+            2.0
           ]
         },
         "up": {
@@ -183,8 +184,8 @@
           "uv": [
             0,
             0,
-            7,
-            1.5
+            6,
+            2
           ]
         },
         "down": {
@@ -193,8 +194,82 @@
           "uv": [
             0,
             0,
-            7,
-            1.5
+            6,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        7.5,
+        6.75
+      ],
+      "to": [
+        13,
+        10,
+        9.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            2.5
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            2.5
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.5
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            2.5,
+            2.5
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            2.5
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1,
+            2.5
           ]
         }
       }

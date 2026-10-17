@@ -1,0 +1,42 @@
+{
+  "alien": false,
+  "tier": 3,
+  "fire_mode": "melee",
+  "ammo": "energy",
+  "magazine": "energy_cell",
+  "stats": {
+    "damage": 5.5,
+    "fire_rate": 170,
+    "magazine": 90,
+    "reload_time": 1.0,
+    "range": 0.6,
+    "spread": 0
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "grip"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "human"
+  ],
+  "blade": "dagger",
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 5
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 3
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "count": 1
+    }
+  ]
+}

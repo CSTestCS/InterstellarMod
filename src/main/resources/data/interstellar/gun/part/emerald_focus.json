@@ -1,0 +1,32 @@
+{
+  "slot": "core",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive",
+    "railgun"
+  ],
+  "modifiers": {
+    "reload_time": {
+      "add": 0,
+      "mul": 0.7
+    }
+  },
+  "effects": [
+    "leech"
+  ],
+  "color": "#36ff6a",
+  "cost": [
+    {
+      "item": "minecraft:emerald",
+      "count": 6
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "count": 2
+    }
+  ]
+}

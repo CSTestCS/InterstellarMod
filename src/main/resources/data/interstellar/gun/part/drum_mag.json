@@ -6,6 +6,8 @@
     "smg",
     "assault_rifle",
     "lmg",
+    "pulse_rifle",
+    "carbine",
     "shotgun"
   ],
   "modifiers": {
@@ -18,6 +20,9 @@
       "mul": 1.5
     }
   },
+  "effects": [
+    "spray"
+  ],
   "cost": [
     {
       "item": "minecraft:iron_block",

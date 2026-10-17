@@ -6,7 +6,8 @@
     "sniper_rifle",
     "dmr",
     "scout_rifle",
-    "beam_rifle"
+    "beam_rifle",
+    "railgun"
   ],
   "modifiers": {
     "zoom": {
@@ -18,6 +19,9 @@
       "mul": 0.6
     }
   },
+  "effects": [
+    "reaper"
+  ],
   "cost": [
     {
       "item": "minecraft:spyglass",

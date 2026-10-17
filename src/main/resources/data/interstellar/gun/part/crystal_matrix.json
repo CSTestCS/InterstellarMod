@@ -13,10 +13,14 @@
       "mul": 1.8
     }
   },
+  "effects": [
+    "shatter"
+  ],
   "themes": [
     "crystal",
     "bio"
   ],
+  "color": "#ff8cf0",
   "cost": [
     {
       "item": "interstellar:crystal_lattice",

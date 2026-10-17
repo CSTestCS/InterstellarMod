@@ -4,27 +4,38 @@
   "alien": false,
   "archetypes": [
     "pistol",
+    "revolver",
     "hand_cannon",
     "smg",
+    "carbine",
     "assault_rifle",
     "battle_rifle",
     "pulse_rifle",
     "scout_rifle",
     "dmr",
     "sniper_rifle",
+    "railgun",
     "shotgun",
     "lmg",
+    "flamethrower",
+    "grenade_launcher",
     "rocket_launcher",
     "plasma_pistol",
     "plasma_rifle",
     "needler",
+    "spiker",
+    "arc_caster",
     "fusion_rifle",
     "beam_rifle",
+    "gravity_rifle",
     "fuel_rod_cannon",
     "shard_launcher",
     "void_lance",
     "sonic_disruptor",
     "bio_spitter"
+  ],
+  "effects": [
+    "stagger"
   ],
   "cost": [
     {

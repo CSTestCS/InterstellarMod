@@ -1,0 +1,47 @@
+{
+  "slot": "barrel",
+  "tier": 2,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "revolver",
+    "hand_cannon",
+    "smg",
+    "carbine",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "railgun",
+    "shotgun",
+    "lmg",
+    "flamethrower",
+    "grenade_launcher",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "recoil": {
+      "add": 0,
+      "mul": 0.7
+    },
+    "velocity": {
+      "add": 0,
+      "mul": 1.1
+    }
+  },
+  "effects": [
+    "arc"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 1
+    },
+    {
+      "item": "minecraft:gunpowder",
+      "count": 6
+    }
+  ]
+}

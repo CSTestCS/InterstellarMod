@@ -3,7 +3,13 @@
   "tier": 3,
   "alien": true,
   "archetypes": [
-    "energy_sword"
+    "energy_sword",
+    "energy_dagger",
+    "plasma_scythe",
+    "gravity_hammer"
+  ],
+  "effects": [
+    "lunge"
   ],
   "cost": [
     {

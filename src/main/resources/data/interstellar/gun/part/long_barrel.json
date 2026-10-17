@@ -4,16 +4,21 @@
   "alien": false,
   "archetypes": [
     "pistol",
+    "revolver",
     "hand_cannon",
     "smg",
+    "carbine",
     "assault_rifle",
     "battle_rifle",
     "pulse_rifle",
     "scout_rifle",
     "dmr",
     "sniper_rifle",
+    "railgun",
     "shotgun",
     "lmg",
+    "flamethrower",
+    "grenade_launcher",
     "rocket_launcher"
   ],
   "modifiers": {
@@ -34,6 +39,9 @@
       "mul": 1.2
     }
   },
+  "effects": [
+    "accelerate"
+  ],
   "cost": [
     {
       "item": "minecraft:iron_block",

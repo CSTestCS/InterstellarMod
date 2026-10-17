@@ -1,0 +1,32 @@
+{
+  "slot": "core",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive",
+    "railgun"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.1
+    }
+  },
+  "effects": [
+    "ignite"
+  ],
+  "color": "#ff2a2a",
+  "cost": [
+    {
+      "item": "minecraft:redstone_block",
+      "count": 4
+    },
+    {
+      "item": "minecraft:blaze_rod",
+      "count": 2
+    }
+  ]
+}

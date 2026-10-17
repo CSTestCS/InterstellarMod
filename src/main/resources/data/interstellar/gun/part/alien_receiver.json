@@ -6,13 +6,19 @@
     "plasma_pistol",
     "plasma_rifle",
     "needler",
+    "spiker",
+    "arc_caster",
     "fusion_rifle",
     "beam_rifle",
+    "gravity_rifle",
     "fuel_rod_cannon",
     "shard_launcher",
     "void_lance",
     "sonic_disruptor",
     "bio_spitter"
+  ],
+  "effects": [
+    "mark"
   ],
   "cost": [
     {

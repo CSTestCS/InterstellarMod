@@ -1,0 +1,26 @@
+{
+  "slot": "grip",
+  "tier": 2,
+  "alien": true,
+  "archetypes": [
+    "energy_sword",
+    "energy_dagger",
+    "plasma_scythe",
+    "gravity_hammer"
+  ],
+  "modifiers": {
+    "fire_rate": {
+      "add": 0,
+      "mul": 1.05
+    }
+  },
+  "effects": [
+    "leech"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 2
+    }
+  ]
+}

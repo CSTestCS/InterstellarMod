@@ -9,7 +9,7 @@
     }
   },
   "effects": [
-    "levitate"
+    "warp"
   ],
   "alien": true,
   "themes": [

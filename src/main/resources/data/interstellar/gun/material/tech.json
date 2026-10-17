@@ -9,7 +9,7 @@
     }
   },
   "effects": [
-    "chain"
+    "echo"
   ],
   "alien": true,
   "themes": [

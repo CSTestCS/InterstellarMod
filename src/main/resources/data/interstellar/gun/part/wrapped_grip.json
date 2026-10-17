@@ -3,7 +3,10 @@
   "tier": 1,
   "alien": false,
   "archetypes": [
-    "laser_sword"
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive"
   ],
   "modifiers": {
     "fire_rate": {
@@ -11,6 +14,9 @@
       "mul": 1.1
     }
   },
+  "effects": [
+    "adrenaline"
+  ],
   "cost": [
     {
       "item": "minecraft:leather",

@@ -19,6 +19,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
  * Laser and energy swords (melee archetypes). Their attack damage and speed come from their stats while the blade
@@ -27,9 +28,8 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
  */
 @EventBusSubscriber(modid = Interstellar.MODID)
 public final class BladeEvents {
-    private static final net.minecraft.resources.Identifier DAMAGE = Interstellar.id("blade_damage"), SPEED = Interstellar.id("blade_speed");
-    /** Effects such as chain lightning hurt other mobs with the same attack; they must not trigger more effects. */
-    private static final ThreadLocal<Boolean> APPLYING = ThreadLocal.withInitial(() -> false);
+    private static final net.minecraft.resources.Identifier DAMAGE = Interstellar.id("blade_damage"), SPEED = Interstellar.id("blade_speed"),
+            BAYONET = Interstellar.id("bayonet"), STEADFAST = Interstellar.id("steadfast");
 
     private BladeEvents() {}
 
@@ -42,6 +42,15 @@ public final class BladeEvents {
     @SubscribeEvent
     static void onAttributes(ItemAttributeModifierEvent event) {
         ItemStack stack = event.getItemStack();
+        if (!(stack.getItem() instanceof GunItem)) return;
+        GunRegistry.Stats any = GunItem.stats(stack);
+        if (any != null && any.has("steadfast")) {
+            event.addModifier(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(STEADFAST, 0.5, AttributeModifier.Operation.ADD_VALUE),
+                    EquipmentSlotGroup.MAINHAND);
+        }
+        if (any != null && any.has("bayonet") && any.fireMode() != GunData.FireMode.MELEE) {
+            event.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(BAYONET, 5, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+        }
         GunRegistry.Stats stats = blade(stack);
         if (stats == null) return;
         boolean lit = GunItem.state(stack).ammo() > 0;
@@ -51,9 +60,28 @@ public final class BladeEvents {
         event.addModifier(Attributes.ATTACK_SPEED, new AttributeModifier(SPEED, speed, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
     }
 
+    /** Blade damage effects (execute, armour shred, lunges, slams...) and parrying blades. */
+    @SubscribeEvent
+    static void onIncoming(LivingIncomingDamageEvent event) {
+        if (GunEffects.secondary() || !(event.getEntity().level() instanceof ServerLevel level)) return;
+        DamageSource source = event.getSource();
+        LivingEntity target = event.getEntity();
+        if (source.getEntity() instanceof LivingEntity attacker && source.getDirectEntity() == attacker) {
+            GunRegistry.Stats stats = blade(attacker.getMainHandItem());
+            if (stats != null && GunItem.state(attacker.getMainHandItem()).ammo() > 0) {
+                event.setAmount(event.getAmount() * GunEffects.damageMultiplier(stats, attacker, target, true));
+            }
+            ItemStack guard = target.getMainHandItem();
+            GunRegistry.Stats parry = blade(guard);
+            if (parry != null && parry.has("parry") && GunItem.state(guard).ammo() > 0) {
+                event.setAmount(GunEffects.parry(level, target, attacker, event.getAmount()));
+            }
+        }
+    }
+
     @SubscribeEvent
     static void onHit(LivingDamageEvent.Post event) {
-        if (APPLYING.get()) return;
+        if (GunEffects.secondary()) return;
         DamageSource source = event.getSource();
         if (!(source.getEntity() instanceof LivingEntity attacker) || source.getDirectEntity() != attacker) return;
         if (!(attacker.level() instanceof ServerLevel level)) return;
@@ -66,13 +94,8 @@ public final class BladeEvents {
             return;
         }
         LivingEntity target = event.getEntity();
-        APPLYING.set(true);
-        try {
-            GunFiring.applyEffects(level, attacker, target, target.position().add(0, target.getBbHeight() * 0.6, 0), stats, event.getInflictedDamage(), source);
-        } finally {
-            APPLYING.set(false);
-        }
-        boolean infinite = !(attacker instanceof Player p) || p.getAbilities().instabuild;
+        GunFiring.applyEffects(level, attacker, target, target.position().add(0, target.getBbHeight() * 0.6, 0), stats, event.getInflictedDamage(), source);
+        boolean infinite = !(attacker instanceof Player p) || p.getAbilities().instabuild || GunEffects.saveAmmo(stats, attacker);
         if (!infinite) stack.set(ModComponents.GUN_STATE.get(), new GunCodecs.GunState(state.ammo() - 1, state.reloadUntil()));
         level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 0.5f, 1.8f);
     }

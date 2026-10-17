@@ -1,0 +1,45 @@
+{
+  "alien": false,
+  "tier": 3,
+  "fire_mode": "auto",
+  "ammo": "plasma",
+  "magazine": "fuel_canister",
+  "stats": {
+    "damage": 2.5,
+    "fire_rate": 1000,
+    "magazine": 80,
+    "reload_time": 3.0,
+    "spread": 7,
+    "range": 12,
+    "velocity": 0.9,
+    "effect_power": 2
+  },
+  "slots": [
+    "receiver",
+    "barrel",
+    "grip",
+    "magazine",
+    "muzzle"
+  ],
+  "required": [
+    "receiver",
+    "barrel"
+  ],
+  "themes": [
+    "human"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 5
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 3
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "count": 1
+    }
+  ]
+}

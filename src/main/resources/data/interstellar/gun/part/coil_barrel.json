@@ -1,0 +1,38 @@
+{
+  "slot": "barrel",
+  "tier": 5,
+  "alien": false,
+  "archetypes": [
+    "railgun",
+    "sniper_rifle",
+    "dmr",
+    "scout_rifle"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.2
+    },
+    "velocity": {
+      "add": 0,
+      "mul": 1.6
+    }
+  },
+  "effects": [
+    "lightning"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:netherite_ingot",
+      "count": 1
+    },
+    {
+      "item": "minecraft:lightning_rod",
+      "count": 4
+    },
+    {
+      "item": "minecraft:copper_block",
+      "count": 2
+    }
+  ]
+}

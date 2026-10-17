@@ -1,9 +1,8 @@
 package com.cstestcs.interstellar.gun;
 
+import com.cstestcs.interstellar.core.gun.EffectCatalog;
 import com.cstestcs.interstellar.core.gun.GunData;
 import com.cstestcs.interstellar.core.gun.GunRegistry;
-import java.util.List;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -13,9 +12,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -41,13 +37,21 @@ public final class GunFiring {
         int pellets = (int) Math.round(stats.get(GunData.Stat.PELLETS));
         double spread = stats.get(GunData.Stat.SPREAD) * (shooter.isCrouching() ? 0.6 : 1.0);
         if (shooter instanceof Player p && p.isUsingItem() && stats.get(GunData.Stat.ZOOM) > 1.5 && p.isCrouching()) spread *= 0.4;
+        if (stats.has("steadfast") && shooter.getDeltaMovement().horizontalDistanceSqr() < 0.003) spread *= 0.5;
+        if (stats.has("spray")) {
+            pellets += 2;
+            spread += 4;
+        }
+        boolean travels = stats.ammo() != GunData.AmmoType.BALLISTIC;
+        for (String fx : EffectCatalog.NEEDS_PROJECTILE) if (stats.has(fx)) travels = true;
         for (int i = 0; i < pellets; i++) {
             Vec3 dir = spread(look, spread, rng);
-            if (stats.ammo() == GunData.AmmoType.BALLISTIC) hitscan(level, shooter, eye, dir, stats, color);
+            if (!travels) hitscan(level, shooter, eye, dir, stats, color);
             else GunProjectile.spawn(level, shooter, eye.add(dir.scale(0.6)), dir, stats, color);
         }
+        GunEffects.onFire(level, shooter, stats, eye, look);
         level.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(), sound(stats), SoundSource.PLAYERS,
-                stats.effects().contains("silent") ? 0.2f : 1.0f, 0.9f + rng.nextFloat() * 0.2f);
+                stats.has("silent") ? 0.2f : 1.0f, 0.9f + rng.nextFloat() * 0.2f);
     }
 
     static Vec3 spread(Vec3 dir, double degrees, RandomSource rng) {
@@ -74,10 +78,11 @@ public final class GunFiring {
             hits++;
             if (!pierce) end = hit.getLocation();
         }
-        tracer(level, from.add(dir.scale(1.0)), end, color);
+        if (!stats.has("silent")) tracer(level, from.add(dir.scale(1.0)), end, color);
         if (block.getType() != HitResult.Type.MISS && hits == 0) {
             level.sendParticles(ParticleTypes.SMOKE, end.x, end.y, end.z, 3, 0.05, 0.05, 0.05, 0.01);
         }
+        if (hits > 0 || block.getType() != HitResult.Type.MISS) GunEffects.impact(level, shooter, end, stats, color);
     }
 
     private static void tracer(ServerLevel level, Vec3 from, Vec3 to, int color) {
@@ -93,47 +98,27 @@ public final class GunFiring {
     /** Applies damage and material/part effects to whatever a shot or projectile hit. */
     public static void applyHit(ServerLevel level, LivingEntity shooter, Entity target, Vec3 at, GunRegistry.Stats stats, float multiplier) {
         float damage = (float) stats.get(GunData.Stat.DAMAGE) * multiplier;
-        if (target instanceof LivingEntity living && at.y > living.getEyeY() - 0.3) damage *= (float) stats.get(GunData.Stat.HEADSHOT);
+        if (target instanceof LivingEntity living) {
+            if (at.y > living.getEyeY() - 0.3) damage *= (float) stats.get(GunData.Stat.HEADSHOT);
+            damage *= GunEffects.damageMultiplier(stats, shooter, living, false);
+        }
         damage *= 1 + (float) stats.get(GunData.Stat.ARMOR_PIERCE) * 0.5f;
         DamageSource source = shooter instanceof Player p ? level.damageSources().playerAttack(p) : level.damageSources().mobAttack(shooter);
-        boolean hurt = target.hurtServer(level, source, damage);
-        if (!hurt || !(target instanceof LivingEntity living)) return;
+        float dealt = damage;
+        boolean[] hurt = { false };
+        GunEffects.quietly(() -> hurt[0] = target.hurtServer(level, source, dealt));
+        if (!hurt[0] || !(target instanceof LivingEntity living)) return;
         living.setInvulnerableTime(0); // automatic weapons would otherwise lose most of their damage
-        applyEffects(level, shooter, living, at, stats, damage, source);
+        GunEffects.onHit(level, shooter, living, at, stats, damage, source, color(stats));
     }
 
-    /** On-hit effects of the weapon's parts and materials (fire, freezing, poison, chain lightning...). */
+    /** On-hit effects of the weapon's parts and materials (used by blades, whose damage is the attack itself). */
     public static void applyEffects(ServerLevel level, LivingEntity shooter, LivingEntity living, Vec3 at, GunRegistry.Stats stats, float damage,
             DamageSource source) {
-        Entity target = living;
-        int power = 1 + (int) stats.get(GunData.Stat.EFFECT_POWER);
-        List<String> fx = stats.effects();
-        if (fx.contains("ignite")) living.igniteForSeconds(2f + power);
-        if (fx.contains("freeze")) {
-            living.setTicksFrozen(Math.min(living.getTicksFrozen() + 40 * power, 300));
-            effect(living, MobEffects.SLOWNESS, 40 * power, 1);
-        }
-        if (fx.contains("poison")) effect(living, MobEffects.POISON, 30 * power, 0);
-        if (fx.contains("wither")) effect(living, MobEffects.WITHER, 30 * power, 0);
-        if (fx.contains("levitate")) effect(living, MobEffects.LEVITATION, 10 * power, 0);
-        if (fx.contains("blind")) effect(living, MobEffects.BLINDNESS, 20 * power, 0);
-        if (fx.contains("knockback")) living.push(living.position().subtract(shooter.position()).normalize().scale(0.4 * power));
-        if (fx.contains("shatter") && living.getRandom().nextInt(5) == 0) {
-            target.hurtServer(level, source, damage * 0.5f);
-            level.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 8, 0.2, 0.2, 0.2, 0.2);
-        }
-        if (fx.contains("chain")) {
-            int chained = 0;
-            for (LivingEntity near : level.getEntitiesOfClass(LivingEntity.class, living.getBoundingBox().inflate(4), e -> e != living && e != shooter && e.isAlive())) {
-                near.hurtServer(level, source, damage * 0.4f);
-                level.sendParticles(ParticleTypes.ELECTRIC_SPARK, near.getX(), near.getY(0.5), near.getZ(), 6, 0.2, 0.3, 0.2, 0.1);
-                if (++chained >= 2) break;
-            }
-        }
-    }
-
-    private static void effect(LivingEntity e, Holder<MobEffect> effect, int ticks, int amp) {
-        e.addEffect(new MobEffectInstance(effect, ticks, amp));
+        int color = color(stats);
+        GunEffects.onHit(level, shooter, living, at, stats, damage, source, color);
+        GunEffects.impact(level, shooter, at, stats, color);
+        GunEffects.melee(level, shooter, living, stats, damage, source, color);
     }
 
     private static SoundEvent sound(GunRegistry.Stats stats) {
@@ -146,8 +131,12 @@ public final class GunFiring {
         };
     }
 
-    /** Projectile and tracer colour: the barrel's (or receiver's/core's) material colour, else a default per ammo type. */
+    /**
+     * Shot and blade colour: the power source (core, focus crystal, special rounds) tinted by its housing, else the
+     * barrel's (or receiver's) material colour, else a default per ammo type.
+     */
     public static int color(GunRegistry.Stats stats) {
+        if (stats.powerColor() >= 0) return stats.powerColor();
         for (GunData.Slot s : new GunData.Slot[] { GunData.Slot.CORE, GunData.Slot.BARREL, GunData.Slot.RECEIVER }) {
             Integer c = stats.colors().get(s);
             if (c != null) return c;

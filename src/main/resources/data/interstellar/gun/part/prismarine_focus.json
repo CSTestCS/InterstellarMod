@@ -1,0 +1,32 @@
+{
+  "slot": "core",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive",
+    "railgun"
+  ],
+  "modifiers": {
+    "range": {
+      "add": 0,
+      "mul": 1.2
+    }
+  },
+  "effects": [
+    "knockback"
+  ],
+  "color": "#3affd8",
+  "cost": [
+    {
+      "item": "minecraft:prismarine_crystals",
+      "count": 8
+    },
+    {
+      "item": "minecraft:heart_of_the_sea",
+      "count": 1
+    }
+  ]
+}

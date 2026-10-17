@@ -1,7 +1,8 @@
 {
   "textures": {
     "metal": "interstellar:item/gun/alien",
-    "particle": "interstellar:item/gun/alien"
+    "particle": "interstellar:item/gun/alien",
+    "power": "interstellar:item/gun/power"
   },
   "display": {
     "thirdperson_righthand": {
@@ -132,7 +133,7 @@
         6.5
       ],
       "to": [
-        10,
+        6,
         10,
         9.5
       ],
@@ -143,7 +144,7 @@
           "uv": [
             0,
             0,
-            7,
+            3,
             4
           ]
         },
@@ -153,7 +154,7 @@
           "uv": [
             0,
             0,
-            7,
+            3,
             4
           ]
         },
@@ -183,7 +184,7 @@
           "uv": [
             0,
             0,
-            7,
+            3,
             3.0
           ]
         },
@@ -193,7 +194,155 @@
           "uv": [
             0,
             0,
-            7,
+            3,
+            3.0
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.5,
+        6.5,
+        6.5
+      ],
+      "to": [
+        8,
+        9.5,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1.5,
+            3.0
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1.5,
+            3.0
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            3.0,
+            3.0
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            3.0,
+            3.0
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1.5,
+            3.0
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1.5,
+            3.0
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8.5,
+        7,
+        6.5
+      ],
+      "to": [
+        10,
+        9,
+        9.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1.5,
+            2
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1.5,
+            2
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            3.0,
+            2
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            3.0,
+            2
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1.5,
+            3.0
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "tintindex": 0,
+          "uv": [
+            0,
+            0,
+            1.5,
             3.0
           ]
         }
@@ -202,12 +351,12 @@
     {
       "from": [
         4,
-        9.5,
+        10.25,
         7
       ],
       "to": [
         9,
-        11,
+        10.75,
         9
       ],
       "faces": {
@@ -218,7 +367,7 @@
             0,
             0,
             5,
-            1.5
+            1
           ]
         },
         "south": {
@@ -228,7 +377,7 @@
             0,
             0,
             5,
-            1.5
+            1
           ]
         },
         "east": {
@@ -238,7 +387,7 @@
             0,
             0,
             2,
-            1.5
+            1
           ]
         },
         "west": {
@@ -248,7 +397,7 @@
             0,
             0,
             2,
-            1.5
+            1
           ]
         },
         "up": {

@@ -1,0 +1,48 @@
+{
+  "slot": "magazine",
+  "tier": 3,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "revolver",
+    "hand_cannon",
+    "smg",
+    "carbine",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "railgun",
+    "shotgun",
+    "lmg",
+    "flamethrower",
+    "grenade_launcher",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "armor_pierce": {
+      "add": 0.3,
+      "mul": 1
+    },
+    "magazine": {
+      "add": 0,
+      "mul": 0.8
+    }
+  },
+  "effects": [
+    "armor_shred"
+  ],
+  "color": "#c9d6e3",
+  "cost": [
+    {
+      "item": "minecraft:netherite_scrap",
+      "count": 1
+    },
+    {
+      "item": "minecraft:iron_block",
+      "count": 1
+    }
+  ]
+}

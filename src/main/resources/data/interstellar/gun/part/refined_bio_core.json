@@ -6,14 +6,20 @@
     "plasma_pistol",
     "plasma_rifle",
     "needler",
+    "spiker",
+    "arc_caster",
     "fusion_rifle",
     "beam_rifle",
+    "gravity_rifle",
     "fuel_rod_cannon",
     "shard_launcher",
     "void_lance",
     "sonic_disruptor",
     "bio_spitter",
-    "energy_sword"
+    "energy_sword",
+    "energy_dagger",
+    "plasma_scythe",
+    "gravity_hammer"
   ],
   "modifiers": {
     "effect_power": {
@@ -26,11 +32,13 @@
     }
   },
   "effects": [
-    "poison"
+    "poison",
+    "echo"
   ],
   "themes": [
     "bio"
   ],
+  "color": "#7dff2a",
   "cost": [
     {
       "item": "interstellar:bio_gel",

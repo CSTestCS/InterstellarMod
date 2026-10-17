@@ -201,27 +201,46 @@ there directly.
 
 There is a single **gun** item, a single **magazine** item, and 11 alien materials. Everything else is data:
 
-* `data/<ns>/gun/archetype/*.json`: 24 families inspired by Halo, Destiny, Call of Duty and Star Wars (pistol, hand
-  cannon, SMG, assault, battle, pulse and scout rifles, DMR, sniper, shotgun, LMG, rocket launcher; plasma pistol and
-  rifle, needler, fusion rifle, beam rifle, fuel rod cannon, shard launcher, void lance, sonic disruptor, bio spitter;
-  and two blades, the laser sword and the alien energy sword).
-* `gun/part/*.json`: 92 parts across 9 slots (receiver, barrel, stock, grip, magazine, sight, muzzle,
-  underbarrel, alien core). Each has stat modifiers, fire-mode/ammo overrides, effects and a model.
+* `data/<ns>/gun/archetype/*.json`: 38 families inspired by Halo, Destiny, Call of Duty and Star Wars. Guns: pistol,
+  revolver, hand cannon, SMG, carbine, assault, battle, pulse and scout rifles, DMR, sniper, railgun, shotgun, LMG,
+  flamethrower, grenade and rocket launchers; plasma pistol and rifle, needler, spiker, arc caster, fusion, beam and
+  gravity rifles, fuel rod cannon, shard launcher, void lance, sonic disruptor, bio spitter. Blades: laser sword,
+  dagger, greatsword and glaive; alien energy sword and dagger, plasma scythe and gravity hammer.
+* `gun/part/*.json`: 130 parts across 9 slots (receiver, barrel, stock, grip, magazine, sight, muzzle,
+  underbarrel, core). Each has stat modifiers, fire-mode/ammo overrides, effects and a model.
 * `gun/material/*.json`: 23 materials. New frames and every installed part need a material in the table's
-  material slot (one is used up each time); it adds its look, stat changes and on-hit effects (ignite, freeze, poison, chain, pierce, shatter, levitate…).
+  material slot (one is used up each time); it adds its look, stat changes and its own effect.
 * Trims: an armour-trim template plus a trim material recolours the gun's trim layer.
 
-**Blades** (laser sword, energy sword) are built like guns (hilt, focus crystal or alien core, grip) but strike
-instead of shooting: their damage and swing speed come from their stats, every hit uses one charge of the blade and
-applies the material effects, and an empty blade is reloaded with energy cells like a gun. The blade glows in the
-colour of its core's material, with the same soft glow as planet atmospheres, and its length is the range stat.
+**Every option is different.** Each part and each material has its own model and its own effect, and no two options
+for the same slot share either, so changing one choice changes both the look and how the weapon fights. There are 51
+effects (hover a part in the Gunsmith Table to read them):
+
+* on hit: ignite, freeze, poison, wither, levitate, blind, slow, weaken, nausea, famish, darkness, knockback, pull,
+  launch, stagger, shatter, chain, leech, mark, warp, lightning, echo (the hit repeats), bleed, disarm, shockwave,
+  plague; on kills: reaper (heal and absorption), adrenaline (speed and haste);
+* damage: execute (low-health targets), armour shred (armoured targets), volatile (harder hits, occasional misfires);
+* blades: sweep, lunge, slam (falling slams hit hardest), parry (halves blows from the front);
+* firing: silent, ammo saver, steadfast, spray, underbarrel grenades, bayonet;
+* rounds: pierce, ricochet, homing, split, accelerate, arc, phase (through blocks); impacts: cluster bomblets,
+  gravity well, concussive blast. Ballistic guns with a round-changing effect fire visible rounds instead of hitscan.
+
+**Power sources set the colour.** Cores, focus crystals and special rounds (incendiary, armour-piercing, cryo,
+explosive, crystal matrix, spore sac) have a colour: shots, tracers and blades take it, tinted a little by the material
+the source is made of, and the source glows in that colour on the weapon.
+
+**Blades** are built like guns (hilt, focus crystal or alien core, grip) but strike instead of shooting: their damage
+and swing speed come from their stats, every hit uses one charge of the blade and applies the weapon's effects, and an
+empty blade is reloaded with energy cells like a gun. Each family has its own blade shape (saber, tapering dagger,
+broad greatsword, double-ended glaive, split energy prongs, curved scythe, hammer head) with the same soft glow as
+planet atmospheres; its length is the range stat.
 
 Each installed part changes the model, and each part shows the block of its material (gold block for gold parts,
 diamond block for diamond; alien materials have their own storage blocks). Parts are covered with the block's
 actual model as loaded, so whatever a resource pack or mod does to that block (retextures, emissive or metallic
 layers, overlays, render types) shows on the gun too. The default part models are copied to
 `config/interstellar/gunmodels/` as an always-on resource pack: reshape any part there and every material version
-of it follows. Guns point forward in either hand. Guns have no durability. Reload with **R**
+of it follows (files you have not edited follow new defaults when the mod updates). Guns point forward in either hand. Guns have no durability. Reload with **R**
 using a magazine of the gun's kind; refill magazines at the **Gunsmith Table**. Human weapons need late-game
 overworld materials (diamond, netherite, nether stars). Alien weapons need alien materials, so for those, aliens
 (30% gun drop chance, randomly rolled builds) are the easier source.
@@ -239,7 +258,8 @@ wear any armour (vanilla or modded) whose repair material belongs to their speci
 Aliens (and any raced mob) fight with whatever they hold: guns are fired according to their fire mode, bows drawn,
 crossbows charged, tridents, snowballs, splash potions and other throwables thrown, and swords, axes, maces, laser
 and energy swords swung. Each species carries guns plus two or three other weapons from its race file's `Weapons`
-list (`blade` is an energy sword for aliens, a laser sword for humans); edit the list to arm them differently.
+list (`blade` is a random alien energy blade for aliens, a random laser blade for humans); edit the list to arm them
+differently.
 
 ## Commands
 

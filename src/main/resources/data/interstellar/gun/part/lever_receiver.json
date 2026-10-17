@@ -1,0 +1,39 @@
+{
+  "slot": "receiver",
+  "tier": 2,
+  "alien": false,
+  "archetypes": [
+    "revolver",
+    "carbine",
+    "shotgun",
+    "scout_rifle",
+    "dmr"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.15
+    },
+    "fire_rate": {
+      "add": 0,
+      "mul": 0.85
+    }
+  },
+  "effects": [
+    "knockback"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 2
+    },
+    {
+      "item": "minecraft:lever",
+      "count": 2
+    },
+    {
+      "item": "minecraft:oak_planks",
+      "count": 6
+    }
+  ]
+}

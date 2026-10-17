@@ -6,7 +6,8 @@
     "assault_rifle",
     "smg",
     "pistol",
-    "scout_rifle"
+    "scout_rifle",
+    "carbine"
   ],
   "modifiers": {
     "burst": {
@@ -18,6 +19,9 @@
       "mul": 0.8
     }
   },
+  "effects": [
+    "echo"
+  ],
   "fire_mode": "burst",
   "cost": [
     {

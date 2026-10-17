@@ -1,0 +1,34 @@
+{
+  "slot": "receiver",
+  "tier": 5,
+  "alien": false,
+  "archetypes": [
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.35
+    },
+    "fire_rate": {
+      "add": 0,
+      "mul": 0.75
+    }
+  },
+  "effects": [
+    "execute"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:netherite_ingot",
+      "count": 2
+    },
+    {
+      "item": "minecraft:wither_skeleton_skull",
+      "count": 1
+    }
+  ]
+}

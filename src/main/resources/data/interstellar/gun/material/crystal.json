@@ -9,7 +9,7 @@
     }
   },
   "effects": [
-    "shatter"
+    "split"
   ],
   "alien": true,
   "themes": [

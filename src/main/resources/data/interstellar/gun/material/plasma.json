@@ -9,7 +9,7 @@
     }
   },
   "effects": [
-    "ignite"
+    "concussive"
   ],
   "alien": true,
   "themes": [

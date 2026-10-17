@@ -78,11 +78,14 @@ public final class GunData {
      * and whether it is human (overworld-craftable) or alien tech.
      */
     public record Archetype(String id, boolean alien, int tier, FireMode fireMode, AmmoType ammo,
-            Map<Stat, Double> stats, Set<Slot> slots, Set<Slot> required, String magazineKind, List<String> themes) {}
+            Map<Stat, Double> stats, Set<Slot> slots, Set<Slot> required, String magazineKind, List<String> themes, String bladeStyle) {}
 
-    /** A swappable part. {@code archetypes} empty = fits every archetype that has the slot. */
+    /**
+     * A swappable part. {@code color}: set on power sources (cores, crystals, special rounds), it colours the shots
+     * and blades of the weapon. {@code archetypes} empty = fits every archetype that has the slot.
+     */
     public record Part(String id, Slot slot, boolean alien, int tier, Set<String> archetypes, Map<Stat, Modifier> modifiers,
-            FireMode fireModeOverride, AmmoType ammoOverride, List<String> effects, String model, List<String> themes) {}
+            FireMode fireModeOverride, AmmoType ammoOverride, List<String> effects, String model, List<String> themes, Integer color) {}
 
     /** Material a part is made from: colour tint, stat changes and on-hit effects. Looked up by item id. */
     public record Material(String id, String item, int color, int tier, Map<Stat, Modifier> modifiers, List<String> effects,

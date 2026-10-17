@@ -3,7 +3,11 @@
   "tier": 4,
   "alien": false,
   "archetypes": [
-    "laser_sword"
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive",
+    "railgun"
   ],
   "modifiers": {
     "armor_pierce": {
@@ -15,6 +19,10 @@
       "mul": 1.15
     }
   },
+  "effects": [
+    "darkness"
+  ],
+  "color": "#1d6fff",
   "cost": [
     {
       "item": "minecraft:echo_shard",

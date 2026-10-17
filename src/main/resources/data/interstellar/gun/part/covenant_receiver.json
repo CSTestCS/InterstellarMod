@@ -1,0 +1,45 @@
+{
+  "slot": "receiver",
+  "tier": 3,
+  "alien": true,
+  "archetypes": [
+    "plasma_pistol",
+    "plasma_rifle",
+    "needler",
+    "spiker",
+    "arc_caster",
+    "fusion_rifle",
+    "beam_rifle",
+    "gravity_rifle",
+    "fuel_rod_cannon",
+    "shard_launcher",
+    "void_lance",
+    "sonic_disruptor",
+    "bio_spitter"
+  ],
+  "modifiers": {
+    "fire_rate": {
+      "add": 0,
+      "mul": 1.15
+    }
+  },
+  "effects": [
+    "accelerate"
+  ],
+  "themes": [
+    "plasma",
+    "nether",
+    "solar",
+    "bio"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 8
+    },
+    {
+      "item": "interstellar:plasma_core",
+      "count": 2
+    }
+  ]
+}

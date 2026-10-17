@@ -3,7 +3,10 @@
   "tier": 4,
   "alien": false,
   "archetypes": [
-    "laser_sword"
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive"
   ],
   "modifiers": {
     "damage": {
@@ -15,6 +18,9 @@
       "mul": 0.85
     }
   },
+  "effects": [
+    "sweep"
+  ],
   "cost": [
     {
       "item": "minecraft:netherite_ingot",

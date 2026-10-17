@@ -1,0 +1,30 @@
+{
+  "slot": "grip",
+  "tier": 2,
+  "alien": false,
+  "archetypes": [
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.05
+    }
+  },
+  "effects": [
+    "stagger"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 1
+    },
+    {
+      "item": "minecraft:flint",
+      "count": 4
+    }
+  ]
+}

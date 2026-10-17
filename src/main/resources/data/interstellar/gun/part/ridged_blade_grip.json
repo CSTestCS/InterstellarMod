@@ -1,0 +1,30 @@
+{
+  "slot": "grip",
+  "tier": 3,
+  "alien": true,
+  "archetypes": [
+    "energy_sword",
+    "energy_dagger",
+    "plasma_scythe",
+    "gravity_hammer"
+  ],
+  "modifiers": {
+    "damage": {
+      "add": 0,
+      "mul": 1.08
+    }
+  },
+  "effects": [
+    "parry"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 3
+    },
+    {
+      "item": "minecraft:prismarine_shard",
+      "count": 4
+    }
+  ]
+}

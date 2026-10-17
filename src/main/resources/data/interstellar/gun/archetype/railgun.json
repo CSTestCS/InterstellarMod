@@ -1,0 +1,53 @@
+{
+  "alien": false,
+  "tier": 5,
+  "fire_mode": "charge",
+  "ammo": "energy",
+  "magazine": "energy_cell",
+  "stats": {
+    "damage": 40,
+    "fire_rate": 30,
+    "magazine": 3,
+    "reload_time": 3.8,
+    "spread": 0.0,
+    "recoil": 7,
+    "range": 300,
+    "velocity": 14,
+    "zoom": 5,
+    "armor_pierce": 0.9,
+    "charge_time": 1.0
+  },
+  "slots": [
+    "receiver",
+    "barrel",
+    "stock",
+    "sight",
+    "magazine"
+  ],
+  "required": [
+    "receiver",
+    "barrel",
+    "stock"
+  ],
+  "themes": [
+    "human"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 7
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 5
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "count": 1
+    },
+    {
+      "item": "minecraft:netherite_ingot",
+      "count": 2
+    }
+  ]
+}

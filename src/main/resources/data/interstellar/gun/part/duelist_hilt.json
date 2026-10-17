@@ -3,7 +3,10 @@
   "tier": 4,
   "alien": false,
   "archetypes": [
-    "laser_sword"
+    "laser_sword",
+    "laser_dagger",
+    "laser_greatsword",
+    "laser_glaive"
   ],
   "modifiers": {
     "fire_rate": {
@@ -15,6 +18,9 @@
       "mul": 0.9
     }
   },
+  "effects": [
+    "lunge"
+  ],
   "cost": [
     {
       "item": "minecraft:diamond",

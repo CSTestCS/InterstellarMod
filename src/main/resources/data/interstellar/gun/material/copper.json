@@ -12,7 +12,9 @@
       "mul": 0.95
     }
   },
-  "effects": [],
+  "effects": [
+    "lightning"
+  ],
   "alien": false,
   "themes": []
 }

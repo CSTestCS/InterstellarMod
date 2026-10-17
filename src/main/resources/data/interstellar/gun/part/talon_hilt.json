@@ -1,0 +1,35 @@
+{
+  "slot": "receiver",
+  "tier": 3,
+  "alien": true,
+  "archetypes": [
+    "energy_sword",
+    "energy_dagger",
+    "plasma_scythe",
+    "gravity_hammer"
+  ],
+  "modifiers": {
+    "fire_rate": {
+      "add": 0,
+      "mul": 1.2
+    }
+  },
+  "effects": [
+    "bleed"
+  ],
+  "themes": [
+    "bio",
+    "toxic",
+    "nether"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 8
+    },
+    {
+      "item": "interstellar:bio_gel",
+      "count": 2
+    }
+  ]
+}

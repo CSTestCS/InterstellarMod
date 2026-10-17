@@ -368,7 +368,6 @@ SWORD_DISPLAY = {
     "gui": {"rotation": [0, 0, -45], "translation": [-3, -3, 0], "scale": [0.45, 0.45, 0.45]},
     "fixed": {"rotation": [0, 0, -45], "translation": [-2, -2, 0], "scale": [0.5, 0.5, 0.5]},
 }
-BLADES = ["laser_sword", "energy_sword"]
 
 
 def box(fr, to, tex="#metal", tint=0):
@@ -381,57 +380,13 @@ def clampbox(fr, to):
     return [max(-16, min(32, v)) for v in fr], [max(-16, min(32, v)) for v in to]
 
 
-def part_boxes(pid, slot, alien):
-    """Cuboids (in a 16-unit item space, gun pointing to +X) for a part, varied by keywords in its id."""
-    long_ = "long" in pid or "heavy" in pid or "emitter" in pid
-    short = "short" in pid
-    thick = 1 if ("heavy" in pid or "drum" in pid or "lmg" in pid) else 0
-    b = []
-    if slot == "receiver":
-        b.append(box([3, 6, 6.5], [10, 10 + thick, 9.5]))
-        if alien:
-            b.append(box([4, 9.5, 7], [9, 11, 9]))
-    elif slot == "barrel":
-        end = 15 if short else 20 if long_ else 17
-        b.append(box([10, 8, 7.25 - thick / 2], [end, 9.5 + thick / 2, 8.75 + thick / 2]))
-        if "fluted" in pid or "lens" in pid:
-            b.append(box([end - 3, 7.5, 7], [end - 1, 10, 9]))
-    elif slot == "stock":
-        b.append(box([-2 if "precision" in pid else -1, 6, 7], [3, 9 if "light" in pid else 10, 9]))
-    elif slot == "grip":
-        b.append(box([4.5, 3, 7.25], [6.5, 6, 8.75]) if "angled" not in pid else box([10.5, 4.5, 7.25], [12.5, 8, 8.75]))
-    elif slot == "magazine":
-        h = 2 if "speed" in pid else 4 if "extended" in pid else 3
-        if "drum" in pid:
-            b.append(box([6.5, 3, 6.5], [9.5, 6, 9.5]))
-        else:
-            b.append(box([7, 6 - h, 7.25], [8.75, 6, 8.75]))
-    elif slot == "sight":
-        if "scope" in pid:
-            ln = 6 if "sniper" in pid else 4
-            b.append(box([5, 10.5, 7.25], [5 + ln, 12, 8.75]))
-        else:
-            b.append(box([6, 10, 7.5], [8, 11, 8.5]))
-    elif slot == "muzzle":
-        b.append(box([20, 7.5, 6.75], [22.5, 10, 9.25]) if "suppressor" in pid else box([20, 7.75, 7], [21.5, 9.75, 9]))
-    elif slot == "underbarrel":
-        if "grenade" in pid:
-            b.append(box([11, 5.5, 7], [16, 7.5, 9]))
-        elif "bayonet" in pid:
-            b.append(box([16, 7, 7.75], [21, 8, 8.25]))
-        else:
-            b.append(box([11, 6.5, 7.5], [13, 7.5, 8.5]))
-    elif slot == "core":
-        b.append(box([5, 8, 5.5], [9, 11, 10.5]))
-        b.append(box([6, 11, 6.5], [8, 12, 9.5]))
-    return b
-
-
 def guns():
+    import gun_models as gm
     # grayscale metal textures, tinted by the material colour
     tex("item/gun/metal", (200, 200, 205), pattern="panel")
     tex("item/gun/alien", (200, 200, 205), accent=(255, 255, 255), pattern="glow")
     tex("item/gun/trim", (230, 230, 230), pattern="grate")
+    tex("item/gun/power", (235, 235, 235), accent=(255, 255, 255), pattern="glow")
     base = {"textures": {"metal": f"{NS}:item/gun/metal", "particle": f"{NS}:item/gun/metal"}, "display": GUN_DISPLAY}
     write_json(f"{A}/models/item/gun/base.json", {**base, "elements": [box([3, 6, 6.5], [10, 10, 9.5])]})
 
@@ -439,27 +394,82 @@ def guns():
     arch_dir = os.path.join(D, NS, "gun", "archetype")
     parts = {f[:-5]: json.load(open(os.path.join(part_dir, f))) for f in sorted(os.listdir(part_dir))}
     archs = {f[:-5]: json.load(open(os.path.join(arch_dir, f))) for f in sorted(os.listdir(arch_dir))}
+    blades = [aid for aid, a in archs.items() if a.get("fire_mode") == "melee"]
+    fits_blade = lambda p: any(a in blades for a in p.get("archetypes", [])) or not p.get("archetypes")
+    fits_gun = lambda p: any(a not in blades for a in p.get("archetypes", [])) or not p.get("archetypes")
+
+    def els(boxes):
+        return [box(list(a), list(b)) for a, b in boxes]
+
+    def glow_els(boxes):
+        out = []
+        for a, b in boxes:
+            e = box(list(a), list(b), tex="#power")
+            e["light_emission"] = 15
+            out.append(e)
+        return out
+
+    for kind in ("part", "blade_part", "power", "blade_power"):
+        shutil.rmtree(f"{A}/models/item/gun/{kind}", ignore_errors=True)
+    gun_shapes = {s: {} for s in ["receiver", "barrel", "stock", "grip", "magazine", "sight", "muzzle", "underbarrel", "core"]}
+    blade_shapes = {s: {} for s in ["receiver", "grip", "core"]}
+    shape_of = {"receiver": gm.receiver, "barrel": gm.barrel, "stock": gm.stock, "grip": gm.grip, "magazine": gm.magazine, "sight": gm.sight,
+                "muzzle": gm.muzzle, "underbarrel": gm.underbarrel, "core": lambda pid: gm.core(pid, gm.GUN_CORE_AT)}
+    blade_shape_of = {"receiver": gm.hilt, "grip": gm.blade_grip, "core": lambda pid: gm.core(pid, gm.BLADE_CORE_AT)}
+    power_models = {}  # part id -> (gun glow model or None, blade glow model or None)
     for pid, p in parts.items():
+        slot = p["slot"]
         texture = f"{NS}:item/gun/alien" if p.get("alien") else f"{NS}:item/gun/metal"
-        write_json(f"{A}/models/item/gun/part/{pid}.json", {"textures": {"metal": texture, "particle": texture}, "display": GUN_DISPLAY,
-                                                          "elements": part_boxes(pid, p["slot"], p.get("alien", False))})
-    # Frame per archetype: a small body that gives each family a silhouette even when parts are missing.
+        textures = {"metal": texture, "particle": texture, "power": f"{NS}:item/gun/power"}
+        if fits_gun(p):
+            boxes = shape_of[slot](pid)
+            if boxes is None:
+                raise SystemExit(f"gun part {pid} ({slot}) has no shape in tools/gun_models.py")
+            gun_shapes[slot][pid] = boxes
+            write_json(f"{A}/models/item/gun/part/{pid}.json", {"textures": textures, "display": GUN_DISPLAY, "elements": els(boxes)})
+        if fits_blade(p) and slot in blade_shape_of:
+            boxes = blade_shape_of[slot](pid)
+            if boxes is None:
+                raise SystemExit(f"blade part {pid} ({slot}) has no shape in tools/gun_models.py")
+            blade_shapes[slot][pid] = boxes
+            write_json(f"{A}/models/item/gun/blade_part/{pid}.json", {"textures": textures, "display": SWORD_DISPLAY, "elements": els(boxes)})
+        if "color" in p:
+            # Power sources glow in their colour on the weapon: the colour of its shots and blade.
+            g = b = None
+            glow = None
+            if slot == "core":
+                glow = gm.CORE_GLOW
+                if fits_gun(p):
+                    g = f"{NS}:item/gun/power/{pid}"
+                    write_json(f"{A}/models/item/gun/power/{pid}.json", {"textures": {"power": f"{NS}:item/gun/power", "particle": f"{NS}:item/gun/power"},
+                               "display": GUN_DISPLAY, "elements": glow_els(gm.shift([glow], *gm.GUN_CORE_AT))})
+                if fits_blade(p):
+                    b = f"{NS}:item/gun/blade_power/{pid}"
+                    write_json(f"{A}/models/item/gun/blade_power/{pid}.json", {"textures": {"power": f"{NS}:item/gun/power", "particle": f"{NS}:item/gun/power"},
+                               "display": SWORD_DISPLAY, "elements": glow_els(gm.shift([glow], *gm.BLADE_CORE_AT))})
+            elif pid in gm.MAG_GLOW:
+                g = f"{NS}:item/gun/power/{pid}"
+                write_json(f"{A}/models/item/gun/power/{pid}.json", {"textures": {"power": f"{NS}:item/gun/power", "particle": f"{NS}:item/gun/power"},
+                           "display": GUN_DISPLAY, "elements": glow_els([gm.MAG_GLOW[pid]])})
+            power_models[pid] = (g, b, int(p["color"][1:], 16))
+    for slot, shapes in gun_shapes.items():
+        gm.check_unique(f"gun {slot}", shapes)
+    for slot, shapes in blade_shapes.items():
+        gm.check_unique(f"blade {slot}", shapes)
+
+    # Frame per archetype: every family has its own body, even before parts are added.
+    frames = {}
     for aid, a in archs.items():
         texture = f"{NS}:item/gun/alien" if a.get("alien") else f"{NS}:item/gun/metal"
-        length = {"pistol": 2, "hand_cannon": 3, "smg": 4, "shotgun": 6, "lmg": 7, "sniper_rifle": 7, "rocket_launcher": 8}.get(aid, 5)
-        els = [box([3, 7, 7], [3 + length, 9, 9])]
-        display = GUN_DISPLAY
-        if aid in ("rocket_launcher", "fuel_rod_cannon"):
-            els = [box([0, 7, 6], [16, 11, 10])]
-        if aid in BLADES:
-            # Upright hilt: pommel, grip, guard and emitter. The blade is drawn by interstellar:laser_blade.
-            els = [box([6.75, 0, 6.75], [9.25, 1, 9.25]), box([7.25, 1, 7.25], [8.75, 8, 8.75]), box([6.5, 8, 6.5], [9.5, 9, 9.5]),
-                   box([7, 9, 7], [9, 11, 9])]
-            if aid == "energy_sword":
-                els = [box([7, 0, 6.5], [9, 7, 9.5]), box([5, 7, 6.75], [11, 9, 9.25]), box([4.5, 9, 7.25], [6, 11, 8.75]),
-                       box([10, 9, 7.25], [11.5, 11, 8.75])]
-            display = SWORD_DISPLAY
-        write_json(f"{A}/models/item/gun/frame/{aid}.json", {"textures": {"metal": texture, "particle": texture}, "display": display, "elements": els})
+        if aid in blades:
+            boxes, display = gm.blade_frame(aid), SWORD_DISPLAY
+        else:
+            boxes, display = gm.gun_frame(aid, a.get("alien")), GUN_DISPLAY
+        if boxes is None:
+            raise SystemExit(f"archetype {aid} has no frame shape in tools/gun_models.py")
+        frames[aid] = boxes
+        write_json(f"{A}/models/item/gun/frame/{aid}.json", {"textures": {"metal": texture, "particle": texture}, "display": display, "elements": els(boxes)})
+    gm.check_unique("frame", frames)
     write_json(f"{A}/models/item/gun/trim.json", {"textures": {"metal": f"{NS}:item/gun/trim", "particle": f"{NS}:item/gun/trim"}, "display": GUN_DISPLAY,
                                                   "elements": [box([3.5, 9.9, 6.4], [9.5, 10.2, 9.6]), box([3.5, 7, 6.3], [9.5, 7.5, 6.5])]})
 
@@ -471,7 +481,8 @@ def guns():
     for kind in ("part_material", "frame_material"):  # replaced by interstellar:block_textured item models
         shutil.rmtree(f"{A}/models/item/gun/{kind}", ignore_errors=True)
     index = ["assets/interstellar/models/item/gun/base.json", "assets/interstellar/models/item/gun/trim.json"]
-    index += [f"assets/interstellar/models/item/gun/part/{pid}.json" for pid in parts]
+    index += [f"assets/interstellar/models/item/gun/part/{pid}.json" for slot in gun_shapes.values() for pid in slot]
+    index += [f"assets/interstellar/models/item/gun/blade_part/{pid}.json" for slot in blade_shapes.values() for pid in slot]
     index += [f"assets/interstellar/models/item/gun/frame/{aid}.json" for aid in archs]
     with open(f"{A}/gunmodels_index.txt", "w") as f:
         f.write("\n".join(index) + "\n")
@@ -485,6 +496,13 @@ def guns():
                           for mid in materials],
                 "fallback": tinted(f"{NS}:item/gun/{kind}/{pid}", slot)}
 
+    def power_layer(slot, which):
+        cases = [{"when": pid, "model": {"type": "minecraft:model", "model": m[which], "tints": [{"type": "minecraft:constant", "value": (0xFF000000 | m[2]) - (1 << 32)}]}}
+                 for pid, m in power_models.items() if m[which] and parts[pid]["slot"] == slot]
+        if not cases:
+            return None
+        return {"type": "minecraft:select", "property": f"{NS}:gun_part", "slot": slot, "cases": cases, "fallback": {"type": "minecraft:empty"}}
+
     def tinted(model, slot=None, trim=False):
         t = {"type": f"{NS}:gun_material", "default": 0xFFFFFF}
         if slot:
@@ -497,20 +515,31 @@ def guns():
                "cases": [{"when": aid, "model": by_material("frame", aid, "receiver")} for aid in archs],
                "fallback": {"type": "minecraft:model", "model": f"{NS}:item/gun/base"}}]
     for slot in ["receiver", "barrel", "stock", "grip", "magazine", "sight", "muzzle", "underbarrel", "core"]:
-        cases = [{"when": pid, "model": by_material("part", pid, slot)} for pid, p in parts.items() if p["slot"] == slot]
+        cases = [{"when": pid, "model": by_material("part", pid, slot)} for pid in gun_shapes[slot]]
         if cases:
             layers.append({"type": "minecraft:select", "property": f"{NS}:gun_part", "slot": slot, "cases": cases, "fallback": {"type": "minecraft:empty"}})
+        glow = power_layer(slot, 0)
+        if glow:
+            layers.append(glow)
     patterns = ["sentry", "dune", "coast", "wild", "ward", "eye", "vex", "tide", "snout", "rib", "spire", "wayfinder", "shaper", "silence", "raiser",
                 "host", "flow", "bolt"]
     layers.append({"type": "minecraft:select", "property": f"{NS}:gun_info", "field": "trim",
                    "cases": [{"when": patterns, "model": tinted(f"{NS}:item/gun/trim", trim=True)}], "fallback": {"type": "minecraft:empty"}})
-    # Blades: the hilt (in its frame material) and the glowing blade; their parts change stats, not looks.
-    blade_cases = [{"when": aid, "model": {"type": "minecraft:composite", "models": [
-        by_material("frame", aid, "receiver"),
-        {"type": "minecraft:special", "base": f"{NS}:item/gun/frame/{aid}", "model": {"type": f"{NS}:laser_blade"}}]}}
-        for aid in BLADES if aid in archs]
-    model = {"type": "minecraft:select", "property": f"{NS}:gun_info", "field": "archetype", "cases": blade_cases,
-             "fallback": {"type": "minecraft:composite", "models": layers}}
+    # Blades: the hilt (in its frame material), its parts standing upright, the glowing power core and the blade.
+    blade_layers = []
+    for slot, shapes in blade_shapes.items():
+        cases = [{"when": pid, "model": by_material("blade_part", pid, slot)} for pid in shapes]
+        blade_layers.append({"type": "minecraft:select", "property": f"{NS}:gun_part", "slot": slot, "cases": cases, "fallback": {"type": "minecraft:empty"}})
+    glow = power_layer("core", 1)
+    if glow:
+        blade_layers.append(glow)
+    # One frame layer for every family, then either the blade layers or the gun layers (shared by all blades / guns).
+    frame_layer = layers[0]
+    blade = {"type": "minecraft:composite", "models": blade_layers + [
+        {"type": "minecraft:special", "base": f"{NS}:item/gun/frame/{blades[0]}", "model": {"type": f"{NS}:laser_blade"}}]}
+    model = {"type": "minecraft:composite", "models": [frame_layer, {
+        "type": "minecraft:select", "property": f"{NS}:gun_info", "field": "archetype", "cases": [{"when": blades, "model": blade}],
+        "fallback": {"type": "minecraft:composite", "models": layers[1:]}}]}
     # Written compactly: one select case per part and material makes this file large.
     os.makedirs(f"{A}/items", exist_ok=True)
     with open(f"{A}/items/gun.json", "w") as f:
@@ -587,6 +616,58 @@ def data():
 
 # ---------------------------------------------------------------- lang
 EXTRA_LANG = {
+    "effect.interstellar.gun.ignite": "Ignite", "effect.interstellar.gun.ignite.desc": "Sets the target on fire",
+    "effect.interstellar.gun.freeze": "Freeze", "effect.interstellar.gun.freeze.desc": "Freezes and slows the target",
+    "effect.interstellar.gun.poison": "Poison", "effect.interstellar.gun.poison.desc": "Poisons the target",
+    "effect.interstellar.gun.wither": "Wither", "effect.interstellar.gun.wither.desc": "Withers the target",
+    "effect.interstellar.gun.levitate": "Levitate", "effect.interstellar.gun.levitate.desc": "Lifts the target off the ground",
+    "effect.interstellar.gun.blind": "Blind", "effect.interstellar.gun.blind.desc": "Blinds the target",
+    "effect.interstellar.gun.knockback": "Knockback", "effect.interstellar.gun.knockback.desc": "Knocks the target away",
+    "effect.interstellar.gun.shatter": "Shatter", "effect.interstellar.gun.shatter.desc": "1 in 5 hits shatter for +50% damage",
+    "effect.interstellar.gun.chain": "Chain", "effect.interstellar.gun.chain.desc": "Arcs to nearby enemies for 40% damage",
+    "effect.interstellar.gun.leech": "Leech", "effect.interstellar.gun.leech.desc": "Heals you for 15% of the damage",
+    "effect.interstellar.gun.pull": "Pull", "effect.interstellar.gun.pull.desc": "Drags the target towards you",
+    "effect.interstellar.gun.launch": "Launch", "effect.interstellar.gun.launch.desc": "Throws the target into the air",
+    "effect.interstellar.gun.stagger": "Stagger", "effect.interstellar.gun.stagger.desc": "Stops the target in its tracks",
+    "effect.interstellar.gun.weaken": "Weaken", "effect.interstellar.gun.weaken.desc": "The target deals less damage",
+    "effect.interstellar.gun.nausea": "Nausea", "effect.interstellar.gun.nausea.desc": "Disorients the target",
+    "effect.interstellar.gun.mark": "Mark", "effect.interstellar.gun.mark.desc": "Marks targets (glowing); marked targets take +30% damage",
+    "effect.interstellar.gun.warp": "Warp", "effect.interstellar.gun.warp.desc": "1 in 3 hits teleport the target a few blocks",
+    "effect.interstellar.gun.lightning": "Lightning", "effect.interstellar.gun.lightning.desc": "1 in 6 hits call down lightning",
+    "effect.interstellar.gun.echo": "Echo", "effect.interstellar.gun.echo.desc": "The hit repeats a moment later for 35% damage",
+    "effect.interstellar.gun.disarm": "Disarm", "effect.interstellar.gun.disarm.desc": "1 in 6 hits knock the weapon out of a mob's hand",
+    "effect.interstellar.gun.famish": "Famish", "effect.interstellar.gun.famish.desc": "Drains the target's hunger",
+    "effect.interstellar.gun.darkness": "Darkness", "effect.interstellar.gun.darkness.desc": "Shrouds the target in darkness",
+    "effect.interstellar.gun.shockwave": "Shockwave", "effect.interstellar.gun.shockwave.desc": "Damages and pushes back enemies around the target",
+    "effect.interstellar.gun.plague": "Plague", "effect.interstellar.gun.plague.desc": "Poison spreads to enemies around the target",
+    "effect.interstellar.gun.reaper": "Reaper", "effect.interstellar.gun.reaper.desc": "Kills heal you and grant absorption",
+    "effect.interstellar.gun.slow": "Slow", "effect.interstellar.gun.slow.desc": "Heavily slows the target",
+    "effect.interstellar.gun.bleed": "Bleed", "effect.interstellar.gun.bleed.desc": "The target keeps bleeding after the hit",
+    "effect.interstellar.gun.adrenaline": "Adrenaline", "effect.interstellar.gun.adrenaline.desc": "Kills give you speed and haste",
+    "effect.interstellar.gun.execute": "Execute", "effect.interstellar.gun.execute.desc": "+75% damage against targets under 30% health",
+    "effect.interstellar.gun.armor_shred": "Armor Shred", "effect.interstellar.gun.armor_shred.desc": "More damage the more armour the target wears",
+    "effect.interstellar.gun.volatile": "Volatile", "effect.interstellar.gun.volatile.desc": "+25% damage, but the weapon sometimes misfires and hurts you",
+    "effect.interstellar.gun.sweep": "Sweep", "effect.interstellar.gun.sweep.desc": "Swings hit every enemy in front of you",
+    "effect.interstellar.gun.lunge": "Lunge", "effect.interstellar.gun.lunge.desc": "+40% damage while sprinting or jumping; carries you into the target",
+    "effect.interstellar.gun.slam": "Slam", "effect.interstellar.gun.slam.desc": "Strikes the ground around the target; falling slams hit much harder",
+    "effect.interstellar.gun.parry": "Parry", "effect.interstellar.gun.parry.desc": "While lit, halves melee blows from the front and shoves the attacker",
+    "effect.interstellar.gun.silent": "Silent", "effect.interstellar.gun.silent.desc": "Quiet shots without tracers",
+    "effect.interstellar.gun.ammo_saver": "Ammo Saver", "effect.interstellar.gun.ammo_saver.desc": "1 in 4 shots or strikes cost no charge",
+    "effect.interstellar.gun.steadfast": "Steadfast", "effect.interstellar.gun.steadfast.desc": "Half recoil, tighter aim standing still, knockback resistance",
+    "effect.interstellar.gun.spray": "Spray", "effect.interstellar.gun.spray.desc": "Two extra pellets over a wider spread",
+    "effect.interstellar.gun.grenade": "Grenade", "effect.interstellar.gun.grenade.desc": "Now and then lobs an underbarrel grenade",
+    "effect.interstellar.gun.bayonet": "Bayonet", "effect.interstellar.gun.bayonet.desc": "+5 melee damage",
+    "effect.interstellar.gun.pierce": "Pierce", "effect.interstellar.gun.pierce.desc": "Shots pass through up to 3 targets; blades hit the enemy behind too",
+    "effect.interstellar.gun.ricochet": "Ricochet", "effect.interstellar.gun.ricochet.desc": "Rounds bounce off blocks up to 3 times",
+    "effect.interstellar.gun.homing": "Homing", "effect.interstellar.gun.homing.desc": "Rounds steer towards targets",
+    "effect.interstellar.gun.split": "Split", "effect.interstellar.gun.split.desc": "Rounds split into three in flight",
+    "effect.interstellar.gun.accelerate": "Accelerate", "effect.interstellar.gun.accelerate.desc": "Rounds start slow, speed up and hit harder the farther they fly",
+    "effect.interstellar.gun.arc": "Arc", "effect.interstellar.gun.arc.desc": "Rounds are lobbed and fall in an arc",
+    "effect.interstellar.gun.phase": "Phase", "effect.interstellar.gun.phase.desc": "Rounds pass through blocks",
+    "effect.interstellar.gun.cluster": "Cluster", "effect.interstellar.gun.cluster.desc": "Impacts scatter small bomblets",
+    "effect.interstellar.gun.gravity_well": "Gravity Well", "effect.interstellar.gun.gravity_well.desc": "Impacts pull nearby enemies in for a second",
+    "effect.interstellar.gun.concussive": "Concussive", "effect.interstellar.gun.concussive.desc": "Impacts blast nearby enemies away",
+    "screen.interstellar.gunsmith.power_color": "Power source: colours shots and blades",
     "block.interstellar.wheel": "Wheel", "block.interstellar.vehicle_pad": "Vehicle Pad",
     "item.interstellar.race_scanner": "Race Scanner",
     "command.interstellar.body.own": "Your body is now %s (saved for every world)",

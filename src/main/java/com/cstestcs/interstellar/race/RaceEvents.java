@@ -253,9 +253,14 @@ public final class RaceEvents {
 
     private static ItemStack weaponFor(String kind, RaceDefinition race, boolean alien, SplittableRandom rng) {
         if (kind.equals("blade")) {
-            // A laser sword for humans, an energy sword for aliens.
-            GunBuild build = GunDataManager.registry().example(alien || !race.weaponTheme().equals("human") ? "energy_sword" : "laser_sword",
-                    race.weaponTier() + 1, rng);
+            // Any laser blade for humans, any alien energy blade for aliens.
+            boolean alienTech = alien || !race.weaponTheme().equals("human");
+            java.util.List<String> pool = new java.util.ArrayList<>();
+            for (var a : GunDataManager.registry().archetypes()) {
+                if (a.fireMode() == com.cstestcs.interstellar.core.gun.GunData.FireMode.MELEE && a.alien() == alienTech) pool.add(a.id());
+            }
+            if (pool.isEmpty()) return ItemStack.EMPTY;
+            GunBuild build = GunDataManager.registry().example(pool.get(rng.nextInt(pool.size())), race.weaponTier() + 1, rng);
             return build == null ? ItemStack.EMPTY : GunItem.create(build, true);
         }
         if (kind.equals("gun") || kind.startsWith("gun:")) {

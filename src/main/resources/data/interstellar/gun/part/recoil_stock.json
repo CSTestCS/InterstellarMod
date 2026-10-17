@@ -1,0 +1,47 @@
+{
+  "slot": "stock",
+  "tier": 4,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "revolver",
+    "hand_cannon",
+    "smg",
+    "carbine",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "railgun",
+    "shotgun",
+    "lmg",
+    "flamethrower",
+    "grenade_launcher",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "recoil": {
+      "add": 0,
+      "mul": 0.35
+    },
+    "fire_rate": {
+      "add": 0,
+      "mul": 1.05
+    }
+  },
+  "effects": [
+    "parry"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:netherite_scrap",
+      "count": 2
+    },
+    {
+      "item": "minecraft:slime_block",
+      "count": 2
+    }
+  ]
+}

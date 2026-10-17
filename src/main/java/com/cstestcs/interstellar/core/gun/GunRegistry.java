@@ -66,7 +66,16 @@ public final class GunRegistry {
     // ------------------------------------------------------------------ stats
 
     public record Stats(Map<GunData.Stat, Double> values, GunData.FireMode fireMode, GunData.AmmoType ammo, List<String> effects,
-            Map<GunData.Slot, Integer> colors, String magazineKind, boolean alien, int tier, boolean complete) {
+            Map<GunData.Slot, Integer> colors, String magazineKind, boolean alien, int tier, boolean complete, int powerColor) {
+        public Stats(Map<GunData.Stat, Double> values, GunData.FireMode fireMode, GunData.AmmoType ammo, List<String> effects,
+                Map<GunData.Slot, Integer> colors, String magazineKind, boolean alien, int tier, boolean complete) {
+            this(values, fireMode, ammo, effects, colors, magazineKind, alien, tier, complete, -1);
+        }
+
+        public boolean has(String effect) {
+            return effects.contains(effect);
+        }
+
         public double get(GunData.Stat s) {
             return values.getOrDefault(s, s.base);
         }
@@ -95,6 +104,8 @@ public final class GunRegistry {
         Map<GunData.Slot, Integer> colors = new EnumMap<>(GunData.Slot.class);
         int tier = arch.tier();
         boolean complete = true;
+        Integer power = null;
+        int powerRank = 99;
         for (GunData.Slot req : arch.required()) if (!build.parts().containsKey(req)) complete = false;
         for (Map.Entry<GunData.Slot, GunBuild.Choice> e : build.parts().entrySet()) {
             if (!arch.slots().contains(e.getKey())) continue;
@@ -103,9 +114,14 @@ public final class GunRegistry {
             part.modifiers().forEach((s, m) -> mods.merge(s, m, GunData.Modifier::combine));
             if (part.fireModeOverride() != null) mode = part.fireModeOverride();
             if (part.ammoOverride() != null) ammo = part.ammoOverride();
-            effects.addAll(part.effects());
+            for (String fx : part.effects()) if (!effects.contains(fx)) effects.add(fx);
             tier = Math.max(tier, part.tier());
             GunData.Material mat = e.getValue().material() == null ? null : materials.get(e.getValue().material());
+            if (part.color() != null && powerRank(e.getKey()) < powerRank) {
+                powerRank = powerRank(e.getKey());
+                // The power source sets the colour; the material it is housed in tints it a little.
+                power = mat == null ? part.color() : blend(part.color(), mat.color(), 0.25);
+            }
             if (mat != null) {
                 mat.modifiers().forEach((s, m) -> mods.merge(s, m, GunData.Modifier::combine));
                 for (String fx : mat.effects()) if (!effects.contains(fx)) effects.add(fx);
@@ -131,7 +147,25 @@ public final class GunRegistry {
             values.put(s, Math.max(s.min, Math.min(s.max, v)));
         }
         if (mode == GunData.FireMode.BURST && values.get(GunData.Stat.BURST) < 2) values.put(GunData.Stat.BURST, 3.0);
-        return new Stats(values, mode, ammo, List.copyOf(effects), colors, arch.magazineKind(), arch.alien(), tier, complete);
+        return new Stats(values, mode, ammo, List.copyOf(effects), colors, arch.magazineKind(), arch.alien(), tier, complete,
+                power == null ? -1 : power);
+    }
+
+    /** Which power source wins when several parts have a colour: the core, then special rounds, then the rest. */
+    private static int powerRank(GunData.Slot slot) {
+        return switch (slot) {
+            case CORE -> 0;
+            case MAGAZINE -> 1;
+            case RECEIVER -> 2;
+            default -> 3;
+        };
+    }
+
+    public static int blend(int a, int b, double t) {
+        int r = (int) Math.round(((a >> 16) & 255) * (1 - t) + ((b >> 16) & 255) * t);
+        int g = (int) Math.round(((a >> 8) & 255) * (1 - t) + ((b >> 8) & 255) * t);
+        int bl = (int) Math.round((a & 255) * (1 - t) + (b & 255) * t);
+        return r << 16 | g << 8 | bl;
     }
 
     // ------------------------------------------------------------------ random builds (aliens)
@@ -206,7 +240,8 @@ public final class GunRegistry {
                 }
                 archetypes.put(id, new GunData.Archetype(id, bool(o, "alien"), integer(o, "tier", 1),
                         enumOf(GunData.FireMode.class, str(o, "fire_mode", "semi")), enumOf(GunData.AmmoType.class, str(o, "ammo", "ballistic")),
-                        stats, slots(o.get("slots")), slots(o.get("required")), str(o, "magazine", id), strings(o.get("themes"))));
+                        stats, slots(o.get("slots")), slots(o.get("required")), str(o, "magazine", id), strings(o.get("themes")),
+                        str(o, "blade", "saber")));
             } catch (RuntimeException e) {
                 problems.add("archetype " + id + ": " + e.getMessage());
             }
@@ -220,7 +255,8 @@ public final class GunRegistry {
                 String fm = str(o, "fire_mode", null), am = str(o, "ammo", null);
                 parts.put(id, new GunData.Part(id, slot, bool(o, "alien"), integer(o, "tier", 1), Set.copyOf(strings(o.get("archetypes"))),
                         mods(id, o.get("modifiers")), fm == null ? null : enumOf(GunData.FireMode.class, fm),
-                        am == null ? null : enumOf(GunData.AmmoType.class, am), strings(o.get("effects")), str(o, "model", null), strings(o.get("themes"))));
+                        am == null ? null : enumOf(GunData.AmmoType.class, am), strings(o.get("effects")), str(o, "model", null), strings(o.get("themes")),
+                        o.has("color") ? color(o.get("color").getAsString()) : null));
             } catch (RuntimeException e) {
                 problems.add("part " + id + ": " + e.getMessage());
             }

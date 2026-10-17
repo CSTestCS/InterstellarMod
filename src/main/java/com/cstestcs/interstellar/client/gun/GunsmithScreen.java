@@ -158,7 +158,13 @@ public class GunsmithScreen extends AbstractContainerScreen<GunsmithMenu> {
             c.append(Component.literal("\n " + GunItem.pretty(stat.key()) + ":" + text).withStyle(ChatFormatting.GRAY));
         });
         if (p.fireModeOverride() != null) c.append(Component.literal("\n Fire mode: " + GunItem.pretty(p.fireModeOverride().name())).withStyle(ChatFormatting.YELLOW));
-        if (!p.effects().isEmpty()) c.append(Component.literal("\n ✦ " + String.join(", ", p.effects())).withStyle(ChatFormatting.GOLD));
+        for (String fx : p.effects()) {
+            c.append(Component.literal("\n ✦ ").append(GunItem.effectName(fx)).withStyle(ChatFormatting.GOLD));
+            c.append(Component.literal("\n   ").append(GunItem.effectDescription(fx)).withStyle(ChatFormatting.GRAY));
+        }
+        if (p.color() != null) {
+            c.append(Component.literal("\n ■ ").withColor(p.color()).append(Component.translatable("screen.interstellar.gunsmith.power_color").withStyle(ChatFormatting.GRAY)));
+        }
         c.append(Component.literal("\n").append(cost("part", p.id(), Component.translatable("screen.interstellar.gunsmith.cost"))));
         return c;
     }

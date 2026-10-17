@@ -1,0 +1,49 @@
+{
+  "alien": true,
+  "tier": 5,
+  "fire_mode": "melee",
+  "ammo": "energy",
+  "magazine": "void_cell",
+  "stats": {
+    "damage": 18,
+    "fire_rate": 40,
+    "magazine": 30,
+    "reload_time": 2.4,
+    "range": 0.7,
+    "spread": 0,
+    "effect_power": 2
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "grip"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "plasma",
+    "nether",
+    "solar",
+    "tech",
+    "crystal",
+    "void",
+    "cryo",
+    "bio",
+    "toxic",
+    "hydro",
+    "sonic"
+  ],
+  "blade": "hammer",
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 28
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 5
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "slot": "stock",
+  "tier": 2,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "revolver",
+    "hand_cannon",
+    "smg",
+    "carbine",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "railgun",
+    "shotgun",
+    "lmg",
+    "flamethrower",
+    "grenade_launcher",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "reload_time": {
+      "add": 0,
+      "mul": 0.85
+    },
+    "recoil": {
+      "add": 0,
+      "mul": 1.1
+    }
+  },
+  "effects": [
+    "ammo_saver"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:bone_block",
+      "count": 2
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 3
+    }
+  ]
+}

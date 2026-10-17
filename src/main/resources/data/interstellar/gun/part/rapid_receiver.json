@@ -6,7 +6,8 @@
     "smg",
     "assault_rifle",
     "lmg",
-    "pulse_rifle"
+    "pulse_rifle",
+    "carbine"
   ],
   "modifiers": {
     "fire_rate": {
@@ -18,6 +19,9 @@
       "mul": 1.2
     }
   },
+  "effects": [
+    "adrenaline"
+  ],
   "cost": [
     {
       "item": "minecraft:diamond",

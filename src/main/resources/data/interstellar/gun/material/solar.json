@@ -9,7 +9,7 @@
     }
   },
   "effects": [
-    "ignite"
+    "blind"
   ],
   "alien": true,
   "themes": [

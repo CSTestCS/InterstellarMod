@@ -12,7 +12,9 @@
       "mul": 0.95
     }
   },
-  "effects": [],
+  "effects": [
+    "steadfast"
+  ],
   "alien": false,
   "themes": []
 }

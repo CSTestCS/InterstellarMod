@@ -3,7 +3,9 @@
   "color": "#d8d8d8",
   "tier": 1,
   "modifiers": {},
-  "effects": [],
+  "effects": [
+    "stagger"
+  ],
   "alien": false,
   "themes": []
 }

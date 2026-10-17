@@ -1,0 +1,47 @@
+{
+  "slot": "grip",
+  "tier": 1,
+  "alien": false,
+  "archetypes": [
+    "pistol",
+    "revolver",
+    "hand_cannon",
+    "smg",
+    "carbine",
+    "assault_rifle",
+    "battle_rifle",
+    "pulse_rifle",
+    "scout_rifle",
+    "dmr",
+    "sniper_rifle",
+    "railgun",
+    "shotgun",
+    "lmg",
+    "flamethrower",
+    "grenade_launcher",
+    "rocket_launcher"
+  ],
+  "modifiers": {
+    "recoil": {
+      "add": 0,
+      "mul": 0.9
+    },
+    "spread": {
+      "add": 0,
+      "mul": 0.95
+    }
+  },
+  "effects": [
+    "parry"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:leather",
+      "count": 3
+    },
+    {
+      "item": "minecraft:slime_ball",
+      "count": 2
+    }
+  ]
+}
