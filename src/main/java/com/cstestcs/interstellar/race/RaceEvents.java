@@ -36,7 +36,6 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
@@ -155,10 +154,11 @@ public final class RaceEvents {
         if (living instanceof PathfinderMob mob) {
             // Any raced mob that ends up holding a gun knows how to use it.
             if (!(mob instanceof com.cstestcs.interstellar.alien.AlienEntity)) {
-                mob.goalSelector.addGoal(2, new com.cstestcs.interstellar.alien.GunAttackGoal(mob, 1.0, 16f));
+                // Above the mob's own melee attack, so armed mobs keep their distance and strafe instead of charging.
+                mob.goalSelector.addGoal(1, new com.cstestcs.interstellar.alien.GunAttackGoal(mob, 1.0, 16f));
                 // Bows, crossbows, tridents and throwables for mobs that have no ranged attack of their own.
                 if (!(mob instanceof net.minecraft.world.entity.monster.RangedAttackMob)) {
-                    mob.goalSelector.addGoal(2, new com.cstestcs.interstellar.alien.RangedItemGoal(mob, 1.0));
+                    mob.goalSelector.addGoal(1, new com.cstestcs.interstellar.alien.RangedItemGoal(mob, 1.0));
                 }
             }
             mob.goalSelector.addGoal(3, new RaceGoals.FollowRecruiter(mob));
@@ -203,7 +203,7 @@ public final class RaceEvents {
             }
             case HOSTILE -> {
                 if (canFight) {
-                    mob.goalSelector.addGoal(2, new MeleeAttackGoal(mob, 1.0, false));
+                    mob.goalSelector.addGoal(3, new com.cstestcs.interstellar.alien.WeaponMeleeGoal(mob, 1.0)); // guns and bows keep their distance
                     mob.targetSelector.addGoal(2, new HurtByTargetGoal(mob));
                     mob.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(mob, Player.class, true));
                 }

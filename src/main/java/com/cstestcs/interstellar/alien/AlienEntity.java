@@ -16,7 +16,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
@@ -56,17 +55,7 @@ public class AlienEntity extends Monster {
         // throwables thrown; swords, axes, maces, laser and energy swords (or bare hands) are swung.
         goalSelector.addGoal(2, new GunAttackGoal(this, 1.0, 18f));
         goalSelector.addGoal(2, new RangedItemGoal(this, 1.0));
-        goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1, false) {
-            @Override
-            public boolean canUse() {
-                return !GunAttackGoal.hasGun(mob) && !RangedItemGoal.hasRanged(mob) && super.canUse();
-            }
-
-            @Override
-            public boolean canContinueToUse() {
-                return !GunAttackGoal.hasGun(mob) && !RangedItemGoal.hasRanged(mob) && super.canContinueToUse();
-            }
-        });
+        goalSelector.addGoal(3, new WeaponMeleeGoal(this, 1.1));
         goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8));
         goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 12f));
         goalSelector.addGoal(8, new RandomLookAroundGoal(this));
