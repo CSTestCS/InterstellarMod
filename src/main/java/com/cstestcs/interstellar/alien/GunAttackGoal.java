@@ -29,8 +29,11 @@ public class GunAttackGoal extends Goal {
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
+    /** Holding a gun that shoots (blades are melee weapons and use the melee AI). */
     public static boolean hasGun(Mob mob) {
-        return mob.getMainHandItem().getItem() instanceof GunItem && GunItem.stats(mob.getMainHandItem()) != null;
+        if (!(mob.getMainHandItem().getItem() instanceof GunItem)) return false;
+        GunRegistry.Stats stats = GunItem.stats(mob.getMainHandItem());
+        return stats != null && stats.fireMode() != GunData.FireMode.MELEE;
     }
 
     @Override

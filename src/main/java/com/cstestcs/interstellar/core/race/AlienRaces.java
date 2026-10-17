@@ -54,7 +54,7 @@ public final class AlienRaces {
         v.put(FAVORITE_ITEM, FAVORITES.get(w.theme()));
         v.put(FAVORITE_ITEM_POTENCY, Integer.toString(5 + r.nextInt(21)));
         v.put(RACE_SIZE, String.format(java.util.Locale.ROOT, "%.2f", 0.8 + r.nextDouble() * 0.6));
-        v.put(WEAPONS, "gun");
+        v.put(WEAPONS, weapons(new SplittableRandom(w.seed() ^ 0x3EA9L)));
         v.put(REPLACE_BODY, "true");
         v.put(BODY_TYPE, "any");
         v.put(SLIM_ARMS, Boolean.toString(r.nextBoolean()));
@@ -98,6 +98,22 @@ public final class AlienRaces {
         scout.put(SPEED_MULTIPLIER, "1.35");
         scout.put(WEAPON_TIER, "1");
         out.put(id + "_scout_details.txt", DefaultRaces.text(RaceDetailsParser.write("Scout subrace of " + w.alienName() + ".", scout)));
+    }
+
+    /**
+     * The weapons a species carries: always guns, plus two or three others among energy swords, bows, crossbows,
+     * tridents and melee weapons (each alien picks one of the list when it spawns; guns are listed twice to stay the
+     * most common).
+     */
+    static String weapons(SplittableRandom r) {
+        String[] others = { "blade", "blade", "bow", "crossbow", "trident", "sword", "axe", "mace" };
+        java.util.List<String> out = new java.util.ArrayList<>(java.util.List.of("gun", "gun"));
+        int n = 2 + r.nextInt(2);
+        while (out.size() < 2 + n) {
+            String w = others[r.nextInt(others.length)];
+            if (!out.contains(w)) out.add(w);
+        }
+        return String.join(", ", out);
     }
 
     private static String traitFor(ForeignWorlds.Theme t) {

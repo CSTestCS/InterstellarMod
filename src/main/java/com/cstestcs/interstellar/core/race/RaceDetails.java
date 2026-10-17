@@ -28,7 +28,7 @@ public final class RaceDetails {
         FAVORITE_ITEM("FavoriteItem", "Item id (or #tag) that sways members of this race. Empty = cannot be recruited."),
         FAVORITE_ITEM_POTENCY("FavoriteItemPotency", "0-100. Percent of full affection each favourite item gives. 0 = cannot be swayed, 100 = one item."),
         RACE_SIZE("RaceSize", "Scale multiplier, 1.0 = normal."),
-        WEAPONS("Weapons", "Preferred weapon kinds: sword, axe, bow, crossbow, trident, mace, spear, gun, gun:<archetype>, or item ids."),
+        WEAPONS("Weapons", "Preferred weapon kinds (one is picked per mob): sword, axe, bow, crossbow, trident, mace, gun, gun:<theme>, blade (laser/energy sword), or item ids."),
         // ---- additional keys needed to fully define a race ----
         FALLBACK("Fallback", "true = only chosen when no other race rolled for this mob (used by the vanilla default races)."),
         REPLACE_BODY("ReplaceBody", "true = replace the mob's model with a base biped using RACENAME_skin.png."),

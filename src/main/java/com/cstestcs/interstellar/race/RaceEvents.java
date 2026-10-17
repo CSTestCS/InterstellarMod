@@ -156,6 +156,10 @@ public final class RaceEvents {
             // Any raced mob that ends up holding a gun knows how to use it.
             if (!(mob instanceof com.cstestcs.interstellar.alien.AlienEntity)) {
                 mob.goalSelector.addGoal(2, new com.cstestcs.interstellar.alien.GunAttackGoal(mob, 1.0, 16f));
+                // Bows, crossbows, tridents and throwables for mobs that have no ranged attack of their own.
+                if (!(mob instanceof net.minecraft.world.entity.monster.RangedAttackMob)) {
+                    mob.goalSelector.addGoal(2, new com.cstestcs.interstellar.alien.RangedItemGoal(mob, 1.0));
+                }
             }
             mob.goalSelector.addGoal(3, new RaceGoals.FollowRecruiter(mob));
             mob.targetSelector.addGoal(1, new RaceGoals.DefendRecruiter(mob));
@@ -248,6 +252,12 @@ public final class RaceEvents {
     }
 
     private static ItemStack weaponFor(String kind, RaceDefinition race, boolean alien, SplittableRandom rng) {
+        if (kind.equals("blade")) {
+            // A laser sword for humans, an energy sword for aliens.
+            GunBuild build = GunDataManager.registry().example(alien || !race.weaponTheme().equals("human") ? "energy_sword" : "laser_sword",
+                    race.weaponTier() + 1, rng);
+            return build == null ? ItemStack.EMPTY : GunItem.create(build, true);
+        }
         if (kind.equals("gun") || kind.startsWith("gun:")) {
             GunBuild build = GunDataManager.registry().roll(kind.startsWith("gun:") ? kind.substring(4) : race.weaponTheme(), race.weaponTier(),
                     alien || !race.weaponTheme().equals("human"), rng);

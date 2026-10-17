@@ -236,6 +236,11 @@ theme matching its species. Aliens spawning on a planet belong to the species se
 names the planet they come from. They are ordinary race files in `races/`, so you can edit or replace them. Aliens may
 wear any armour (vanilla or modded) whose repair material belongs to their species' world.
 
+Aliens (and any raced mob) fight with whatever they hold: guns are fired according to their fire mode, bows drawn,
+crossbows charged, tridents, snowballs, splash potions and other throwables thrown, and swords, axes, maces, laser
+and energy swords swung. Each species carries guns plus two or three other weapons from its race file's `Weapons`
+list (`blade` is an energy sword for aliens, a laser sword for humans); edit the list to arm them differently.
+
 ## Commands
 
 ```

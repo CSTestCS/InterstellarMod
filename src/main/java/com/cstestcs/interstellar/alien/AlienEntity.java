@@ -30,8 +30,9 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * The humanoid that alien races are applied to. It has no look of its own: its race (one per foreign world, plus
- * subraces) supplies skin, head model, size, stats, disposition, faction and weapon theme. Aliens carry rolled guns
- * from their world's theme and drop them with a configurable chance (30% by default).
+ * subraces) supplies skin, head model, size, stats, disposition, faction and weapons. Aliens fight with whatever they
+ * hold (guns, blades, bows, crossbows, tridents, throwables, any melee weapon) and drop their weapon with a
+ * configurable chance (30% by default).
  */
 public class AlienEntity extends Monster {
     public AlienEntity(EntityType<? extends AlienEntity> type, Level level) {
@@ -51,11 +52,19 @@ public class AlienEntity extends Monster {
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(0, new FloatGoal(this));
+        // Whatever the alien holds decides how it fights: guns are fired, bows drawn, crossbows charged, tridents and
+        // throwables thrown; swords, axes, maces, laser and energy swords (or bare hands) are swung.
         goalSelector.addGoal(2, new GunAttackGoal(this, 1.0, 18f));
+        goalSelector.addGoal(2, new RangedItemGoal(this, 1.0));
         goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.1, false) {
             @Override
             public boolean canUse() {
-                return !GunAttackGoal.hasGun(mob) && super.canUse();
+                return !GunAttackGoal.hasGun(mob) && !RangedItemGoal.hasRanged(mob) && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !GunAttackGoal.hasGun(mob) && !RangedItemGoal.hasRanged(mob) && super.canContinueToUse();
             }
         });
         goalSelector.addGoal(6, new WaterAvoidingRandomStrollGoal(this, 0.8));
