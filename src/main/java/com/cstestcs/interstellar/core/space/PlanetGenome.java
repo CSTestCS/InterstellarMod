@@ -38,6 +38,33 @@ public record PlanetGenome(
     public static final String PREFIX = "planet_";
     private static final Pattern PATH = Pattern.compile(PREFIX + "(m?\\d+)_(m?\\d+)");
     private static final long GALAXY = 0x20_14_1_14L;
+    /**
+     * Per-world galaxy key, derived from the world seed: every world has its own planets. Clients receive the key
+     * (a one-way hash), never the seed itself.
+     */
+    private static volatile long galaxyKey = GALAXY;
+
+    /** The galaxy key for a world seed. */
+    public static long keyForSeed(long worldSeed) {
+        return mix(GALAXY ^ mix(worldSeed ^ 0x5DEECE66DL));
+    }
+
+    /** The galaxy of worlds whose space was generated before galaxies depended on the seed. */
+    public static long legacyKey() {
+        return GALAXY;
+    }
+
+    public static long galaxyKey() {
+        return galaxyKey;
+    }
+
+    /** Switches to another world's galaxy (forgets cached planets of the previous one). */
+    public static void setGalaxyKey(long key) {
+        if (key == galaxyKey) return;
+        galaxyKey = key;
+        CELLS.clear();
+        SHAPES.clear();
+    }
 
     /** Terrain templates (the snapshot picked surface, nether-like or end-like generators). */
     public enum Terrain {
@@ -147,7 +174,7 @@ public record PlanetGenome(
     private static Optional<PlanetGenome> compute(int cellX, int cellZ) {
         double cx = (cellX + 0.5) * CELL, cz = (cellZ + 0.5) * CELL;
         if (cx * cx + cz * cz < (double) RESERVED_RADIUS * RESERVED_RADIUS) return Optional.empty();
-        long seed = mix(GALAXY ^ (cellX * 0x9E3779B97F4A7C15L) ^ (cellZ * 0xC2B2AE3D27D4EB4FL));
+        long seed = mix(galaxyKey ^ (cellX * 0x9E3779B97F4A7C15L) ^ (cellZ * 0xC2B2AE3D27D4EB4FL));
         Random r = new Random(seed);
         if (r.nextInt(10) < 3) return Optional.empty(); // empty space
         return Optional.of(generate(cellX, cellZ, seed, r));

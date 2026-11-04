@@ -149,7 +149,7 @@ public final class InterstellarCommands {
                             var g = nearestPlanet(c.getSource());
                             c.getSource().sendSuccess(() -> Component.translatable("command.interstellar.planets.nearest", g.name(), g.dimensionId(),
                                     g.x(), g.y(), g.z(), g.terrain().name().toLowerCase(java.util.Locale.ROOT),
-                                    com.cstestcs.interstellar.core.space.ForeignWorlds.all().get(g.species()).alienName()), false);
+                                    com.cstestcs.interstellar.core.space.ForeignWorlds.all().get(g.species()).theme().name().toLowerCase(java.util.Locale.ROOT)), false);
                             return 1;
                         }))
                         .then(Commands.literal("visit").executes(c -> {

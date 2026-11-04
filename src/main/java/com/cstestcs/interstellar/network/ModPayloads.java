@@ -164,6 +164,17 @@ public final class ModPayloads {
         }
     }
 
+    /** The world's galaxy key (a hash of the seed): clients build the same procedural planets as the server. */
+    public record Galaxy(long key) implements CustomPacketPayload {
+        public static final Type<Galaxy> TYPE = typeOf("galaxy");
+        public static final StreamCodec<ByteBuf, Galaxy> CODEC = StreamCodec.composite(ByteBufCodecs.VAR_LONG, Galaxy::key, Galaxy::new);
+
+        @Override
+        public Type<Galaxy> type() {
+            return TYPE;
+        }
+    }
+
     // ------------------------------------------------------------------ registration
 
     public static void register(RegisterPayloadHandlersEvent event) {
@@ -177,6 +188,7 @@ public final class ModPayloads {
         r.playToClient(GunData.TYPE, GunData.CODEC);
         r.playToClient(SaveOwnBody.TYPE, SaveOwnBody.CODEC);
         r.playToClient(Planets.TYPE, Planets.CODEC);
+        r.playToClient(Galaxy.TYPE, Galaxy.CODEC);
     }
 
     private static void onShipInput(ShipInput p, IPayloadContext ctx) {

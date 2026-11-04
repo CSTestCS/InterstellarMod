@@ -24,9 +24,47 @@ import org.joml.Vector3fc;
 public final class PlanetSync {
     private PlanetSync() {}
 
+    /** Each world has its own galaxy: the planets are derived from the world seed. */
+    @SubscribeEvent
+    static void onServerStarting(net.neoforged.neoforge.event.server.ServerStartingEvent event) {
+        com.cstestcs.interstellar.core.space.PlanetGenome.setGalaxyKey(galaxyKey(event.getServer()));
+    }
+
+    /**
+     * The world's galaxy key, remembered in the world folder. New worlds derive it from their seed; worlds whose space
+     * was already generated with the old shared galaxy keep it, so existing planets are not cut in half.
+     */
+    static long galaxyKey(MinecraftServer server) {
+        java.nio.file.Path root = server.getWorldPath(net.minecraft.world.level.storage.LevelResource.ROOT);
+        java.nio.file.Path file = root.resolve("interstellar_galaxy.txt");
+        try {
+            if (java.nio.file.Files.exists(file)) return Long.parseLong(java.nio.file.Files.readString(file).strip());
+        } catch (Exception e) {
+            Interstellar.LOGGER.warn("Unreadable {}: {}", file, e.toString());
+        }
+        boolean legacy = false;
+        java.nio.file.Path region = root.resolve("dimensions").resolve(Interstellar.MODID).resolve("space").resolve("region");
+        try (var files = java.nio.file.Files.list(region)) {
+            legacy = files.findAny().isPresent();
+        } catch (Exception ignored) {
+            // no space generated yet
+        }
+        long key = legacy ? com.cstestcs.interstellar.core.space.PlanetGenome.legacyKey()
+                : com.cstestcs.interstellar.core.space.PlanetGenome.keyForSeed(server.overworld().getSeed());
+        try {
+            java.nio.file.Files.writeString(file, Long.toString(key));
+        } catch (Exception e) {
+            Interstellar.LOGGER.warn("Could not save {}: {}", file, e.toString());
+        }
+        return key;
+    }
+
     @SubscribeEvent
     static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer p) send(p);
+        if (event.getEntity() instanceof ServerPlayer p) {
+            PacketDistributor.sendToPlayer(p, new ModPayloads.Galaxy(com.cstestcs.interstellar.core.space.PlanetGenome.galaxyKey()));
+            send(p);
+        }
     }
 
     @SubscribeEvent

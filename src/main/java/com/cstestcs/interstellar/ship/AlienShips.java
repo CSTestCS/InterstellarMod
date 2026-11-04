@@ -1,6 +1,5 @@
 package com.cstestcs.interstellar.ship;
 
-import com.cstestcs.interstellar.core.race.SpeciesRaces;
 
 import com.cstestcs.interstellar.Interstellar;
 import com.cstestcs.interstellar.InterstellarConfig;
@@ -61,10 +60,9 @@ public final class AlienShips {
     /** Spawns an alien-crewed ship of a design. @return the ship, or null if the design or race is missing */
     public static @Nullable SpacecraftEntity spawn(ServerLevel level, Vec3 pos, ForeignWorlds.World world, String designName, RandomSource random) {
         ShipStructure design = StarshipLibrary.load(level.getServer(), designName).orElse(null);
-        RaceDefinition race = RaceManager.get(world.alienRaceId());
-        // A quarter of alien ships belong to the Covenant, crewed by a mix of its species.
-        boolean covenant = random.nextInt(4) == 0 && RaceManager.get(SpeciesRaces.COVENANT.get(0)) != null;
-        if (covenant) race = RaceManager.get(SpeciesRaces.COVENANT.get(random.nextInt(SpeciesRaces.COVENANT.size())));
+        // The crew is one faction that lives on the ship's home world (natives, or the Covenant, which goes everywhere).
+        List<RaceDefinition> faction = com.cstestcs.interstellar.race.FactionRoster.pickFaction(world.dimensionId(), random);
+        RaceDefinition race = faction == null ? null : com.cstestcs.interstellar.race.FactionRoster.pickMember(faction, random);
         if (design == null || design.entries.isEmpty()) return null;
         BlockState hull = BuiltInRegistries.BLOCK.getOptional(Identifier.parse(ForeignWorlds.hullBlock(world))).orElse(Blocks.STONE).defaultBlockState();
         ShipStructure structure = StarshipLibrary.withHull(design, hull);
@@ -78,7 +76,7 @@ public final class AlienShips {
         for (int seat = 0; seat < crew; seat++) {
             AlienEntity alien = ModEntities.ALIEN.get().spawn(level, BlockPos.containing(pos), EntitySpawnReason.EVENT);
             if (alien == null) continue;
-            RaceDefinition member = covenant ? RaceManager.get(SpeciesRaces.COVENANT.get(random.nextInt(SpeciesRaces.COVENANT.size()))) : race;
+            RaceDefinition member = faction == null ? null : com.cstestcs.interstellar.race.FactionRoster.pickMember(faction, random);
             if (member != null) RaceEvents.setRace(alien, member);
             AlienArmor.equip(alien, world.dimensionId(), random, 0.5f);
             alien.setPersistenceRequired();

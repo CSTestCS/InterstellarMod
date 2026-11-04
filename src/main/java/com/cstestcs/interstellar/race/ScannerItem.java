@@ -75,7 +75,7 @@ public class ScannerItem extends Item {
         java.util.List<String> names = new java.util.ArrayList<>();
         for (String dim : race.homeDimension().includes()) {
             var world = com.cstestcs.interstellar.core.space.ForeignWorlds.byDimension(dim);
-            names.add(world != null ? world.displayName() + " (" + world.alienName() + " planets)" : dim);
+            names.add(world != null ? world.displayName() + " (" + world.theme().name().toLowerCase(java.util.Locale.ROOT) + " worlds)" : dim);
         }
         return Component.literal(String.join(", ", names));
     }

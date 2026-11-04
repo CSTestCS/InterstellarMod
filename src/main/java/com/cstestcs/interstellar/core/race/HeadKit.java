@@ -42,11 +42,39 @@ final class HeadKit {
     final ModelDef.PartDef head = new ModelDef.PartDef("head");
     private final SplittableRandom rng;
     private int cu, cv, rowH;
+    /** Material of the first (main) cube: used for the neck. */
+    private Mat main;
 
     HeadKit(int size, long seed) {
         tex = new Image(size, size);
         rng = new SplittableRandom(seed);
         root.children.put("head", head);
+    }
+
+    /**
+     * Makes sure the head sits on the body: the neck pivot is y = 0, so a head whose lowest cube ends above it would
+     * float. Such heads get a neck in their main colour, reaching from under the skull down to the body.
+     */
+    void connect() {
+        if (head.cubes.isEmpty()) return;
+        float bottom = -99, minX = 99, maxX = -99, minZ = 99, maxZ = -99;
+        ModelDef.CubeDef skull = head.cubes.get(0);
+        for (ModelDef.CubeDef c : head.cubes) bottom = Math.max(bottom, c.y() + c.h());
+        float gap = -bottom;
+        if (gap <= 0.01f) return;
+        minX = skull.x();
+        maxX = skull.x() + skull.w();
+        minZ = skull.z();
+        maxZ = skull.z() + skull.d();
+        int w = Math.max(2, Math.min(4, (int) (maxX - minX) - 2)), d = Math.max(2, Math.min(4, (int) (maxZ - minZ) - 2));
+        int h = (int) Math.ceil(gap) + 1; // reaches a little into the skull so nothing shows between them
+        float cx = (minX + maxX) / 2, cz = (minZ + maxZ) / 2;
+        box(head, cx - w / 2f, -h, cz - d / 2f, w, h, d, main == null ? new Mat(0xFF808080) : main.with(Pattern.PLAIN, main.color()));
+    }
+
+    /** Width of the main head cube (pixels). */
+    float width() {
+        return head.cubes.isEmpty() ? 8 : head.cubes.get(0).w();
     }
 
     ModelDef model() {
@@ -83,6 +111,7 @@ final class HeadKit {
         cu += bw;
         rowH = Math.max(rowH, bh);
         p.cubes.add(new ModelDef.CubeDef(c.u, c.v, x, y, z, w, h, d, 0, 0, 0, mirror));
+        if (main == null && p == head) main = m;
         paint(c, m);
         return c;
     }

@@ -32,6 +32,32 @@ public final class SpeciesRaces {
     /** Ids of the Covenant species (used to crew Covenant ships). */
     public static final List<String> COVENANT = List.of("sangheili", "jiralhanae", "unggoy", "kig_yar");
 
+    /**
+     * Alien factions besides the Covenant: each groups several species (members never fight each other) and has its
+     * own enemies. Factions are ordinary race settings (Faction, Enemies), so race files can add or change them.
+     */
+    static final Map<String, List<String>> FACTIONS = Map.of(
+            "pastoral_union", List.of("bovar", "porcine", "ovine", "gallid", "equine", "camelid", "caprid", "sniffar", "armadan"),
+            "wildkin", List.of("lupine", "feline", "vulpine", "leporid", "ursan"),
+            "tide_court", List.of("axolite", "testudo", "cephalid", "delphin", "guardite", "ranid"),
+            "hive", List.of("apid", "psittan", "chiropter"),
+            "nether_conclave", List.of("striden", "hoglan", "blazar", "ghastling"),
+            "blight", List.of("creepid", "arachnid", "gelan", "ravagon"),
+            "shulker_syndicate", List.of("shulkari"));
+    private static final Map<String, String> FACTION_ENEMIES = Map.of(
+            "pastoral_union", "covenant, blight, nether_conclave",
+            "wildkin", "covenant, blight",
+            "tide_court", "covenant, blight, nether_conclave",
+            "hive", "covenant, blight",
+            "nether_conclave", "humans, villagers, illagers, covenant, tide_court, pastoral_union",
+            "blight", "humans, villagers, illagers, covenant, pastoral_union, wildkin, tide_court, hive",
+            "shulker_syndicate", "humans, villagers, illagers, covenant");
+
+    static String factionOf(String race) {
+        for (Map.Entry<String, List<String>> e : FACTIONS.entrySet()) if (e.getValue().contains(race)) return e.getKey();
+        return race;
+    }
+
     // ---------------------------------------------------------------- body skins
 
     /** How a species' body is painted. */
@@ -169,7 +195,7 @@ public final class SpeciesRaces {
         v.put(RACE_NAME, s.name);
         v.put(GENDER, "null");
         v.put(TAIL_TYPE, s.tail);
-        if (!s.homes.isEmpty()) v.put(HOME_DIMENSION, homes(s.homes));
+        v.put(HOME_DIMENSION, s.homes.isEmpty() ? COVENANT_HOME : homes(s.homes));
         v.put(MOB_CONSTRAINT, "interstellar:alien");
         v.put(POPULATION_PERCENT, Integer.toString(s.population));
         v.put(DEFAULT_DISPOSITION, s.disposition);
@@ -182,7 +208,8 @@ public final class SpeciesRaces {
         v.put(REPLACE_BODY, "true");
         v.put(BODY_TYPE, "any");
         v.put(SLIM_ARMS, Boolean.toString(s.slim));
-        if (s.headScale != 1) v.put(HEAD_SCALE, fmt(s.headScale));
+        double headScale = Math.max(s.headScale, headWidthScale(s));
+        if (headScale != 1) v.put(HEAD_SCALE, fmt(headScale));
         v.put(FACTION, s.faction);
         v.put(ENEMIES, s.enemies);
         v.put(HEALTH_MULTIPLIER, fmt(s.health));
@@ -222,14 +249,24 @@ public final class SpeciesRaces {
         }
     }
 
+    /** Heads much narrower than the body look lost on it: scale them up to about 7 pixels across (at most 1.5x). */
+    private static double headWidthScale(Spec s) {
+        HeadKit k = new HeadKit(128, 0);
+        s.head.accept(k, null);
+        float w = k.width();
+        return w >= 6 ? 1 : Math.min(1.5, 7.0 / w);
+    }
+
     private static void writeHead(Map<String, byte[]> out, String id, BiConsumer<HeadKit, Integer> design, Integer variant, long seed) {
         HeadKit k;
         try {
             k = new HeadKit(64, seed);
             design.accept(k, variant);
+            k.connect();
         } catch (IllegalStateException full) {
             k = new HeadKit(128, seed);
             design.accept(k, variant);
+            k.connect();
         }
         out.put(id + "_headskin.png", k.tex.toPng());
         out.put(id + "_head.java", DefaultRaces.text(JavaModelWriter.write(id + "_head", k.model())));
@@ -255,28 +292,31 @@ public final class SpeciesRaces {
 
     // ================================================================ Halo: the Covenant
 
-    private static final String COV_ENEMIES = "humans, villagers, illagers";
+    /** The Covenant wars on humanity and on every other alien faction. */
+    private static final String COV_ENEMIES = "humans, villagers, illagers, pastoral_union, wildkin, tide_court, hive, nether_conclave, blight, shulker_syndicate";
+    /** The Covenant can appear on any world that is not one of vanilla Minecraft's (Interstellar's planets, other mods' dimensions). */
+    static final String COVENANT_HOME = "*, !minecraft:*";
 
     private static void halo(List<Spec> s) {
-        s.add(new Spec("sangheili", "Sangheili (Elite)", "hostile", "covenant", COV_ENEMIES, List.of(), 6, 1.25, 2.2, 1.15, 1.4, "none", false,
+        s.add(new Spec("sangheili", "Sangheili (Elite)", "hostile", "covenant", COV_ENEMIES, List.of(), 8, 1.25, 2.2, 1.15, 1.4, "none", false,
                 "night_vision",
                 "weapon:plasma_rifle, weapon:plasma_rifle, weapon:energy_sword, weapon:covenant_carbine, weapon:needle_rifle, weapon:concussion_rifle, weapon:beam_rifle",
                 "plasma", 3, null, "Thel 'Vadam, Rtas 'Vadum, Jul 'Mdama, Usze 'Taham, Ripa 'Moramee, Xytan 'Jar, Orna 'Fulsamee, Torka 'Mdama",
                 new Body(c(0x4A4444), c(0x5C5552), c(0x3A3434), PLAIN, c(0x4A4444), 0, 0, false).armored(c(0x3B5FB0), c(0x9FB8E8)),
                 SpeciesRaces::elite, 1.0, "Sangheili warriors of the Covenant: tall, proud, split-jawed."));
-        s.add(new Spec("jiralhanae", "Jiralhanae (Brute)", "hostile", "covenant", COV_ENEMIES, List.of(), 6, 1.4, 2.6, 0.95, 1.6, "none", false,
+        s.add(new Spec("jiralhanae", "Jiralhanae (Brute)", "hostile", "covenant", COV_ENEMIES, List.of(), 8, 1.4, 2.6, 0.95, 1.6, "none", false,
                 "regeneration",
                 "weapon:spiker, weapon:spiker, weapon:mauler, weapon:brute_shot, weapon:gravity_hammer, weapon:pulse_carbine, weapon:skewer, weapon:stalker_rifle",
                 "nether", 3, null, "Tartarus, Atriox, Escharum, Maccabeus, Gravemind's Bane, Vorgus, Lydus, Barathrum",
                 Body.fur(c(0x5E5A55), c(0x6E6A66), c(0x3A3632), FUR, c(0x4A4642)).armored(c(0x6E5A3A), c(0xB08A4A)),
                 SpeciesRaces::brute, 1.0, "Jiralhanae: huge, furred and savage, fond of heavy blades and spike weapons."));
-        s.add(new Spec("unggoy", "Unggoy (Grunt)", "hostile", "covenant", COV_ENEMIES, List.of(), 10, 0.75, 1.0, 1.05, 0.9, "none", false,
+        s.add(new Spec("unggoy", "Unggoy (Grunt)", "hostile", "covenant", COV_ENEMIES, List.of(), 14, 0.75, 1.0, 1.05, 0.9, "none", false,
                 "",
                 "weapon:plasma_pistol, weapon:plasma_pistol, weapon:needler, weapon:needler, weapon:fuel_rod_cannon, weapon:plasma_launcher",
                 "plasma", 1, "minecraft:cookie", "Yayap, Dadab, Kwassass, Flipyap, Lalabeb, Gagaw, Bapap, Mumumu",
                 Body.fur(c(0x6C5A6E), c(0x857085), c(0x4A3A4C), SCALES, c(0x5C4A5E)).armored(c(0xC0602A), c(0xE09050)).withTank(),
                 SpeciesRaces::grunt, 1.0, "Unggoy: small, numerous, breathing methane through a mask."));
-        s.add(new Spec("kig_yar", "Kig-Yar (Jackal)", "hostile", "covenant", COV_ENEMIES, List.of(), 7, 1.0, 1.2, 1.25, 1.0, "lizard", true,
+        s.add(new Spec("kig_yar", "Kig-Yar (Jackal)", "hostile", "covenant", COV_ENEMIES, List.of(), 10, 1.0, 1.2, 1.25, 1.0, "lizard", true,
                 "night_vision",
                 "weapon:plasma_pistol, weapon:covenant_carbine, weapon:covenant_carbine, weapon:beam_rifle, weapon:needle_rifle",
                 "plasma", 2, "minecraft:gold_ingot", "Chur'R-Yar, Reth, Zhar, Kel'Tah, Yar-Raq, Skirr, Ckik, Tzar'K",
@@ -407,7 +447,8 @@ public final class SpeciesRaces {
             String traits, String favorite, String names, Body body, BiConsumer<HeadKit, Integer> head, double headScale, String description) {
         SplittableRandom r = new SplittableRandom(id.hashCode());
         String theme = homes.isEmpty() ? "plasma" : homes.get(0).weaponTheme;
-        return new Spec(id, name, disposition, id, disposition.equals("hostile") ? MOB_ENEMIES : "", homes, 28, size, 1.0 + r.nextDouble() * 0.8,
+        String faction = factionOf(id);
+        return new Spec(id, name, disposition, faction, FACTION_ENEMIES.getOrDefault(faction, MOB_ENEMIES), homes, 100, size, 1.0 + r.nextDouble() * 0.8,
                 0.9 + r.nextDouble() * 0.35, 1.0, tail, slim, traits, AlienRaces.weapons(r), theme, 1 + r.nextInt(3), favorite, names, body, head,
                 headScale, description);
     }

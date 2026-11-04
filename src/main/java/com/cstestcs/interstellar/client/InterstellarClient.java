@@ -148,6 +148,7 @@ public final class InterstellarClient {
         event.register(ModPayloads.RaceAssets.TYPE, (p, ctx) -> ClientRaces.receive(p));
         event.register(ModPayloads.GunData.TYPE, (p, ctx) -> GunDataManager.receive(p));
         event.register(ModPayloads.Planets.TYPE, (p, ctx) -> com.cstestcs.interstellar.client.space.SpaceClient.receive(p));
+        event.register(ModPayloads.Galaxy.TYPE, (p, ctx) -> com.cstestcs.interstellar.core.space.PlanetGenome.setGalaxyKey(p.key()));
         event.register(ModPayloads.SaveOwnBody.TYPE, (p, ctx) -> {
             InterstellarConfig.CLIENT.ownBody.set(p.body());
             InterstellarConfig.CLIENT_SPEC.save();

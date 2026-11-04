@@ -118,6 +118,20 @@ public final class RaceManager {
                 changed = true;
             }
         }
+        // Retire generated files that are no longer defaults (the old per-world alien races), unless edited.
+        for (String name : new java.util.ArrayList<>(manifest.stringPropertyNames())) {
+            if (defaults.containsKey(name)) continue;
+            Path f = dir.resolve(name);
+            if (!Files.exists(f)) {
+                manifest.remove(name);
+                changed = true;
+            } else if (com.cstestcs.interstellar.core.race.DefaultFileUpdater.hash(Files.readAllBytes(f)).equals(manifest.getProperty(name))) {
+                Files.delete(f);
+                manifest.remove(name);
+                changed = true;
+                Interstellar.LOGGER.info("[races] removed retired default file {}", name);
+            }
+        }
         if (changed) {
             try (var out = Files.newBufferedWriter(manifestFile, StandardCharsets.UTF_8)) {
                 manifest.store(out, "Hashes of generated default files; files still matching them are updated automatically");

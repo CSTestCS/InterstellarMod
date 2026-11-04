@@ -47,7 +47,6 @@ public final class DefaultRaces {
         vanilla(out, "illusioner", "Illusioner", "minecraft:illusioner", "hostile", null, 0, "bow", "illagers", "humans, villagers");
         vanilla(out, "witch", "Witch", "minecraft:witch", "hostile", "minecraft:nether_wart", 10, "", "witches", "humans");
         vanilla(out, "enderman", "Enderman", "minecraft:enderman", "neutral", "minecraft:chorus_fruit", 10, "", "end", "");
-        AlienRaces.write(out);
         SpeciesRaces.write(out);
         return out;
     }
