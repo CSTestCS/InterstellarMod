@@ -17,7 +17,8 @@
     "receiver",
     "core",
     "barrel",
-    "grip"
+    "grip",
+    "underbarrel"
   ],
   "required": [
     "receiver",
@@ -29,6 +30,12 @@
     "toxic",
     "sonic"
   ],
+  "preset": {
+    "receiver": "alien_receiver",
+    "core": "unstable_nether_core",
+    "barrel": "splitter_emitter",
+    "underbarrel": "brute_blade"
+  },
   "cost": [
     {
       "item": "interstellar:alien_alloy",

@@ -19,7 +19,10 @@
     "lmg",
     "flamethrower",
     "grenade_launcher",
-    "rocket_launcher"
+    "rocket_launcher",
+    "bulldog",
+    "hmg",
+    "spartan_laser"
   ],
   "modifiers": {
     "magazine": {

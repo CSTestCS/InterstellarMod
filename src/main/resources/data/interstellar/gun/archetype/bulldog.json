@@ -1,0 +1,56 @@
+{
+  "alien": false,
+  "tier": 3,
+  "fire_mode": "semi",
+  "ammo": "ballistic",
+  "magazine": "shell",
+  "stats": {
+    "damage": 4,
+    "fire_rate": 150,
+    "magazine": 12,
+    "pellets": 6,
+    "reload_time": 2.6,
+    "spread": 6,
+    "recoil": 3,
+    "range": 24
+  },
+  "slots": [
+    "receiver",
+    "barrel",
+    "stock",
+    "grip",
+    "magazine",
+    "sight",
+    "muzzle",
+    "underbarrel"
+  ],
+  "required": [
+    "receiver",
+    "barrel"
+  ],
+  "themes": [
+    "human"
+  ],
+  "preset": {
+    "receiver": "auto_shotgun_receiver",
+    "barrel": "short_barrel",
+    "stock": "recoil_stock",
+    "grip": "vertical_grip",
+    "magazine": "drum_mag",
+    "sight": "red_dot"
+  },
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 5
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 3
+    },
+    {
+      "item": "minecraft:redstone_block",
+      "count": 1
+    }
+  ]
+}

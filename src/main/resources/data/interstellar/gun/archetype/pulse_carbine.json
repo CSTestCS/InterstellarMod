@@ -1,0 +1,49 @@
+{
+  "alien": true,
+  "tier": 3,
+  "fire_mode": "burst",
+  "ammo": "plasma",
+  "magazine": "energy_cell",
+  "stats": {
+    "damage": 4.5,
+    "fire_rate": 480,
+    "magazine": 36,
+    "burst": 3,
+    "reload_time": 1.9,
+    "spread": 1.2,
+    "range": 72,
+    "velocity": 3,
+    "effect_power": 1
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "barrel",
+    "sight",
+    "grip"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "plasma",
+    "hydro",
+    "tech"
+  ],
+  "preset": {
+    "receiver": "covenant_receiver",
+    "core": "refined_plasma_core",
+    "barrel": "focusing_lens"
+  },
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 20
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 3
+    }
+  ]
+}

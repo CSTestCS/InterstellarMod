@@ -28,6 +28,11 @@
     "bio",
     "void"
   ],
+  "preset": {
+    "receiver": "covenant_receiver",
+    "core": "refined_crystal_core",
+    "magazine": "crystal_matrix"
+  },
   "cost": [
     {
       "item": "interstellar:alien_alloy",

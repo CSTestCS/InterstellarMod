@@ -32,6 +32,12 @@
     "tech",
     "bio"
   ],
+  "preset": {
+    "receiver": "covenant_receiver",
+    "core": "stable_plasma_core",
+    "barrel": "overcharged_emitter",
+    "grip": "alien_grip"
+  },
   "cost": [
     {
       "item": "interstellar:alien_alloy",

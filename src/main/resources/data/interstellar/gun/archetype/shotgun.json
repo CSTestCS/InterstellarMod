@@ -30,6 +30,13 @@
   "themes": [
     "human"
   ],
+  "preset": {
+    "receiver": "standard_receiver",
+    "barrel": "standard_barrel",
+    "stock": "tactical_stock",
+    "magazine": "speed_mag",
+    "underbarrel": "flashlight"
+  },
   "cost": [
     {
       "item": "minecraft:iron_block",

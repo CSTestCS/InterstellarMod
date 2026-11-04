@@ -36,6 +36,11 @@
     "sonic"
   ],
   "blade": "hammer",
+  "preset": {
+    "receiver": "gravity_hilt",
+    "core": "ancient_hydro_core",
+    "grip": "ridged_blade_grip"
+  },
   "cost": [
     {
       "item": "interstellar:alien_alloy",

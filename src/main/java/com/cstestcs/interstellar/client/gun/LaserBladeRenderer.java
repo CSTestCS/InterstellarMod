@@ -58,13 +58,14 @@ public final class LaserBladeRenderer implements SpecialModelRenderer<LaserBlade
                 out.add(new Piece(c - w, -9 / 16f - len * 0.75f, c - w, c + w, -9 / 16f, c + w));
             }
             case "prongs" -> {
-                // Two blades splaying apart, like a split energy sword.
-                int n = 6;
+                // Two blades from the ends of the guard (Halo energy sword): bowing out, then closing to the tips.
+                int n = 7;
                 for (int side = -1; side <= 1; side += 2) {
                     for (int i = 0; i < n; i++) {
-                        float off = side * (1.2f / 16f + 1.6f / 16f * (float) Math.sin(Math.PI * (i + 0.5) / n));
-                        float hw = w * (i == n - 1 ? 0.6f : 0.9f);
-                        out.add(new Piece(c + off - hw, BASE + len * i / n, c - hw, c + off + hw, BASE + len * (i + 1) / n, c + hw));
+                        float t = (i + 0.5f) / n;
+                        float off = side * (3.5f / 16f + 0.9f / 16f * (float) Math.sin(Math.PI * t * 0.9) - 1.6f / 16f * t);
+                        float hw = w * (1.1f - 0.6f * t);
+                        out.add(new Piece(c + off - hw, BASE + len * i / n, c - hw * 0.7f, c + off + hw, BASE + len * (i + 1) / n, c + hw * 0.7f));
                     }
                 }
             }
@@ -83,10 +84,11 @@ public final class LaserBladeRenderer implements SpecialModelRenderer<LaserBlade
                 }
             }
             case "hammer" -> {
-                // A glowing shaft topped with a heavy head.
-                float top = BASE + len;
-                out.add(new Piece(c - w * 0.7f, BASE, c - w * 0.7f, c + w * 0.7f, top, c + w * 0.7f));
-                out.add(new Piece(c - 5 / 16f, top, c - 2.2f / 16f, c + 5 / 16f, top + 4 / 16f, c + 2.2f / 16f));
+                // Gravity hammer: the head is part of the hilt model; the gravity field glows over its faces.
+                float x0 = 4.5f / 16f, x1 = 11.5f / 16f, y0 = 9.5f / 16f, y1 = 14.5f / 16f;
+                out.add(new Piece(x0, y0, 5.25f / 16f, x1, y1, 5.45f / 16f));
+                out.add(new Piece(x0, y0, 10.55f / 16f, x1, y1, 10.75f / 16f));
+                out.add(new Piece(2.8f / 16f, 10f / 16f, 6.5f / 16f, 3f / 16f, 14f / 16f, 9.5f / 16f));
             }
             default -> out.add(new Piece(c - w, BASE, c - w, c + w, BASE + len, c + w)); // saber
         }

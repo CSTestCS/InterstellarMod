@@ -1,0 +1,36 @@
+{
+  "slot": "barrel",
+  "tier": 4,
+  "alien": false,
+  "archetypes": [
+    "hmg",
+    "lmg"
+  ],
+  "modifiers": {
+    "fire_rate": {
+      "add": 0,
+      "mul": 1.4
+    },
+    "spread": {
+      "add": 0,
+      "mul": 1.3
+    }
+  },
+  "effects": [
+    "spray"
+  ],
+  "cost": [
+    {
+      "item": "minecraft:iron_block",
+      "count": 4
+    },
+    {
+      "item": "minecraft:piston",
+      "count": 2
+    },
+    {
+      "item": "minecraft:diamond",
+      "count": 1
+    }
+  ]
+}

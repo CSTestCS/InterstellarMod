@@ -1,0 +1,50 @@
+{
+  "alien": true,
+  "tier": 4,
+  "fire_mode": "semi",
+  "ammo": "explosive",
+  "magazine": "rocket",
+  "stats": {
+    "damage": 13,
+    "fire_rate": 90,
+    "magazine": 6,
+    "reload_time": 3.0,
+    "spread": 1.5,
+    "recoil": 3,
+    "range": 56,
+    "velocity": 1.3,
+    "effect_power": 2
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "barrel",
+    "grip",
+    "underbarrel"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "nether",
+    "solar",
+    "tech"
+  ],
+  "preset": {
+    "receiver": "alien_receiver",
+    "core": "stable_nether_core",
+    "barrel": "overcharged_emitter",
+    "underbarrel": "brute_blade"
+  },
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 24
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 4
+    }
+  ]
+}

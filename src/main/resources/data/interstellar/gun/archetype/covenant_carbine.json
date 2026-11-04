@@ -1,0 +1,50 @@
+{
+  "alien": true,
+  "tier": 3,
+  "fire_mode": "semi",
+  "ammo": "needle",
+  "magazine": "crystal_cartridge",
+  "stats": {
+    "damage": 8,
+    "fire_rate": 300,
+    "magazine": 18,
+    "reload_time": 2.0,
+    "spread": 0.5,
+    "range": 96,
+    "velocity": 7,
+    "zoom": 2.5,
+    "effect_power": 1
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "barrel",
+    "sight",
+    "grip"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "toxic",
+    "plasma",
+    "bio"
+  ],
+  "preset": {
+    "receiver": "covenant_receiver",
+    "core": "stable_toxic_core",
+    "barrel": "focusing_lens",
+    "sight": "holo_scope"
+  },
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 20
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 3
+    }
+  ]
+}

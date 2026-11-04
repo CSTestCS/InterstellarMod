@@ -36,6 +36,11 @@
     "sonic"
   ],
   "blade": "prongs",
+  "preset": {
+    "receiver": "energy_sword_hilt",
+    "core": "refined_plasma_core",
+    "grip": "alien_blade_grip"
+  },
   "cost": [
     {
       "item": "interstellar:alien_alloy",

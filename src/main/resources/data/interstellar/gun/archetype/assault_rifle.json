@@ -31,6 +31,13 @@
   "themes": [
     "human"
   ],
+  "preset": {
+    "receiver": "standard_receiver",
+    "barrel": "standard_barrel",
+    "stock": "tactical_stock",
+    "magazine": "extended_mag",
+    "sight": "red_dot"
+  },
   "cost": [
     {
       "item": "minecraft:iron_block",

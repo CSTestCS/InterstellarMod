@@ -28,6 +28,12 @@
   "themes": [
     "human"
   ],
+  "preset": {
+    "receiver": "standard_receiver",
+    "barrel": "long_barrel",
+    "sight": "acog_scope",
+    "grip": "rubber_grip"
+  },
   "cost": [
     {
       "item": "minecraft:iron_block",

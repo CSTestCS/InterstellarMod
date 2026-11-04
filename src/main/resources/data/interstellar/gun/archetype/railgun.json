@@ -22,7 +22,8 @@
     "barrel",
     "stock",
     "sight",
-    "magazine"
+    "magazine",
+    "core"
   ],
   "required": [
     "receiver",
@@ -32,6 +33,12 @@
   "themes": [
     "human"
   ],
+  "preset": {
+    "receiver": "heavy_receiver",
+    "barrel": "coil_barrel",
+    "stock": "tactical_stock",
+    "core": "diamond_focus"
+  },
   "cost": [
     {
       "item": "minecraft:iron_block",

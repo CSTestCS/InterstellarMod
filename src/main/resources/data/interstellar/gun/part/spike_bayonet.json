@@ -1,0 +1,35 @@
+{
+  "slot": "underbarrel",
+  "tier": 4,
+  "alien": true,
+  "archetypes": [
+    "spiker",
+    "mauler",
+    "brute_shot",
+    "skewer"
+  ],
+  "modifiers": {
+    "armor_pierce": {
+      "add": 0.2,
+      "mul": 1
+    }
+  },
+  "effects": [
+    "bayonet",
+    "armor_shred"
+  ],
+  "themes": [
+    "nether",
+    "tech"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 6
+    },
+    {
+      "item": "minecraft:pointed_dripstone",
+      "count": 4
+    }
+  ]
+}

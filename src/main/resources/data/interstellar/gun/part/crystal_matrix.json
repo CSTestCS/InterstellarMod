@@ -5,7 +5,8 @@
   "archetypes": [
     "needler",
     "shard_launcher",
-    "bio_spitter"
+    "bio_spitter",
+    "needle_rifle"
   ],
   "modifiers": {
     "magazine": {

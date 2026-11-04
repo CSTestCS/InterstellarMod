@@ -1,0 +1,30 @@
+{
+  "slot": "underbarrel",
+  "tier": 3,
+  "alien": true,
+  "archetypes": [
+    "spiker",
+    "mauler",
+    "brute_shot",
+    "skewer"
+  ],
+  "effects": [
+    "bayonet",
+    "bleed"
+  ],
+  "themes": [
+    "nether",
+    "solar",
+    "tech"
+  ],
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 4
+    },
+    {
+      "item": "interstellar:nether_cinder",
+      "count": 2
+    }
+  ]
+}

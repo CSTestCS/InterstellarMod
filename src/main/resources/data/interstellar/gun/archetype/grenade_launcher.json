@@ -29,6 +29,13 @@
   "themes": [
     "human"
   ],
+  "preset": {
+    "receiver": "standard_receiver",
+    "barrel": "short_barrel",
+    "stock": "light_stock",
+    "grip": "rubber_grip",
+    "sight": "iron_sights"
+  },
   "cost": [
     {
       "item": "minecraft:iron_block",

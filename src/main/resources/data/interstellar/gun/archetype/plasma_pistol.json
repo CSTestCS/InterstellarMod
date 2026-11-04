@@ -31,6 +31,11 @@
     "solar",
     "tech"
   ],
+  "preset": {
+    "receiver": "covenant_receiver",
+    "core": "refined_bio_core",
+    "grip": "alien_grip"
+  },
   "cost": [
     {
       "item": "interstellar:alien_alloy",

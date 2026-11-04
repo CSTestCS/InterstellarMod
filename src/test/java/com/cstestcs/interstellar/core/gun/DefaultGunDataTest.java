@@ -95,4 +95,21 @@ class DefaultGunDataTest {
             if (a.fireMode() == GunData.FireMode.MELEE) assertNotNull(a.bladeStyle(), a.id());
         }
     }
+
+    /** Every preset (the Halo weapon a family is modelled on) assembles a complete weapon from valid parts. */
+    @Test
+    void presetsAssembleCompleteWeapons() throws Exception {
+        GunRegistry reg = load();
+        int presets = 0;
+        for (GunData.Archetype a : reg.archetypes()) {
+            if (a.preset().isEmpty()) continue;
+            presets++;
+            GunBuild b = reg.preset(a, new SplittableRandom(1));
+            assertNotNull(b, a.id() + " preset is invalid");
+            GunRegistry.Stats s = reg.compute(b);
+            assertTrue(s.complete(), a.id());
+            assertEquals(a.preset().size(), b.parts().size(), a.id());
+        }
+        assertTrue(presets >= 30, "presets: " + presets);
+    }
 }

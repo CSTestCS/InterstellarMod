@@ -10,7 +10,9 @@
     "lmg",
     "shotgun",
     "revolver",
-    "railgun"
+    "railgun",
+    "hmg",
+    "bulldog"
   ],
   "modifiers": {
     "damage": {

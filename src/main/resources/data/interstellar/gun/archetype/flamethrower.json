@@ -28,6 +28,12 @@
   "themes": [
     "human"
   ],
+  "preset": {
+    "receiver": "standard_receiver",
+    "barrel": "short_barrel",
+    "magazine": "incendiary_mag",
+    "muzzle": "incendiary_choke"
+  },
   "cost": [
     {
       "item": "minecraft:iron_block",

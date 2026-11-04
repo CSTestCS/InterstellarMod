@@ -35,6 +35,14 @@
   "themes": [
     "human"
   ],
+  "preset": {
+    "receiver": "heavy_receiver",
+    "barrel": "long_barrel",
+    "stock": "precision_stock",
+    "magazine": "extended_mag",
+    "sight": "sniper_scope",
+    "muzzle": "muzzle_brake"
+  },
   "cost": [
     {
       "item": "minecraft:iron_block",

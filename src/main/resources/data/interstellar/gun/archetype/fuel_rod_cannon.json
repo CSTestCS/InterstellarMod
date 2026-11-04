@@ -30,6 +30,11 @@
     "bio",
     "nether"
   ],
+  "preset": {
+    "receiver": "covenant_receiver",
+    "core": "ancient_toxic_core",
+    "barrel": "overcharged_emitter"
+  },
   "cost": [
     {
       "item": "interstellar:alien_alloy",

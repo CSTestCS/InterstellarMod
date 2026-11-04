@@ -1,0 +1,50 @@
+{
+  "alien": true,
+  "tier": 5,
+  "fire_mode": "charge",
+  "ammo": "explosive",
+  "magazine": "energy_cell",
+  "stats": {
+    "damage": 22,
+    "fire_rate": 50,
+    "magazine": 4,
+    "reload_time": 3.2,
+    "spread": 1,
+    "range": 96,
+    "velocity": 1.4,
+    "charge_time": 1.2,
+    "effect_power": 2
+  },
+  "slots": [
+    "receiver",
+    "core",
+    "barrel",
+    "sight",
+    "grip"
+  ],
+  "required": [
+    "receiver",
+    "core"
+  ],
+  "themes": [
+    "plasma",
+    "solar",
+    "hydro"
+  ],
+  "preset": {
+    "receiver": "swarm_receiver",
+    "core": "stable_plasma_core",
+    "barrel": "focusing_lens",
+    "grip": "alien_grip"
+  },
+  "cost": [
+    {
+      "item": "interstellar:alien_alloy",
+      "count": 28
+    },
+    {
+      "item": "minecraft:ender_eye",
+      "count": 5
+    }
+  ]
+}

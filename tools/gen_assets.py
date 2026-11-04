@@ -413,8 +413,7 @@ def guns():
         shutil.rmtree(f"{A}/models/item/gun/{kind}", ignore_errors=True)
     gun_shapes = {s: {} for s in ["receiver", "barrel", "stock", "grip", "magazine", "sight", "muzzle", "underbarrel", "core"]}
     blade_shapes = {s: {} for s in ["receiver", "grip", "core"]}
-    shape_of = {"receiver": gm.receiver, "barrel": gm.barrel, "stock": gm.stock, "grip": gm.grip, "magazine": gm.magazine, "sight": gm.sight,
-                "muzzle": gm.muzzle, "underbarrel": gm.underbarrel, "core": lambda pid: gm.core(pid, gm.GUN_CORE_AT)}
+    shape_of = {slot: (lambda pid, slot=slot: gm.gun_part_shape(slot, pid)) for slot in gun_shapes}
     blade_shape_of = {"receiver": gm.hilt, "grip": gm.blade_grip, "core": lambda pid: gm.core(pid, gm.BLADE_CORE_AT)}
     power_models = {}  # part id -> (gun glow model or None, blade glow model or None)
     for pid, p in parts.items():
@@ -461,15 +460,15 @@ def guns():
     frames = {}
     for aid, a in archs.items():
         texture = f"{NS}:item/gun/alien" if a.get("alien") else f"{NS}:item/gun/metal"
-        if aid in blades:
-            boxes, display = gm.blade_frame(aid), SWORD_DISPLAY
-        else:
-            boxes, display = gm.gun_frame(aid, a.get("alien")), GUN_DISPLAY
+        boxes, display = gm.frame_shape(aid), (SWORD_DISPLAY if aid in blades else GUN_DISPLAY)
         if boxes is None:
             raise SystemExit(f"archetype {aid} has no frame shape in tools/gun_models.py")
         frames[aid] = boxes
         write_json(f"{A}/models/item/gun/frame/{aid}.json", {"textures": {"metal": texture, "particle": texture}, "display": display, "elements": els(boxes)})
     gm.check_unique("frame", frames)
+    anchors = gm.anchors_json()
+    anchors["barrel_ends"] = {pid: gm.barrel_end(pid) for pid in gun_shapes["barrel"]}
+    write_json(f"{A}/gun_anchors.json", anchors)
     write_json(f"{A}/models/item/gun/trim.json", {"textures": {"metal": f"{NS}:item/gun/trim", "particle": f"{NS}:item/gun/trim"}, "display": GUN_DISPLAY,
                                                   "elements": [box([3.5, 9.9, 6.4], [9.5, 10.2, 9.6]), box([3.5, 7, 6.3], [9.5, 7.5, 6.5])]})
 
@@ -491,13 +490,15 @@ def guns():
         """Model for a part made of a known material (block textured), tinted fallback for unknown materials."""
         # Frames have their own material (older guns without one show their receiver's).
         sel = {"property": f"{NS}:gun_info", "field": "frame_material"} if kind == "frame" else {"property": f"{NS}:gun_material", "slot": slot}
+        anchored = {"slot": slot} if kind == "part" else {}
         return {"type": "minecraft:select", **sel,
-                "cases": [{"when": mid, "model": {"type": f"{NS}:block_textured", "model": f"{NS}:item/gun/{kind}/{pid}", "block": MATERIAL_BLOCK[mid]}}
+                "cases": [{"when": mid, "model": {"type": f"{NS}:block_textured", "model": f"{NS}:item/gun/{kind}/{pid}", "block": MATERIAL_BLOCK[mid], **anchored}}
                           for mid in materials],
-                "fallback": tinted(f"{NS}:item/gun/{kind}/{pid}", slot)}
+                "fallback": {**tinted(f"{NS}:item/gun/{kind}/{pid}", slot), "type": f"{NS}:block_textured", **anchored}}
 
     def power_layer(slot, which):
-        cases = [{"when": pid, "model": {"type": "minecraft:model", "model": m[which], "tints": [{"type": "minecraft:constant", "value": (0xFF000000 | m[2]) - (1 << 32)}]}}
+        anchored = {"type": f"{NS}:block_textured", "slot": slot} if which == 0 else {"type": "minecraft:model"}
+        cases = [{"when": pid, "model": {**anchored, "model": m[which], "tints": [{"type": "minecraft:constant", "value": (0xFF000000 | m[2]) - (1 << 32)}]}}
                  for pid, m in power_models.items() if m[which] and parts[pid]["slot"] == slot]
         if not cases:
             return None

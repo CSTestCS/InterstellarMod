@@ -183,14 +183,40 @@ public final class GunRegistry {
         if (pool.isEmpty()) for (GunData.Archetype a : archetypes.values()) if (a.alien() == alien && a.fireMode() != GunData.FireMode.MELEE) pool.add(a);
         if (pool.isEmpty()) for (GunData.Archetype a : archetypes.values()) if (a.fireMode() != GunData.FireMode.MELEE) pool.add(a);
         if (pool.isEmpty()) return null;
-        return build(pool.get(rng.nextInt(pool.size())), theme, tier, alien, rng);
+        GunData.Archetype arch = pool.get(rng.nextInt(pool.size()));
+        // Half the time an alien carries the weapon its family is modelled on.
+        if (alien && rng.nextBoolean()) {
+            GunBuild preset = preset(arch, rng);
+            if (preset != null) return preset;
+        }
+        return build(arch, theme, tier, alien, rng);
     }
 
-    /** A random complete example of one archetype (any kind, blades included). */
+    /**
+     * An example of one archetype (any kind, blades included): its preset when it has one (the weapon it is modelled
+     * on), else random parts.
+     */
     public GunBuild example(String archetypeId, int tier, RandomGenerator rng) {
         GunData.Archetype arch = archetypes.get(archetypeId);
         if (arch == null) return null;
+        GunBuild preset = preset(arch, rng);
+        if (preset != null) return preset;
         return build(arch, arch.themes().isEmpty() ? "human" : arch.themes().get(0), tier, arch.alien(), rng);
+    }
+
+    /** The archetype's preset parts, in a material that suits it, or null without a (valid) preset. */
+    public GunBuild preset(GunData.Archetype arch, RandomGenerator rng) {
+        if (arch.preset().isEmpty()) return null;
+        String mat = arch.alien() ? "alien_alloy" : "netherite";
+        if (!materials.containsKey(mat)) mat = materials.isEmpty() ? null : materials.keySet().iterator().next();
+        Map<GunData.Slot, GunBuild.Choice> chosen = new EnumMap<>(GunData.Slot.class);
+        for (Map.Entry<GunData.Slot, String> e : arch.preset().entrySet()) {
+            GunData.Part p = parts.get(e.getValue());
+            if (p == null || p.slot() != e.getKey() || !arch.slots().contains(e.getKey())) return null;
+            chosen.put(e.getKey(), new GunBuild.Choice(p.id(), mat));
+        }
+        for (GunData.Slot req : arch.required()) if (!chosen.containsKey(req)) return null;
+        return new GunBuild(arch.id(), chosen, null, Map.of(), mat);
     }
 
     private GunBuild build(GunData.Archetype arch, String theme, int tier, boolean alien, RandomGenerator rng) {
@@ -241,7 +267,7 @@ public final class GunRegistry {
                 archetypes.put(id, new GunData.Archetype(id, bool(o, "alien"), integer(o, "tier", 1),
                         enumOf(GunData.FireMode.class, str(o, "fire_mode", "semi")), enumOf(GunData.AmmoType.class, str(o, "ammo", "ballistic")),
                         stats, slots(o.get("slots")), slots(o.get("required")), str(o, "magazine", id), strings(o.get("themes")),
-                        str(o, "blade", "saber")));
+                        str(o, "blade", "saber"), preset(o.get("preset"))));
             } catch (RuntimeException e) {
                 problems.add("archetype " + id + ": " + e.getMessage());
             }
@@ -297,6 +323,17 @@ public final class GunRegistry {
             }
             return out;
         }
+    }
+
+    private static Map<GunData.Slot, String> preset(JsonElement el) {
+        Map<GunData.Slot, String> out = new EnumMap<>(GunData.Slot.class);
+        if (el == null || !el.isJsonObject()) return out;
+        for (Map.Entry<String, JsonElement> e : el.getAsJsonObject().entrySet()) {
+            GunData.Slot slot = GunData.Slot.byKey(e.getKey());
+            if (slot == null) throw new IllegalArgumentException("unknown preset slot " + e.getKey());
+            out.put(slot, e.getValue().getAsString());
+        }
+        return out;
     }
 
     private static Set<GunData.Slot> slots(JsonElement el) {

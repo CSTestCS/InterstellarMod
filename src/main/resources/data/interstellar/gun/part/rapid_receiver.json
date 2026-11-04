@@ -7,7 +7,9 @@
     "assault_rifle",
     "lmg",
     "pulse_rifle",
-    "carbine"
+    "carbine",
+    "hmg",
+    "bulldog"
   ],
   "modifiers": {
     "fire_rate": {

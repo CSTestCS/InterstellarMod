@@ -33,6 +33,12 @@
     "crystal",
     "hydro"
   ],
+  "preset": {
+    "receiver": "covenant_receiver",
+    "core": "refined_crystal_core",
+    "barrel": "focusing_lens",
+    "sight": "holo_scope"
+  },
   "cost": [
     {
       "item": "interstellar:alien_alloy",

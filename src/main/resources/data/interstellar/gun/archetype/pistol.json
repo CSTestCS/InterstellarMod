@@ -28,6 +28,13 @@
   "themes": [
     "human"
   ],
+  "preset": {
+    "receiver": "match_receiver",
+    "barrel": "standard_barrel",
+    "grip": "rubber_grip",
+    "magazine": "speed_mag",
+    "sight": "red_dot"
+  },
   "cost": [
     {
       "item": "minecraft:iron_block",

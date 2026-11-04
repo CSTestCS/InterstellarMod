@@ -75,10 +75,12 @@ public final class GunData {
 
     /**
      * A weapon family (pistol, assault rifle, plasma rifle, ...). Base stats, which slots exist, which are required,
-     * and whether it is human (overworld-craftable) or alien tech.
+     * and whether it is human (overworld-craftable) or alien tech. {@code preset}: the parts that assemble the weapon
+     * it is modelled on (its Halo counterpart), used for creative examples and some alien weapons.
      */
     public record Archetype(String id, boolean alien, int tier, FireMode fireMode, AmmoType ammo,
-            Map<Stat, Double> stats, Set<Slot> slots, Set<Slot> required, String magazineKind, List<String> themes, String bladeStyle) {}
+            Map<Stat, Double> stats, Set<Slot> slots, Set<Slot> required, String magazineKind, List<String> themes, String bladeStyle,
+            Map<Slot, String> preset) {}
 
     /**
      * A swappable part. {@code color}: set on power sources (cores, crystals, special rounds), it colours the shots

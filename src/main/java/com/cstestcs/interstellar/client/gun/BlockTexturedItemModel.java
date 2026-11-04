@@ -1,5 +1,8 @@
 package com.cstestcs.interstellar.client.gun;
 
+import com.cstestcs.interstellar.core.gun.GunBuild;
+import com.cstestcs.interstellar.registry.ModComponents;
+
 import com.mojang.math.Transformation;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -55,12 +58,16 @@ public final class BlockTexturedItemModel implements ItemModel {
     private final Supplier<Vector3fc[]> extents;
     private final ModelRenderProperties properties;
     private final Matrix4fc transformation;
-    private final Identifier blockId;
+    private final @Nullable Identifier blockId;
+    /** Gun slot whose anchor places this part on each weapon family (empty: stays where it was modelled). */
+    private final String slot;
     private @Nullable BlockStateModel source;
     private ItemQuads quads;
     private boolean animated;
 
-    private BlockTexturedItemModel(List<ItemTintSource> tints, QuadCollection shape, ModelRenderProperties properties, Matrix4fc transformation, Identifier blockId) {
+    private BlockTexturedItemModel(List<ItemTintSource> tints, QuadCollection shape, ModelRenderProperties properties, Matrix4fc transformation,
+            @Nullable Identifier blockId, String slot) {
+        this.slot = slot;
         this.tints = tints;
         this.shape = shape.getAll();
         this.fallback = ItemQuads.split(this.shape);
@@ -93,7 +100,16 @@ public final class BlockTexturedItemModel implements ItemModel {
             }
         }
         layer.setExtents(extents);
-        layer.setLocalTransform(transformation);
+        Matrix4fc local = transformation;
+        GunBuild build = slot.isEmpty() ? null : item.get(ModComponents.GUN_BUILD.get());
+        if (build != null) {
+            org.joml.Matrix4f placed = GunAnchors.transform(build, slot);
+            if (placed != null) {
+                local = new org.joml.Matrix4f(transformation).mul(placed);
+                output.appendModelIdentityElement(GunAnchors.key(build, slot));
+            }
+        }
+        layer.setLocalTransform(local);
         properties.applyToLayer(layer, displayContext);
         layer.setQuads(quads);
         if (animated) output.setAnimated();
@@ -101,6 +117,7 @@ public final class BlockTexturedItemModel implements ItemModel {
 
     /** Rebuilds the quads when the block's model changed (first use, resource reload). */
     private void refresh() {
+        if (blockId == null) return; // shape only, keeps its own texture
         Block block = BuiltInRegistries.BLOCK.getOptional(blockId).orElse(null);
         if (block == null) return;
         BlockState state = block.defaultBlockState();
@@ -166,12 +183,14 @@ public final class BlockTexturedItemModel implements ItemModel {
                 skin.materialInfo(), face.bakedNormals(), skin.bakedColors());
     }
 
-    public record Unbaked(Identifier model, Identifier block, Optional<Transformation> transformation, List<ItemTintSource> tints) implements ItemModel.Unbaked {
+    public record Unbaked(Identifier model, Optional<Identifier> block, Optional<Transformation> transformation, List<ItemTintSource> tints,
+            String slot) implements ItemModel.Unbaked {
         public static final MapCodec<Unbaked> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                 Identifier.CODEC.fieldOf("model").forGetter(Unbaked::model),
-                Identifier.CODEC.fieldOf("block").forGetter(Unbaked::block),
+                Identifier.CODEC.optionalFieldOf("block").forGetter(Unbaked::block),
                 Transformation.EXTENDED_CODEC.optionalFieldOf("transformation").forGetter(Unbaked::transformation),
-                ItemTintSources.CODEC.listOf().optionalFieldOf("tints", List.of()).forGetter(Unbaked::tints)
+                ItemTintSources.CODEC.listOf().optionalFieldOf("tints", List.of()).forGetter(Unbaked::tints),
+                com.mojang.serialization.Codec.STRING.optionalFieldOf("slot", "").forGetter(Unbaked::slot)
         ).apply(i, Unbaked::new));
 
         @Override
@@ -186,7 +205,8 @@ public final class BlockTexturedItemModel implements ItemModel {
             TextureSlots slots = resolved.getTopTextureSlots();
             QuadCollection quads = resolved.bakeTopGeometry(slots, baker, BlockModelRotation.IDENTITY);
             ModelRenderProperties properties = ModelRenderProperties.fromResolvedModel(baker, resolved, slots);
-            return new BlockTexturedItemModel(tints, quads, properties, Transformation.compose(transform, transformation), block);
+            GunAnchors.invalidate(); // baked on every resource reload: re-read the anchors with the new resources
+            return new BlockTexturedItemModel(tints, quads, properties, Transformation.compose(transform, transformation), block.orElse(null), slot);
         }
 
         @Override
