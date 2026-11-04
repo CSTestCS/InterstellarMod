@@ -61,7 +61,7 @@ public final class LaserBladeRenderer implements SpecialModelRenderer<LaserBlade
                 // Halo energy sword: two long blades from the emitters at the ends of the crosswise handle. Each has a
                 // short pointed tail behind the emitter, is widest just past it and sweeps inwards to a fine point;
                 // the blades run side by side with a gap between them.
-                float base = 6.5f / 16f, blade = len * 1.6f;
+                float base = 6.5f / 16f, reach = len * 1.6f;
                 int n = 14;
                 for (int side = -1; side <= 1; side += 2) {
                     for (int i = -2; i < n; i++) {
@@ -75,7 +75,7 @@ public final class LaserBladeRenderer implements SpecialModelRenderer<LaserBlade
                             off = 5.75f / 16f + 0.5f / 16f * (float) Math.sin(Math.PI * Math.min(1, t * 2.5)) - 4.2f / 16f * t;
                             hw = (t < 0.15f ? 1.0f + 2f * t : 1.3f * (1 - (t - 0.15f) / 0.85f) + 0.12f) / 16f;
                         }
-                        float y0 = base + blade * t0 * (t0 < 0 ? 0.2f : 1), y1 = base + blade * t1 * (t1 <= 0 ? 0.2f : 1);
+                        float y0 = base + reach * t0 * (t0 < 0 ? 0.2f : 1), y1 = base + reach * t1 * (t1 <= 0 ? 0.2f : 1);
                         out.add(new Piece(c + side * off - hw, Math.min(y0, y1), c - 0.35f / 16f, c + side * off + hw, Math.max(y0, y1), c + 0.35f / 16f));
                     }
                 }
