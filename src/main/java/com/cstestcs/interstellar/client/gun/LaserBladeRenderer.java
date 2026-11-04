@@ -29,7 +29,7 @@ import org.jspecify.annotations.Nullable;
  */
 public final class LaserBladeRenderer implements SpecialModelRenderer<LaserBladeRenderer.Blade> {
     /** Colour (RGB), length in blocks, shape (saber, dagger, broad, glaive, prongs, scythe, hammer). */
-    public record Blade(int color, float length, String style) {}
+    public record Blade(int color, float length, String style, String archetype) {}
 
     /** Where the hilt's emitter ends, in item model space (blocks). */
     private static final float BASE = 11 / 16f;
@@ -58,14 +58,25 @@ public final class LaserBladeRenderer implements SpecialModelRenderer<LaserBlade
                 out.add(new Piece(c - w, -9 / 16f - len * 0.75f, c - w, c + w, -9 / 16f, c + w));
             }
             case "prongs" -> {
-                // Two blades from the ends of the guard (Halo energy sword): bowing out, then closing to the tips.
-                int n = 7;
+                // Halo energy sword: two long blades from the emitters at the ends of the crosswise handle. Each has a
+                // short pointed tail behind the emitter, is widest just past it and sweeps inwards to a fine point;
+                // the blades run side by side with a gap between them.
+                float base = 6.5f / 16f, blade = len * 1.6f;
+                int n = 14;
                 for (int side = -1; side <= 1; side += 2) {
-                    for (int i = 0; i < n; i++) {
-                        float t = (i + 0.5f) / n;
-                        float off = side * (3.5f / 16f + 0.9f / 16f * (float) Math.sin(Math.PI * t * 0.9) - 1.6f / 16f * t);
-                        float hw = w * (1.1f - 0.6f * t);
-                        out.add(new Piece(c + off - hw, BASE + len * i / n, c - hw * 0.7f, c + off + hw, BASE + len * (i + 1) / n, c + hw * 0.7f));
+                    for (int i = -2; i < n; i++) {
+                        float t0 = i / (float) n, t1 = (i + 1) / (float) n;
+                        float t = (t0 + t1) / 2;
+                        float off, hw;
+                        if (t < 0) { // tail, pointing back past the emitter
+                            off = 5.75f / 16f + 0.6f / 16f * (-t * 7);
+                            hw = 1.1f / 16f * (1 + t * 7);
+                        } else {
+                            off = 5.75f / 16f + 0.5f / 16f * (float) Math.sin(Math.PI * Math.min(1, t * 2.5)) - 4.2f / 16f * t;
+                            hw = (t < 0.15f ? 1.0f + 2f * t : 1.3f * (1 - (t - 0.15f) / 0.85f) + 0.12f) / 16f;
+                        }
+                        float y0 = base + blade * t0 * (t0 < 0 ? 0.2f : 1), y1 = base + blade * t1 * (t1 <= 0 ? 0.2f : 1);
+                        out.add(new Piece(c + side * off - hw, Math.min(y0, y1), c - 0.35f / 16f, c + side * off + hw, Math.max(y0, y1), c + 0.35f / 16f));
                     }
                 }
             }
@@ -101,6 +112,12 @@ public final class LaserBladeRenderer implements SpecialModelRenderer<LaserBlade
         int c = blade.color();
         float r = ((c >> 16) & 255) / 255f, g = ((c >> 8) & 255) / 255f, b = (c & 255) / 255f;
         List<Piece> pieces = shape(blade);
+        org.joml.Matrix4f tilt = GunAnchors.pose(blade.archetype());
+        if (tilt != null) {
+            // The weapon's whole-model tilt (the energy sword points forward), as for its other layers.
+            poseStack.pushPose();
+            poseStack.last().pose().mul(tilt);
+        }
         collector.submitCustomGeometry(poseStack, RenderTypes.lightning(), (pose, vc) -> {
             Matrix4f m = pose.pose();
             for (Piece p : pieces) {
@@ -114,12 +131,13 @@ public final class LaserBladeRenderer implements SpecialModelRenderer<LaserBlade
                 for (Piece p : pieces) SpaceClient.box(vc, m, p.x0 - e, p.y0 - e * 0.4f, p.z0 - e, p.x1 + e, p.y1 + e * 0.6f, p.z1 + e, r, g, b, a);
             }
         });
+        if (tilt != null) poseStack.popPose();
     }
 
     @Override
     public void getExtents(Consumer<Vector3fc> out) {
-        out.accept(new Vector3f(-0.6f, -1.6f, 0.2f));
-        out.accept(new Vector3f(1.6f, BASE + 2.8f, 0.8f));
+        out.accept(new Vector3f(-2.5f, -1.6f, 0.2f));
+        out.accept(new Vector3f(1.6f, BASE + 4.2f, 0.8f));
     }
 
     @Override
@@ -129,7 +147,8 @@ public final class LaserBladeRenderer implements SpecialModelRenderer<LaserBlade
         GunBuild build = stack.get(ModComponents.GUN_BUILD.get());
         GunData.Archetype arch = build == null ? null : GunDataManager.registry().archetype(build.archetype());
         String style = arch == null || arch.bladeStyle() == null ? "saber" : arch.bladeStyle();
-        return new Blade(bright(GunFiring.color(stats)), (float) Math.max(0.4, Math.min(2.5, stats.get(GunData.Stat.RANGE))), style);
+        return new Blade(bright(GunFiring.color(stats)), (float) Math.max(0.4, Math.min(2.5, stats.get(GunData.Stat.RANGE))), style,
+                build == null ? "" : build.archetype());
     }
 
     /** Dark material colours would barely glow: lift them while keeping their hue. */

@@ -35,9 +35,10 @@
   "preset": {
     "receiver": "standard_receiver",
     "barrel": "long_barrel",
-    "stock": "light_stock",
+    "stock": "tactical_stock",
     "magazine": "extended_mag",
-    "sight": "acog_scope"
+    "sight": "acog_scope",
+    "underbarrel": "flashlight"
   },
   "cost": [
     {

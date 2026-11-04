@@ -28,6 +28,8 @@ public final class GunAnchors {
     private final Set<String> foregrips = new HashSet<>();
     private final Map<String, Float> barrelEnds = new HashMap<>();
     private final Map<String, Map<String, Anchor>> archetypes = new HashMap<>();
+    /** Whole-weapon tilts (applied to every layer of that family). */
+    private final Map<String, Matrix4f> poses = new HashMap<>();
 
     private GunAnchors() {}
 
@@ -60,6 +62,22 @@ public final class GunAnchors {
         if (o.has("barrel_ends")) {
             for (Map.Entry<String, JsonElement> e : o.getAsJsonObject("barrel_ends").entrySet()) barrelEnds.put(e.getKey(), e.getValue().getAsFloat());
         }
+        if (o.has("poses")) {
+            for (Map.Entry<String, JsonElement> e : o.getAsJsonObject("poses").entrySet()) {
+                JsonObject p = e.getValue().getAsJsonObject();
+                float[] pv = floats(p.get("pivot"));
+                float angle = (float) Math.toRadians(p.get("angle").getAsFloat());
+                String axis = p.get("axis").getAsString();
+                Matrix4f m = new Matrix4f().translate(pv[0] / 16f, pv[1] / 16f, pv[2] / 16f);
+                switch (axis) {
+                    case "x" -> m.rotateX(angle);
+                    case "y" -> m.rotateY(angle);
+                    default -> m.rotateZ(angle);
+                }
+                m.translate(-pv[0] / 16f, -pv[1] / 16f, -pv[2] / 16f);
+                poses.put(e.getKey(), m);
+            }
+        }
         for (Map.Entry<String, JsonElement> a : o.getAsJsonObject("archetypes").entrySet()) {
             Map<String, Anchor> slots = new HashMap<>();
             for (Map.Entry<String, JsonElement> s : a.getValue().getAsJsonObject().entrySet()) {
@@ -77,22 +95,33 @@ public final class GunAnchors {
         return f;
     }
 
-    /** Key identifying the placement (for render state caching), or null when the part stays where it was designed. */
-    static @Nullable String key(GunBuild build, String slot) {
-        GunAnchors a = get();
-        Map<String, Anchor> slots = a.archetypes.get(build.archetype());
-        if (slots == null) return null;
-        String barrel = part(build, "barrel");
-        return build.archetype() + "/" + slot + "/" + part(build, slot) + (slot.equals("muzzle") ? "/" + barrel : "");
+    /** Key identifying the placement (for render state caching). */
+    static String key(GunBuild build, String slot) {
+        String partSlot = slot.startsWith("blade:") ? slot.substring(6) : slot;
+        return build.archetype() + "/" + slot + "/" + part(build, partSlot) + (slot.equals("muzzle") ? "/" + part(build, "barrel") : "");
+    }
+
+    /** The family's whole-weapon tilt, if it has one. */
+    static @Nullable Matrix4f pose(String archetype) {
+        return get().poses.get(archetype);
     }
 
     /** Transform (block units) placing a slot's part on the build's family, or null when it stays as designed. */
     static @Nullable Matrix4f transform(GunBuild build, String slot) {
         GunAnchors a = get();
+        Matrix4f pose = a.poses.get(build.archetype());
+        Matrix4f placed = slot.equals("frame") ? null : place(a, build, slot);
+        if (pose == null) return placed;
+        return placed == null ? new Matrix4f(pose) : new Matrix4f(pose).mul(placed);
+    }
+
+    private static @Nullable Matrix4f place(GunAnchors a, GunBuild build, String slot) {
         Map<String, Anchor> slots = a.archetypes.get(build.archetype());
         if (slots == null) return null;
+        boolean blade = slot.startsWith("blade:");
+        if (blade) slot = slot.substring(6);
         String pid = part(build, slot);
-        String key = slot.equals("grip") && pid != null && a.foregrips.contains(pid) ? "foregrip" : slot;
+        String key = blade ? "blade_" + slot : slot.equals("grip") && pid != null && a.foregrips.contains(pid) ? "foregrip" : slot;
         float[] pivot = a.pivots.get(key);
         if (pivot == null) return null;
         Anchor anchor = slots.get(key);
@@ -111,7 +140,7 @@ public final class GunAnchors {
             sz = anchor.sz;
         }
         String barrel = part(build, "barrel");
-        if (slot.equals("muzzle") && barrel != null) {
+        if (!blade && slot.equals("muzzle") && barrel != null) {
             // Muzzles sit on the end of the fitted barrel.
             float[] bp = a.pivots.get("barrel");
             Anchor b = slots.get("barrel");

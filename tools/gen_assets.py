@@ -398,13 +398,20 @@ def guns():
     fits_blade = lambda p: any(a in blades for a in p.get("archetypes", [])) or not p.get("archetypes")
     fits_gun = lambda p: any(a not in blades for a in p.get("archetypes", [])) or not p.get("archetypes")
 
+    def element(b, tex="#metal"):
+        e = box(list(b[0]), list(b[1]), tex=tex)
+        if len(b) > 2:
+            ax, ang, o = b[2]
+            e["rotation"] = {"angle": ang, "axis": ax, "origin": list(o)}
+        return e
+
     def els(boxes):
-        return [box(list(a), list(b)) for a, b in boxes]
+        return [element(b) for b in boxes]
 
     def glow_els(boxes):
         out = []
-        for a, b in boxes:
-            e = box(list(a), list(b), tex="#power")
+        for b in boxes:
+            e = element(b, tex="#power")
             e["light_emission"] = 15
             out.append(e)
         return out
@@ -468,6 +475,7 @@ def guns():
     gm.check_unique("frame", frames)
     anchors = gm.anchors_json()
     anchors["barrel_ends"] = {pid: gm.barrel_end(pid) for pid in gun_shapes["barrel"]}
+    anchors["poses"] = gm.POSES
     write_json(f"{A}/gun_anchors.json", anchors)
     write_json(f"{A}/models/item/gun/trim.json", {"textures": {"metal": f"{NS}:item/gun/trim", "particle": f"{NS}:item/gun/trim"}, "display": GUN_DISPLAY,
                                                   "elements": [box([3.5, 9.9, 6.4], [9.5, 10.2, 9.6]), box([3.5, 7, 6.3], [9.5, 7.5, 6.5])]})
@@ -490,14 +498,14 @@ def guns():
         """Model for a part made of a known material (block textured), tinted fallback for unknown materials."""
         # Frames have their own material (older guns without one show their receiver's).
         sel = {"property": f"{NS}:gun_info", "field": "frame_material"} if kind == "frame" else {"property": f"{NS}:gun_material", "slot": slot}
-        anchored = {"slot": slot} if kind == "part" else {}
+        anchored = {"slot": slot} if kind == "part" else {"slot": "blade:" + slot} if kind == "blade_part" else {"slot": "frame"}
         return {"type": "minecraft:select", **sel,
                 "cases": [{"when": mid, "model": {"type": f"{NS}:block_textured", "model": f"{NS}:item/gun/{kind}/{pid}", "block": MATERIAL_BLOCK[mid], **anchored}}
                           for mid in materials],
                 "fallback": {**tinted(f"{NS}:item/gun/{kind}/{pid}", slot), "type": f"{NS}:block_textured", **anchored}}
 
     def power_layer(slot, which):
-        anchored = {"type": f"{NS}:block_textured", "slot": slot} if which == 0 else {"type": "minecraft:model"}
+        anchored = {"type": f"{NS}:block_textured", "slot": slot if which == 0 else "blade:" + slot}
         cases = [{"when": pid, "model": {**anchored, "model": m[which], "tints": [{"type": "minecraft:constant", "value": (0xFF000000 | m[2]) - (1 << 32)}]}}
                  for pid, m in power_models.items() if m[which] and parts[pid]["slot"] == slot]
         if not cases:
@@ -536,8 +544,10 @@ def guns():
         blade_layers.append(glow)
     # One frame layer for every family, then either the blade layers or the gun layers (shared by all blades / guns).
     frame_layer = layers[0]
-    blade = {"type": "minecraft:composite", "models": blade_layers + [
-        {"type": "minecraft:special", "base": f"{NS}:item/gun/frame/{blades[0]}", "model": {"type": f"{NS}:laser_blade"}}]}
+    special = {"type": "minecraft:select", "property": f"{NS}:gun_info", "field": "archetype",
+               "cases": [{"when": aid, "model": {"type": "minecraft:special", "base": f"{NS}:item/gun/frame/{aid}", "model": {"type": f"{NS}:laser_blade"}}}
+                         for aid in blades], "fallback": {"type": "minecraft:empty"}}
+    blade = {"type": "minecraft:composite", "models": blade_layers + [special]}
     model = {"type": "minecraft:composite", "models": [frame_layer, {
         "type": "minecraft:select", "property": f"{NS}:gun_info", "field": "archetype", "cases": [{"when": blades, "model": blade}],
         "fallback": {"type": "minecraft:composite", "models": layers[1:]}}]}

@@ -36,8 +36,7 @@
   "preset": {
     "receiver": "covenant_receiver",
     "core": "refined_crystal_core",
-    "barrel": "focusing_lens",
-    "sight": "holo_scope"
+    "barrel": "focusing_lens"
   },
   "cost": [
     {

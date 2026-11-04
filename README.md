@@ -170,8 +170,8 @@ Players who die in space have their inventory stored. Restore it with
 
 Space is divided into cells of 160×160 blocks. Away from the centre (640 blocks, kept for the planets of real
 dimensions) seven cells in ten hold a planet, so wherever you fly there is always another one ahead. Like the
-dimensions of the 20w14∞ snapshot, each planet is derived from a single number (its cell) by a seeded random, in the
-same order the snapshot used:
+dimensions of the 20w14∞ snapshot, each planet is derived from a single number (its cell, mixed with the world's
+seed, so every world has its own galaxy) by a seeded random, in the same order the snapshot used:
 
 * a terrain family (surface: normal, amplified, large biomes, caves or floating islands; nether-like; end-like) and,
   for surface worlds, a random sea level;
@@ -229,10 +229,14 @@ effects (hover a part in the Gunsmith Table to read them):
 * rounds: pierce, ricochet, homing, split, accelerate, arc, phase (through blocks); impacts: cluster bomblets,
   gravity well, concussive blast. Ballistic guns with a round-changing effect fire visible rounds instead of hitscan.
 
-**Halo shapes, still modular.** Each family's frame is modelled on its Halo counterpart, and
+**Halo shapes, still modular.** Weapons follow the design language of hand-made Blockbench models: slim
+two-pixel bodies, one-pixel barrels, 22.5° angled grips and fins, few pieces. The MA40, BR55 and Type-50 beam rifle
+frames are those models. Each family's frame is modelled on its Halo counterpart, and
 `assets/interstellar/gun_anchors.json` says where each slot's part attaches on that family. The same parts therefore
 sit where that weapon has them: a bullpup's magazine behind the grip, needler crystals on top, Brute blades under the
-muzzle, muzzles on the end of whichever barrel is fitted. Every Halo family has a **preset**, the part choices that
+muzzle, muzzles on the end of whichever barrel is fitted. Receivers form the main body of each weapon (alien
+receivers taper like Covenant hulls). The energy sword is held by its crosswise handle and points forward. Its two
+curved blades leave the ends of the guard, are widest near the hilt and sweep in to their points. Every Halo family has a **preset**, the part choices that
 assemble the real weapon (MA40: standard receiver, standard barrel, extended magazine, red dot; plasma pistol: Covenant
 receiver and a green bio core). Presets are listed in each archetype's JSON. The creative tab shows them, and half of
 alien weapons are built from them.
@@ -261,7 +265,11 @@ Regenerate the default data with `python3 tools/gen_gun_data.py`.
 
 ## 7. Aliens
 
-**Halo species: the Covenant.** These live among the aliens of every world and crew a quarter of alien ships:
+Aliens belong to **factions**: groups of species that never fight each other, each with its own enemies.
+Faction, Allies and Enemies are ordinary race settings, so race files can add factions or change them.
+
+**The Covenant** (Halo) can appear on any world that is not vanilla Minecraft's: Interstellar's planets and other
+mods' dimensions. It wars on humanity and on every other alien faction.
 
 * Sangheili (Elites). Split jaws and crested helmets; Minor (blue), Major (red), Ultra (white) and Zealot (gold)
   ranks.
@@ -269,24 +277,30 @@ Regenerate the default data with `python3 tools/gen_gun_data.py`.
 * Unggoy (Grunts). Methane masks and back tanks; Minor, Major and Heavy ranks.
 * Kig-Yar (Jackals). Beaked and quilled; Snipers carry beam rifles.
 
-Each species is armed with its Halo weapons through `weapon:<family>` entries in its `Weapons` list. Every race has
-its own head model and armour skin.
+Each species is armed with its Halo weapons through `weapon:<family>` entries in its `Weapons` list.
 
-**Mob-folk.** 32 bipedal alien species descended from Minecraft's animals and mobs, each with its own head model and
-painted body: Bovar (cow, with Mooshroom), Porcine (pig), Ovine (sheep), Gallid (chicken), Lupine (wolf), Feline
-(cat), Vulpine (fox), Leporid (rabbit), Equine (horse), Camelid (llama), Ursan (panda, with Polar), Ranid (frog),
-Axolite (axolotl), Testudo (turtle), Apid (bee), Arachnid (spider), Creepid (creeper), Cephalid (squid, with Glow),
-Delphin (dolphin), Caprid (goat), Psittan (parrot), Striden (strider), Hoglan (hoglin), Blazar (blaze), Guardite
-(guardian), Gelan (slime, with Magma), Shulkari (shulker), Ghastling (ghast), Sniffar (sniffer), Armadan
-(armadillo), Chiropter (bat) and Ravagon (ravager). Each lives on the worlds that suit it (frog-folk on toxic and
-fungal worlds, blaze-folk on magma worlds) beside that world's native species. Each also carries fitting traits
-(water breathing, fire immunity, slow falling) and tails.
+**Mob-folk factions.** 32 bipedal species descended from Minecraft's animals and mobs, each with its own head model
+and painted body, are the natives of the worlds that suit them. They form seven factions:
 
-**World natives.** One alien race per species, plus Elite and Scout subraces. Each has a procedurally painted skin, a
-Blockbench-format head (antennae, eye clusters, tentacles…), a faction, a disposition, a favourite item and a weapon
-theme matching its species. Aliens spawning on a planet belong to the species settling it, and the Race Scanner
-names the planet they come from. They are ordinary race files in `races/`, so you can edit or replace them. Aliens may
-wear any armour (vanilla or modded) whose repair material belongs to their species' world.
+* Pastoral Union: Bovar (cow, with Mooshroom), Porcine (pig), Ovine (sheep), Gallid (chicken), Equine (horse),
+  Camelid (llama), Caprid (goat), Sniffar (sniffer), Armadan (armadillo).
+* Wildkin: Lupine (wolf), Feline (cat), Vulpine (fox), Leporid (rabbit), Ursan (panda, with Polar).
+* Tide Court: Axolite (axolotl), Testudo (turtle), Cephalid (squid, with Glow), Delphin (dolphin), Guardite
+  (guardian), Ranid (frog).
+* Hive: Apid (bee), Psittan (parrot), Chiropter (bat).
+* Nether Conclave: Striden (strider), Hoglan (hoglin), Blazar (blaze), Ghastling (ghast).
+* The Blight: Creepid (creeper), Arachnid (spider), Gelan (slime, with Magma), Ravagon (ravager).
+* Shulker Syndicate: Shulkari (shulker).
+
+Frog-folk live on toxic and fungal worlds, blaze-folk on magma worlds, and so on. Each species also has fitting
+traits (water breathing, fire immunity, slow falling) and a tail where it suits.
+
+**Raids and ships.** Now and then a squad of one faction lands near a player in any non-vanilla dimension. The squad
+comes from a faction whose races may live there: the Covenant anywhere, natives on their own worlds, and any custom
+faction through its races' HomeDimension. Alien ships are crewed by one faction from their home world. Aliens may
+wear any armour (vanilla or modded) whose repair material belongs to the world they come from. All species are
+ordinary race files in `races/`. The procedural per-world races of earlier versions are removed on start unless you
+edited them.
 
 Aliens (and any raced mob) fight with whatever they hold: guns are fired according to their fire mode, bows drawn,
 crossbows charged, tridents, snowballs, splash potions and other throwables thrown, and swords, axes, maces, laser
