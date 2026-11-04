@@ -1,5 +1,7 @@
 package com.cstestcs.interstellar.ship;
 
+import com.cstestcs.interstellar.core.race.SpeciesRaces;
+
 import com.cstestcs.interstellar.Interstellar;
 import com.cstestcs.interstellar.InterstellarConfig;
 import com.cstestcs.interstellar.alien.AlienArmor;
@@ -60,6 +62,9 @@ public final class AlienShips {
     public static @Nullable SpacecraftEntity spawn(ServerLevel level, Vec3 pos, ForeignWorlds.World world, String designName, RandomSource random) {
         ShipStructure design = StarshipLibrary.load(level.getServer(), designName).orElse(null);
         RaceDefinition race = RaceManager.get(world.alienRaceId());
+        // A quarter of alien ships belong to the Covenant, crewed by a mix of its species.
+        boolean covenant = random.nextInt(4) == 0 && RaceManager.get(SpeciesRaces.COVENANT.get(0)) != null;
+        if (covenant) race = RaceManager.get(SpeciesRaces.COVENANT.get(random.nextInt(SpeciesRaces.COVENANT.size())));
         if (design == null || design.entries.isEmpty()) return null;
         BlockState hull = BuiltInRegistries.BLOCK.getOptional(Identifier.parse(ForeignWorlds.hullBlock(world))).orElse(Blocks.STONE).defaultBlockState();
         ShipStructure structure = StarshipLibrary.withHull(design, hull);
@@ -73,7 +78,8 @@ public final class AlienShips {
         for (int seat = 0; seat < crew; seat++) {
             AlienEntity alien = ModEntities.ALIEN.get().spawn(level, BlockPos.containing(pos), EntitySpawnReason.EVENT);
             if (alien == null) continue;
-            if (race != null) RaceEvents.setRace(alien, race);
+            RaceDefinition member = covenant ? RaceManager.get(SpeciesRaces.COVENANT.get(random.nextInt(SpeciesRaces.COVENANT.size()))) : race;
+            if (member != null) RaceEvents.setRace(alien, member);
             AlienArmor.equip(alien, world.dimensionId(), random, 0.5f);
             alien.setPersistenceRequired();
             if (alien.startRiding(ship, true, true)) ship.restoreSeat(alien, seat);

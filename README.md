@@ -201,12 +201,16 @@ there directly.
 
 There is a single **gun** item, a single **magazine** item, and 11 alien materials. Everything else is data:
 
-* `data/<ns>/gun/archetype/*.json`: 38 families inspired by Halo, Destiny, Call of Duty and Star Wars. Guns: pistol,
-  revolver, hand cannon, SMG, carbine, assault, battle, pulse and scout rifles, DMR, sniper, railgun, shotgun, LMG,
-  flamethrower, grenade and rocket launchers; plasma pistol and rifle, needler, spiker, arc caster, fusion, beam and
-  gravity rifles, fuel rod cannon, shard launcher, void lance, sonic disruptor, bio spitter. Blades: laser sword,
-  dagger, greatsword and glaive; alien energy sword and dagger, plasma scythe and gravity hammer.
-* `gun/part/*.json`: 130 parts across 9 slots (receiver, barrel, stock, grip, magazine, sight, muzzle,
+* `data/<ns>/gun/archetype/*.json`: 50 families inspired by Halo, Destiny, Call of Duty and Star Wars.
+  * UNSC: Magnum (pistol), SMG, MA40 assault rifle, BR55 battle rifle, DMR, SRS99 sniper, M45 shotgun, Bulldog,
+    M319 grenade launcher, SPNKr rocket launcher, railgun, Spartan Laser, flamethrower, HMG.
+  * Covenant: plasma pistol and rifle, needler, Covenant carbine, needle rifle, beam rifle, fuel rod cannon,
+    concussion rifle, plasma launcher, energy sword, gravity hammer.
+  * Banished and Jiralhanae: spiker, mauler, Brute Shot, pulse carbine, stalker rifle, Skewer.
+  * Others: revolver, hand cannon, carbine, pulse and scout rifles, LMG, arc caster, fusion and gravity rifles,
+    shard launcher, void lance, sonic disruptor, bio spitter.
+  * Blades: laser sword, dagger, greatsword and glaive; energy dagger and plasma scythe.
+* `gun/part/*.json`: 133 parts across 9 slots (receiver, barrel, stock, grip, magazine, sight, muzzle,
   underbarrel, core). Each has stat modifiers, fire-mode/ammo overrides, effects and a model.
 * `gun/material/*.json`: 23 materials. New frames and every installed part need a material in the table's
   material slot (one is used up each time); it adds its look, stat changes and its own effect.
@@ -224,6 +228,14 @@ effects (hover a part in the Gunsmith Table to read them):
 * firing: silent, ammo saver, steadfast, spray, underbarrel grenades, bayonet;
 * rounds: pierce, ricochet, homing, split, accelerate, arc, phase (through blocks); impacts: cluster bomblets,
   gravity well, concussive blast. Ballistic guns with a round-changing effect fire visible rounds instead of hitscan.
+
+**Halo shapes, still modular.** Each family's frame is modelled on its Halo counterpart, and
+`assets/interstellar/gun_anchors.json` says where each slot's part attaches on that family. The same parts therefore
+sit where that weapon has them: a bullpup's magazine behind the grip, needler crystals on top, Brute blades under the
+muzzle, muzzles on the end of whichever barrel is fitted. Every Halo family has a **preset**, the part choices that
+assemble the real weapon (MA40: standard receiver, standard barrel, extended magazine, red dot; plasma pistol: Covenant
+receiver and a green bio core). Presets are listed in each archetype's JSON. The creative tab shows them, and half of
+alien weapons are built from them.
 
 **Power sources set the colour.** Cores, focus crystals and special rounds (incendiary, armour-piercing, cryo,
 explosive, crystal matrix, spore sac) have a colour: shots, tracers and blades take it, tinted a little by the material
@@ -249,7 +261,28 @@ Regenerate the default data with `python3 tools/gen_gun_data.py`.
 
 ## 7. Aliens
 
-One alien race per species, plus Elite and Scout subraces. Each has a procedurally painted skin, a
+**Halo species: the Covenant.** These live among the aliens of every world and crew a quarter of alien ships:
+
+* Sangheili (Elites). Split jaws and crested helmets; Minor (blue), Major (red), Ultra (white) and Zealot (gold)
+  ranks.
+* Jiralhanae (Brutes). Furred, tusked and huge; Chieftains wear gold headdresses and carry gravity hammers.
+* Unggoy (Grunts). Methane masks and back tanks; Minor, Major and Heavy ranks.
+* Kig-Yar (Jackals). Beaked and quilled; Snipers carry beam rifles.
+
+Each species is armed with its Halo weapons through `weapon:<family>` entries in its `Weapons` list. Every race has
+its own head model and armour skin.
+
+**Mob-folk.** 32 bipedal alien species descended from Minecraft's animals and mobs, each with its own head model and
+painted body: Bovar (cow, with Mooshroom), Porcine (pig), Ovine (sheep), Gallid (chicken), Lupine (wolf), Feline
+(cat), Vulpine (fox), Leporid (rabbit), Equine (horse), Camelid (llama), Ursan (panda, with Polar), Ranid (frog),
+Axolite (axolotl), Testudo (turtle), Apid (bee), Arachnid (spider), Creepid (creeper), Cephalid (squid, with Glow),
+Delphin (dolphin), Caprid (goat), Psittan (parrot), Striden (strider), Hoglan (hoglin), Blazar (blaze), Guardite
+(guardian), Gelan (slime, with Magma), Shulkari (shulker), Ghastling (ghast), Sniffar (sniffer), Armadan
+(armadillo), Chiropter (bat) and Ravagon (ravager). Each lives on the worlds that suit it (frog-folk on toxic and
+fungal worlds, blaze-folk on magma worlds) beside that world's native species. Each also carries fitting traits
+(water breathing, fire immunity, slow falling) and tails.
+
+**World natives.** One alien race per species, plus Elite and Scout subraces. Each has a procedurally painted skin, a
 Blockbench-format head (antennae, eye clusters, tentacles…), a faction, a disposition, a favourite item and a weapon
 theme matching its species. Aliens spawning on a planet belong to the species settling it, and the Race Scanner
 names the planet they come from. They are ordinary race files in `races/`, so you can edit or replace them. Aliens may

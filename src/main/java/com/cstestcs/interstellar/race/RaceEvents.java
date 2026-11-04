@@ -263,6 +263,11 @@ public final class RaceEvents {
             GunBuild build = GunDataManager.registry().example(pool.get(rng.nextInt(pool.size())), race.weaponTier() + 1, rng);
             return build == null ? ItemStack.EMPTY : GunItem.create(build, true);
         }
+        if (kind.startsWith("weapon:")) {
+            // A specific gun family, assembled like the weapon it is modelled on (its preset) when it has one.
+            GunBuild build = GunDataManager.registry().example(kind.substring(7), race.weaponTier(), rng);
+            return build == null ? ItemStack.EMPTY : GunItem.create(build, true);
+        }
         if (kind.equals("gun") || kind.startsWith("gun:")) {
             GunBuild build = GunDataManager.registry().roll(kind.startsWith("gun:") ? kind.substring(4) : race.weaponTheme(), race.weaponTier(),
                     alien || !race.weaponTheme().equals("human"), rng);
