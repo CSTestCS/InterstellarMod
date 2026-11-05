@@ -60,11 +60,11 @@ public final class ModBlocks {
     public static final DeferredBlock<HullFenceGate> HULL_FENCE_GATE = BLOCKS.registerBlock("hull_plating_fence_gate", HullFenceGate::new,
             p -> metal(p).forceSolidOn());
     public static final DeferredBlock<HullDoor> HULL_DOOR = BLOCKS.registerBlock("hull_plating_door", HullDoor::new,
-            p -> metal(p).noOcclusion().pushReaction(PushReaction.DESTROY));
+            p -> metal(p).noOcclusion().pushReaction(PushReaction.POPPED));
     public static final DeferredBlock<HullTrapDoor> HULL_TRAPDOOR = BLOCKS.registerBlock("hull_plating_trapdoor", HullTrapDoor::new,
             p -> metal(p).noOcclusion().isValidSpawn((s, l, pos, t) -> false));
     public static final DeferredBlock<HullButton> HULL_BUTTON = BLOCKS.registerBlock("hull_plating_button", HullButton::new,
-            p -> p.mapColor(MapColor.METAL).noCollision().strength(0.5f).sound(SoundType.METAL).pushReaction(PushReaction.DESTROY));
+            p -> p.mapColor(MapColor.METAL).noCollision().strength(0.5f).sound(SoundType.METAL).pushReaction(PushReaction.POPPED));
     public static final DeferredBlock<HullPane> HULL_PANE = BLOCKS.registerBlock("hull_plating_pane", HullPane::new, p -> metal(p).noOcclusion());
     public static final DeferredBlock<GunsmithTableBlock> GUNSMITH_TABLE = BLOCKS.registerBlock("gunsmith_table", GunsmithTableBlock::new, p -> metal(p).noOcclusion());
     /** Invisible glowing shell around every planet in space. */

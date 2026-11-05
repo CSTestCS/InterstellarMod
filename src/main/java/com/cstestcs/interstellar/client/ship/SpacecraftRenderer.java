@@ -59,7 +59,8 @@ public class SpacecraftRenderer extends EntityRenderer<SpacecraftEntity, Spacecr
         poseStack.rotateDegrees(Axis.XP, state.pitch); // Vec3.xRot(a) == JOML rotateX(-a)
         poseStack.rotateDegrees(Axis.YP, state.structure.baseYaw);
         ShipStructure structure = state.structure;
-        if (!(structure.renderCache instanceof net.neoforged.neoforge.model.data.ModelData[] data) || data.length != structure.entries.size()) {
+        net.neoforged.neoforge.model.data.ModelData[] data = structure.renderCache instanceof net.neoforged.neoforge.model.data.ModelData[] d ? d : null;
+        if (data == null || data.length != structure.entries.size()) {
             // Plated blocks carry their plating in their block entity data: decoded once per structure.
             data = new net.neoforged.neoforge.model.data.ModelData[structure.entries.size()];
             for (int i = 0; i < data.length; i++) {
