@@ -21,7 +21,7 @@ import org.jspecify.annotations.Nullable;
  * part sits where that weapon has it. Muzzles follow the end of the fitted barrel. Read again after a resource reload.
  */
 public final class GunAnchors {
-    private record Anchor(float x, float y, float z, float sx, float sy, float sz) {}
+    private record Anchor(float x, float y, float z, float sx, float sy, float sz, float rz) {}
 
     private static @Nullable GunAnchors loaded;
     private final Map<String, float[]> pivots = new HashMap<>();
@@ -82,7 +82,7 @@ public final class GunAnchors {
             Map<String, Anchor> slots = new HashMap<>();
             for (Map.Entry<String, JsonElement> s : a.getValue().getAsJsonObject().entrySet()) {
                 float[] f = floats(s.getValue());
-                slots.put(s.getKey(), new Anchor(f[0], f[1], f[2], f[3], f[4], f[5]));
+                slots.put(s.getKey(), new Anchor(f[0], f[1], f[2], f[3], f[4], f[5], f.length > 6 ? f[6] : 0));
             }
             archetypes.put(a.getKey(), slots);
         }
@@ -125,7 +125,7 @@ public final class GunAnchors {
         float[] pivot = a.pivots.get(key);
         if (pivot == null) return null;
         Anchor anchor = slots.get(key);
-        float tx, ty, tz, sx, sy, sz;
+        float tx, ty, tz, sx, sy, sz, rz = anchor == null ? 0 : anchor.rz;
         if (anchor == null) {
             tx = pivot[0];
             ty = pivot[1];
@@ -152,7 +152,9 @@ public final class GunAnchors {
         } else if (anchor == null) {
             return null;
         }
-        return new Matrix4f().translate(tx / 16f, ty / 16f, tz / 16f).scale(sx, sy, sz).translate(-pivot[0] / 16f, -pivot[1] / 16f, -pivot[2] / 16f);
+        // Move the pivot to the target, rotate about z (angled parts), scale about the pivot.
+        return new Matrix4f().translate(tx / 16f, ty / 16f, tz / 16f).rotateZ((float) Math.toRadians(rz)).scale(sx, sy, sz)
+                .translate(-pivot[0] / 16f, -pivot[1] / 16f, -pivot[2] / 16f);
     }
 
     private static @Nullable String part(GunBuild build, String slot) {

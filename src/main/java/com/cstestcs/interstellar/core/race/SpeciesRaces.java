@@ -352,34 +352,51 @@ public final class SpeciesRaces {
 
     // ---------------------------------------------------------------- Halo heads
 
+    /**
+     * Sangheili: a long neck leaning forward out of the shoulders, carrying a long, low, flat head whose cranium
+     * sweeps back. The four mandibles hang under the front half of the head, the eyes sit on its sides right above
+     * them, and the dark mouth opens between the mandibles.
+     */
     private static void elite(HeadKit k, Integer armor) {
         HeadKit.Mat skin = new HeadKit.Mat(c(0x4E4846)).with(SCALES, c(0x423C3A));
-        HeadKit.Mat dark = new HeadKit.Mat(c(0x2E2826));
+        HeadKit.Mat dark = new HeadKit.Mat(c(0x1E1818));
         HeadKit.Mat tooth = new HeadKit.Mat(c(0xE8E0C8));
-        // Long sloping skull reaching forward over the jaw.
-        HeadKit.Cube skull = k.box(k.head, -3, -8, -3.5f, 6, 6, 8, skin);
-        k.box(k.head, -2.5f, -5, -6.5f, 5, 3, 3, skin); // upper jaw
-        k.box(k.head, -2, -2, -2, 4, 2, 4, skin);       // throat
-        k.decal(skull, LEFT, 4, 2, pal('o', 0xFF9A1A, 'k', 0x1A1010), "ko");
-        k.decal(skull, RIGHT, 2, 2, pal('o', 0xFF9A1A, 'k', 0x1A1010), "ok");
-        // Four mandibles, splayed, with teeth on the inside.
+        HeadKit.Mat eye = new HeadKit.Mat(c(0xFF9A1A), 0.05f, PLAIN, c(0xFF9A1A));
+        // Lower neck rising from the body (reaches the neck pivot, so the head never floats), upper neck leaning forward.
+        k.box(k.head, -1.5f, -5, -1.5f, 3, 5, 3, skin);
+        var neck = k.part(k.head, "neck", 0, -5, 0, 28, 0, 0);
+        k.box(neck, -1.25f, -5, -1.25f, 3, 5, 3, skin);
+        // The head sits on the top of the leaning neck: long, low and flat, reaching well forward.
+        var head = k.part(neck, "skull", 0, -5, 0, -28, 0, 0);
+        HeadKit.Cube skull = k.box(head, -3, -3, -7, 6, 3, 10, skin);
+        k.box(head, -2.5f, -4, -3, 5, 1, 6, skin);           // low forehead ridge
+        var crown = k.part(head, "crown", 0, -3, 2, -18, 0, 0); // cranium sweeping back and up
+        k.box(crown, -2, -2, 0, 4, 2, 5, skin);
+        k.box(head, -2, 0, -6, 4, 1, 5, dark);                 // the mouth between the mandibles
+        k.fill(skull, BOTTOM, 1, 1, 4, 5, c(0x2A2222));
+        // Eyes on the sides at the front, right above the mandibles.
+        k.box(head, -3.2f, -2, -6, 1, 1, 1, eye);
+        k.box(head, 2.2f, -2, -6, 1, 1, 1, eye);
+        // Four mandibles hanging under the front half of the head, splayed, teeth on the inside.
         for (int side = -1; side <= 1; side += 2) {
             for (int lower = 0; lower <= 1; lower++) {
-                var m = k.part(k.head, "mandible_" + (side < 0 ? "r" : "l") + lower, side * 1.6f, lower == 0 ? -3.5f : -2.2f, -5,
-                        lower == 0 ? 8 : 24, side * 18, side * (lower == 0 ? 6 : 14));
-                HeadKit.Cube cb = k.box(m, -0.75f, 0, -4, 2, 1, 5, skin);
-                k.fill(cb, side < 0 ? LEFT : RIGHT, 0, 0, 5, 1, c(0x2A2020));
-                k.box(m, side < 0 ? 0.5f : -0.5f, 0.8f, -3.5f, 1, 1, 1, tooth);
-                k.box(m, side < 0 ? 0.5f : -0.5f, 0.8f, -1.5f, 1, 1, 1, tooth);
+                var m = k.part(head, "mandible_" + (side < 0 ? "r" : "l") + lower, side * (lower == 0 ? 2.2f : 1.4f), 0, lower == 0 ? -6.5f : -5.5f,
+                        lower == 0 ? 25 : 55, side * -14, side * (lower == 0 ? -10 : -4));
+                HeadKit.Cube cb = k.box(m, -0.75f, 0, -1, 2, 5, 1, skin);
+                k.fill(cb, FRONT, 0, 4, 2, 1, c(0x2A2020));
+                k.box(m, side < 0 ? 0.6f : -0.6f, 1, -1.5f, 1, 1, 1, tooth);
+                k.box(m, side < 0 ? 0.6f : -0.6f, 3, -1.5f, 1, 1, 1, tooth);
             }
         }
-        k.box(k.head, -1.5f, -3.5f, -5.5f, 3, 1, 1, dark); // maw
         if (armor != null) {
-            // Ranked Sangheili wear a crested helmet in their armour colour.
+            // Ranked Sangheili wear a crested helmet in their armour colour, low over the long head.
             HeadKit.Mat helm = new HeadKit.Mat(armor, 0.05f, PLATES, armor);
-            k.box(k.head, -3.5f, -8.7f, -4.5f, 7, 2, 9, helm);
-            k.box(k.head, -0.5f, -10.5f, -3.5f, 1, 2, 7, helm);
-            for (int side = -1; side <= 1; side += 2) k.box(k.head, side < 0 ? -4 : 3, -8, -1, 1, 3, 4, helm);
+            // It hugs the skull: a shell over the top that stops short of the eyes, cheek guards behind them, a
+            // cover over the swept-back cranium and a low crest down the middle.
+            k.box(head, -3.5f, -4.4f, -5, 7, 1, 8, helm);
+            for (int side = -1; side <= 1; side += 2) k.box(head, side < 0 ? -3.5f : 2.5f, -3.4f, -4.5f, 1, 2, 6, helm);
+            k.box(crown, -2.5f, -2.5f, 0, 5, 1, 5, helm);
+            k.box(head, -0.5f, -5.4f, -4.5f, 1, 1, 7, helm);
         }
     }
 

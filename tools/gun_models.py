@@ -64,12 +64,11 @@ def receiver(pid):
         "lever_receiver": [body, B(4, 5.5, 7.6, 6.5, 6, 8.4), B(4, 6, 7.6, 4.5, 7, 8.4)],
         "auto_shotgun_receiver": [body, B(6, 10, 7.25, 9, 10.5, 8.75), B(6.5, 8, 6.75, 8.5, 9.5, 7)],
         "gyro_receiver": [body, B(5, 7.5, 9, 8, 9.5, 9.5), B(5.75, 8.25, 9.5, 7.25, 8.75, 9.75)],
-        # Alien bodies taper at both ends (angled end pieces), so stretched over a frame they read as rounded hulls.
-        "alien_receiver": [B(4, 7, 7, 9, 10, 9), R(8, 7.25, 7.1, 10.75, 9.75, 8.9, -22.5, 9, 8.5), R(2.25, 7.25, 7.1, 5, 9.75, 8.9, 22.5, 4, 8.5)],
-        "covenant_receiver": [B(4, 7, 6.75, 9, 10, 9.25), R(8, 7.5, 6.85, 10.5, 9.75, 9.15, -22.5, 9, 8.6), R(2.5, 7.25, 6.85, 5, 9.5, 9.15, 22.5, 4, 8.4),
-                              B(4.5, 10, 7.5, 8.5, 10.5, 8.5)],
+        # Alien bodies: clean hulls with their own trim (they are stretched over each weapon's traced body).
+        "alien_receiver": [body, B(3.5, 6.75, 7.25, 9.5, 7.25, 8.75)],
+        "covenant_receiver": [B(3, 7, 6.75, 10, 10, 9.25), B(4.5, 10, 7.5, 8.5, 10.4, 8.5), B(9.6, 7.6, 6.9, 10.2, 9.4, 9.1)],
         "forerunner_receiver": [B(3, 7, 7, 6, 10, 9), B(6.5, 7.5, 7, 10, 9.5, 9), B(3, 10.25, 7.5, 10, 10.75, 8.5)],
-        "swarm_receiver": [B(3.5, 7, 7, 9.5, 10, 9), R(9, 7.5, 7.15, 10.5, 9.5, 8.85, -22.5, 9.25, 8.5), B(4, 10, 7.25, 5, 11, 8.75), B(6, 10, 7.25, 7, 11.5, 8.75),
+        "swarm_receiver": [B(3.5, 7, 7, 9.5, 10, 9), B(9.5, 7.5, 7.15, 10.5, 9.5, 8.85), B(4, 10, 7.25, 5, 11, 8.75), B(6, 10, 7.25, 7, 11.5, 8.75),
                            B(8, 10, 7.25, 9, 10.75, 8.75)],
     }
     return s.get(pid)
@@ -328,8 +327,8 @@ POSES = {"energy_sword": {"axis": "z", "angle": 75, "pivot": [8, 1.75, 8]}}
 
 
 # (target x, y, z, scale x, y, z): the part's SLOT_PIVOT moves to the target, the part is scaled about it.
-def A(x, y, z=8, sx=1, sy=1, sz=1):
-    return (x, y, z, sx, sy, sz)
+def A(x, y, z=8, sx=1, sy=1, sz=1, rz=0):
+    return (x, y, z, sx, sy, sz, rz)
 
 
 def pistol_grip(x, top=7, bottom=3.5, angle=-22.5):
@@ -575,10 +574,12 @@ def anchor(aid, key):
     a = ANCHORS.get(aid, {}).get(key)
     if a is None:
         p = SLOT_PIVOT[key]
-        return (p[0], p[1], p[2], 1, 1, 1)
-    if key == "receiver" and aid in FRAMES:
+        return (p[0], p[1], p[2], 1, 1, 1, 0)
+    if len(a) == 6:
+        a = a + (0,)
+    if key == "receiver" and aid in FRAMES and aid not in DESIGNED:
         # Inset into the frame's sides: no coplanar faces (they would flicker), features on top still show.
-        a = a[:5] + (a[5] * 0.94,)
+        a = a[:5] + (a[5] * 0.94, a[6])
     return a
 
 
@@ -602,11 +603,23 @@ def anchor_matrix(aid, slot, chosen):
         end = barrel_end(chosen["barrel"])
         bp = SLOT_PIVOT["barrel"]
         target = (b[0] + (end - bp[0]) * b[3], b[1], b[2])
-    return (pivot, target, a[3:])
+    return (pivot, target, a[3:6], a[6])
+
+
+def place_points(m, pts):
+    """Anchor transform of points (for previews): scale about the pivot, rotate about z, move to the target."""
+    import math
+    (px, py, pz), (tx, ty, tz), (sx, sy, sz), rz = m
+    c, s_ = math.cos(math.radians(rz)), math.sin(math.radians(rz))
+    out = []
+    for (x, y, z) in pts:
+        x, y, z = (x - px) * sx, (y - py) * sy, (z - pz) * sz
+        out.append((tx + x * c - y * s_, ty + x * s_ + y * c, tz + z))
+    return out
 
 
 def apply(m, box):
-    (px, py, pz), (tx, ty, tz), (sx, sy, sz) = m
+    (px, py, pz), (tx, ty, tz), (sx, sy, sz) = m[0], m[1], m[2]
     a, b = box[0], box[1]
     f = lambda p: (tx + (p[0] - px) * sx, ty + (p[1] - py) * sy, tz + (p[2] - pz) * sz)
     out = (f(a), f(b))
@@ -620,7 +633,7 @@ def apply(m, box):
 
 # Part choices that assemble each Halo weapon (blades: receiver = hilt).
 PRESETS = {
-    "pistol": {"receiver": "match_receiver", "barrel": "standard_barrel", "grip": "rubber_grip", "magazine": "speed_mag", "sight": "red_dot"},
+    "pistol": {"receiver": "match_receiver", "barrel": "standard_barrel", "grip": "rubber_grip", "magazine": "speed_mag"},
     "smg": {"receiver": "rapid_receiver", "barrel": "short_barrel", "stock": "skeleton_stock", "grip": "vertical_grip", "magazine": "extended_mag", "sight": "red_dot"},
     "assault_rifle": {"receiver": "standard_receiver", "barrel": "standard_barrel", "stock": "tactical_stock", "magazine": "extended_mag", "underbarrel": "flashlight"},
     "battle_rifle": {"receiver": "standard_receiver", "barrel": "long_barrel", "stock": "tactical_stock", "magazine": "extended_mag", "sight": "acog_scope",
@@ -631,7 +644,7 @@ PRESETS = {
     "shotgun": {"receiver": "standard_receiver", "barrel": "standard_barrel", "stock": "tactical_stock", "magazine": "speed_mag", "underbarrel": "flashlight"},
     "bulldog": {"receiver": "auto_shotgun_receiver", "barrel": "short_barrel", "stock": "recoil_stock", "grip": "vertical_grip", "magazine": "drum_mag",
                 "sight": "red_dot"},
-    "grenade_launcher": {"receiver": "standard_receiver", "barrel": "short_barrel", "stock": "light_stock", "grip": "rubber_grip", "sight": "iron_sights"},
+    "grenade_launcher": {"receiver": "standard_receiver", "barrel": "short_barrel", "grip": "rubber_grip", "sight": "iron_sights"},
     "rocket_launcher": {"receiver": "standard_receiver", "barrel": "long_barrel", "sight": "acog_scope", "grip": "rubber_grip"},
     "railgun": {"receiver": "heavy_receiver", "barrel": "coil_barrel", "stock": "tactical_stock", "core": "diamond_focus"},
     "spartan_laser": {"receiver": "gyro_receiver", "core": "ruby_focus", "barrel": "standard_barrel", "stock": "tactical_stock", "sight": "acog_scope",
@@ -656,3 +669,74 @@ PRESETS = {
     "energy_sword": {"receiver": "energy_sword_hilt", "core": "refined_plasma_core", "grip": "alien_blade_grip"},
     "gravity_hammer": {"receiver": "gravity_hilt", "core": "ancient_hydro_core", "grip": "ridged_blade_grip"},
 }
+
+
+# ================================================================ traced Halo designs -> frames and anchors
+
+# The part each slot's target is fitted with when the preset has none there (other parts land in the same place).
+REPRESENTATIVE = {"receiver": "standard_receiver", "barrel": "standard_barrel", "stock": "tactical_stock", "grip": "rubber_grip",
+                  "foregrip": "vertical_grip", "magazine": "extended_mag", "sight": "red_dot", "muzzle": "suppressor",
+                  "underbarrel": "flashlight", "core": "stable_plasma_core"}
+DESIGNED = set()
+
+
+def corners(box):
+    """The 8 corners of a (possibly rotated) cuboid."""
+    import math
+    a, b = box[0], box[1]
+    pts = [(x, y, z) for x in (a[0], b[0]) for y in (a[1], b[1]) for z in (a[2], b[2])]
+    if len(box) > 2:
+        ax, ang, o = box[2]
+        t = math.radians(ang)
+        c, s = math.cos(t), math.sin(t)
+        out = []
+        for (x, y, z) in pts:
+            x, y, z = x - o[0], y - o[1], z - o[2]
+            if ax == "z":
+                x, y = x * c - y * s, x * s + y * c
+            elif ax == "x":
+                y, z = y * c - z * s, y * s + z * c
+            else:
+                x, z = x * c + z * s, -x * s + z * c
+            out.append((x + o[0], y + o[1], z + o[2]))
+        pts = out
+    return pts
+
+
+def fit_anchor(slot, pid, key, target):
+    """Anchor that scales a part's bounding box onto a target box (x0, y0, z0, x1, y1, z1, angle)."""
+    import math
+    pts = [p for b in gun_part_shape(slot, pid) for p in corners(b)]
+    lo = [min(p[i] for p in pts) for i in range(3)]
+    hi = [max(p[i] for p in pts) for i in range(3)]
+    t0, t1, ang = target[0:3], target[3:6], target[6]
+    s = [(t1[i] - t0[i]) / max(1e-6, hi[i] - lo[i]) for i in range(3)]
+    P = SLOT_PIVOT[key]
+    pc = [(lo[i] + hi[i]) / 2 for i in range(3)]
+    tc = [(t0[i] + t1[i]) / 2 for i in range(3)]
+    v = [(pc[i] - P[i]) * s[i] for i in range(3)]
+    c, sn = math.cos(math.radians(ang)), math.sin(math.radians(ang))
+    v = [v[0] * c - v[1] * sn, v[0] * sn + v[1] * c, v[2]]
+    t = [round(tc[i] - v[i], 4) for i in range(3)]
+    return (t[0], t[1], t[2], round(s[0], 4), round(s[1], 4), round(s[2], 4), ang)
+
+
+def _build_designs():
+    from halo_designs import DESIGNS
+    for aid, d in DESIGNS.items():
+        FRAMES[aid] = d["frame"]
+        DESIGNED.add(aid)
+        preset = PRESETS.get(aid, {})
+        anchors = {}
+        for key, target in d["slots"].items():
+            slot = "grip" if key == "foregrip" else key
+            pid = preset.get(slot)
+            if pid is None or anchor_key(slot, pid) != key:
+                pid = REPRESENTATIVE[key]
+            anchors[key] = fit_anchor(slot, pid, key, target)
+        if aid in ANCHORS and "blade_receiver" in ANCHORS[aid]:
+            anchors.update({k: v for k, v in ANCHORS[aid].items() if k.startswith("blade_")})
+        ANCHORS[aid] = anchors
+
+
+_build_designs()
