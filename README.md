@@ -114,6 +114,21 @@ carries over to other worlds and servers.
 3. Right-click the control panel to take off. The ship becomes an entity and the camera switches to third person,
    pulled back far enough to show the whole craft. Riders lean with the ship as it pitches.
 
+**Plating.** Hull plating and the ship parts (seat, cannon, generator, life support, thruster, landing gear,
+control panel) can be plated with any full, solid block. Right-click one holding the block (it uses one; a block
+that was already plated gives its old plating back). Right-click with a pickaxe to pry the plating off; sneak to
+place blocks against a platable block instead. A plated block looks like its plating: plain hull plating shows the
+block exactly, and the shapes and parts keep their own shape covered with it, while screens, cores and cushions
+keep their own look. It also takes the plating's hardness, blast resistance, tool and sounds, and drops the
+plating when broken. Plating stays on through flight, landing and saved designs. Alien ships come plated with
+their world's metal or stone.
+
+**Hull plating shapes**: stairs, slab, wall, fence, fence gate, door, trapdoor, button and pane, all platable.
+Sneak while placing a shape to lay it on its side: against the side of a block it lies with its bottom against
+that block, and on a floor or ceiling it tips over towards you. Sideways stairs stay straight, two sideways slabs
+make a full block, and sideways fences, walls and panes join to each other and to solid faces. Buttons already
+go on floors, walls and ceilings. Hull doors and trapdoors open by hand.
+
 A **Passenger Seat** next to the control panel is the pilot's seat: the pilot sits there instead of standing behind
 the panel.
 
@@ -271,11 +286,15 @@ Faction, Allies and Enemies are ordinary race settings, so race files can add fa
 **The Covenant** (Halo) can appear on any world that is not vanilla Minecraft's: Interstellar's planets and other
 mods' dimensions. It wars on humanity and on every other alien faction.
 
-* Sangheili (Elites). Split jaws and crested helmets; Minor (blue), Major (red), Ultra (white) and Zealot (gold)
-  ranks.
-* Jiralhanae (Brutes). Furred, tusked and huge; Chieftains wear gold headdresses and carry gravity hammers.
+* Sangheili (Elites). Big heads carried forward on long necks, with four mandibles; Minor (blue), Major (red),
+  Ultra (white) and Zealot (gold) ranks.
+* Jiralhanae (Brutes). Furred, tusked and huge; Chieftains wear gold armour and carry gravity hammers.
 * Unggoy (Grunts). Methane masks and back tanks; Minor, Major and Heavy ranks.
 * Kig-Yar (Jackals). Beaked and quilled; Snipers carry beam rifles.
+
+**Helmets fit every head.** Heads have no helmets built in. A worn helmet (vanilla, or any mod's humanoid
+armour) is moved, turned and stretched onto the race's skull: a part named `skull` in the head model if there is
+one, otherwise the head's biggest cube.
 
 Each species is armed with its Halo weapons through `weapon:<family>` entries in its `Weapons` list.
 
