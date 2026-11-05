@@ -353,9 +353,9 @@ public final class SpeciesRaces {
     // ---------------------------------------------------------------- Halo heads
 
     /**
-     * Sangheili: a big, boxy head carried forward on a thick neck that slopes down and back into the shoulders. The
-     * head tips slightly nose-down; the eyes sit at the outer corners of the face under dark brow ridges, a row of
-     * teeth runs along the bottom of the face, and four mandibles hang under it around the dark mouth.
+     * Sangheili: a compact head carried forward on a short, thick neck that slopes back into the shoulders. The eyes
+     * sit at the outer corners of the face, a row of teeth runs along its bottom, and four long mandibles hinge under
+     * the back of the head and run forward and down beneath the face, teeth on their inner edges and tusks at the tips.
      */
     private static void elite(HeadKit k, Integer armor) {
         HeadKit.Mat skin = new HeadKit.Mat(c(0x5C5A58)).noise(0.05f);
@@ -364,32 +364,32 @@ public final class SpeciesRaces {
         HeadKit.Mat tusk = new HeadKit.Mat(c(0xECECE6)).noise(0.03f);
         HeadKit.Mat mouth = new HeadKit.Mat(c(0x3E2626), 0.1f, STRIPES, c(0x2A1A1A));
         // Root of the neck, sunk into the shoulders (reaches the neck pivot so the head never floats).
-        k.box(k.head, -2.5f, -2, -1, 5, 2, 4, skin);
-        // The neck leans forward out of the shoulders; the head sits on its top end.
-        var neck = k.part(k.head, "neck", 0, 0, 1, 40, 0, 0);
-        k.box(neck, -2.5f, -8, -2, 5, 8, 4, skin);
-        var head = k.part(neck, "skull", 0, -8, 0, -26, 0, 0);
-        HeadKit.Cube skull = k.box(head, -4, -4, -6, 8, 5, 9, skin);
+        k.box(k.head, -2, -2, -1, 4, 2, 4, skin);
+        // A short neck leaning forward; the head sits on its top end.
+        var neck = k.part(k.head, "neck", 0, 0, 1, 35, 0, 0);
+        k.box(neck, -2, -5, -2, 4, 5, 4, skin);
+        var head = k.part(neck, "skull", 0, -5, 0, -27, 0, 0);
+        HeadKit.Cube skull = k.box(head, -3, -3.5f, -5, 6, 4, 7, skin);
         // Eyes at the outer corners of the face, seen from the front and the sides.
         var eye = pal('e', 0xB08A2A, 'k', 0x262424);
-        k.decal(skull, FRONT, 0, 3, eye, "ek....ke");
-        k.decal(skull, LEFT, 0, 3, eye, "ke");
-        k.decal(skull, RIGHT, 7, 3, eye, "ek");
-        // Brow ridges jutting over the eyes and back along the sides.
-        for (int side = -1; side <= 1; side += 2) k.box(head, side < 0 ? -4.25f : 2.25f, -2, -6.25f, 2, 1, 3, brow);
-        // The row of teeth along the bottom of the face.
-        k.box(head, -3.5f, 1, -6, 7, 1, 3, teeth);
-        // The mouth between the mandibles.
-        k.box(head, -2, 1, -5.5f, 4, 2, 4, mouth);
-        // Four mandibles: a front and a rear pair, hanging down and a little forward, teeth on their inner edges.
+        k.decal(skull, FRONT, 0, 2, eye, "ek..ke");
+        k.decal(skull, LEFT, 0, 2, eye, "ke");
+        k.decal(skull, RIGHT, 5, 2, eye, "ek");
+        // Brow ridges over the eyes.
+        for (int side = -1; side <= 1; side += 2) k.box(head, side < 0 ? -3.25f : 1.25f, -2.5f, -5.25f, 2, 1, 3, brow);
+        // The row of teeth along the bottom of the face, and the mouth behind it.
+        k.box(head, -2.5f, 0.5f, -5, 5, 1, 2, teeth);
+        k.box(head, -1.5f, 0.5f, -4.5f, 3, 2, 5, mouth);
+        // Four mandibles hinged under the back of the head, running forward and down beneath the face: the outer
+        // pair along the cheeks, the inner pair lower and closer together.
         for (int side = -1; side <= 1; side += 2) {
-            for (int rear = 0; rear <= 1; rear++) {
-                var m = k.part(head, "mandible_" + (side < 0 ? "r" : "l") + rear, side * 3, 1.5f, rear == 0 ? -5 : -2,
-                        rear == 0 ? -22 : -32, 0, side * (rear == 0 ? -8 : -12));
-                float outer = side < 0 ? -1 : 0, inner = side < 0 ? 0 : -1;
-                k.box(m, outer, 0, -1, 1, 4, 2, skin);
-                k.box(m, inner, 0, -1, 1, 3, 1, teeth);
-                k.box(m, inner, 3, -1.25f, 1, 1, 1, tusk);
+            for (int inner = 0; inner <= 1; inner++) {
+                float x = side * (inner == 0 ? 2.4f : 1.3f);
+                var m = k.part(head, "mandible_" + (side < 0 ? "r" : "l") + inner, x, 0.5f, 1.5f, inner == 0 ? 20 : 30, side * (inner == 0 ? -6 : -3), 0);
+                float in = side < 0 ? 0.25f : -0.25f;
+                k.box(m, -0.5f, 0, -6, 1, 1, 6, skin);
+                k.box(m, -0.5f + in, -0.25f, -5, 1, 1, 4, teeth);
+                k.box(m, -0.5f, 0.75f, -6.5f, 1, 1, 1, tusk);
             }
         }
     }
