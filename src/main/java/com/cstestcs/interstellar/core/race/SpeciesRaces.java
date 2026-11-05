@@ -208,7 +208,8 @@ public final class SpeciesRaces {
         v.put(REPLACE_BODY, "true");
         v.put(BODY_TYPE, "any");
         v.put(SLIM_ARMS, Boolean.toString(s.slim));
-        double headScale = Math.max(s.headScale, headWidthScale(s));
+        // A head modelled in finer pixels asks for its own smaller scale; others are kept from looking lost on the body.
+        double headScale = s.headScale < 1 ? s.headScale : Math.max(s.headScale, headWidthScale(s));
         if (headScale != 1) v.put(HEAD_SCALE, fmt(headScale));
         v.put(FACTION, s.faction);
         v.put(ENEMIES, s.enemies);
@@ -303,7 +304,7 @@ public final class SpeciesRaces {
                 "weapon:plasma_rifle, weapon:plasma_rifle, weapon:energy_sword, weapon:covenant_carbine, weapon:needle_rifle, weapon:concussion_rifle, weapon:beam_rifle",
                 "plasma", 3, null, "Thel 'Vadam, Rtas 'Vadum, Jul 'Mdama, Usze 'Taham, Ripa 'Moramee, Xytan 'Jar, Orna 'Fulsamee, Torka 'Mdama",
                 new Body(c(0x4A4444), c(0x5C5552), c(0x3A3434), PLAIN, c(0x4A4444), 0, 0, false).armored(c(0x3B5FB0), c(0x9FB8E8)),
-                SpeciesRaces::elite, 1.0, "Sangheili warriors of the Covenant: tall, proud, split-jawed."));
+                SpeciesRaces::elite, 0.4, "Sangheili warriors of the Covenant: tall, proud, split-jawed."));
         s.add(new Spec("jiralhanae", "Jiralhanae (Brute)", "hostile", "covenant", COV_ENEMIES, List.of(), 8, 1.4, 2.6, 0.95, 1.6, "none", false,
                 "regeneration",
                 "weapon:spiker, weapon:spiker, weapon:mauler, weapon:brute_shot, weapon:gravity_hammer, weapon:pulse_carbine, weapon:skewer, weapon:stalker_rifle",
@@ -353,44 +354,50 @@ public final class SpeciesRaces {
     // ---------------------------------------------------------------- Halo heads
 
     /**
-     * Sangheili: a compact head carried forward on a short, thick neck that slopes back into the shoulders. The eyes
-     * sit at the outer corners of the face, a row of teeth runs along its bottom, and four long mandibles hinge under
-     * the back of the head and run forward and down beneath the face, teeth on their inner edges and tusks at the tips.
+     * Sangheili, after the reference model. Modelled in fine pixels (the race draws it at 0.4 scale, so the head is
+     * about 6.5 vanilla pixels wide). A long, flat-topped head tipped 14 degrees nose-down sits on a thick neck that
+     * leaves the back of its underside and runs down and back into the shoulders, poking out a little behind the
+     * head. The eyes sit at the outer corners of the face under dark brows and wrap round onto the sides; a row of
+     * teeth runs along the bottom of the face. Each side has two mandibles with ridged teeth on their inner halves:
+     * a short upper one hanging just behind the teeth with a tusk at its tip, and a long lower one that starts under
+     * the middle of the head and reaches forward and down to the front. Dark mouth tissue shows in the narrow gaps
+     * between the mandibles and the neck.
      */
     private static void elite(HeadKit k, Integer armor) {
-        HeadKit.Mat skin = new HeadKit.Mat(c(0x5C5A58)).noise(0.05f);
-        HeadKit.Mat brow = new HeadKit.Mat(c(0x3C3A3A)).noise(0.04f);
-        HeadKit.Mat teeth = new HeadKit.Mat(c(0xDCDCD8), 0.03f, GLOW, c(0xA4A4A2));
-        HeadKit.Mat tusk = new HeadKit.Mat(c(0xECECE6)).noise(0.03f);
-        HeadKit.Mat mouth = new HeadKit.Mat(c(0x3E2626), 0.1f, STRIPES, c(0x2A1A1A));
-        // Root of the neck, sunk into the shoulders (reaches the neck pivot so the head never floats).
-        k.box(k.head, -2, -2, -1, 4, 2, 4, skin);
-        // A short neck leaning forward; the head sits on its top end.
-        var neck = k.part(k.head, "neck", 0, 0, 1, 35, 0, 0);
-        k.box(neck, -2, -5, -2, 4, 5, 4, skin);
-        var head = k.part(neck, "skull", 0, -5, 0, -27, 0, 0);
-        HeadKit.Cube skull = k.box(head, -3, -3.5f, -5, 6, 4, 7, skin);
-        // Eyes at the outer corners of the face, seen from the front and the sides.
-        var eye = pal('e', 0xB08A2A, 'k', 0x262424);
-        k.decal(skull, FRONT, 0, 2, eye, "ek..ke");
-        k.decal(skull, LEFT, 0, 2, eye, "ke");
-        k.decal(skull, RIGHT, 5, 2, eye, "ek");
-        // Brow ridges over the eyes.
-        for (int side = -1; side <= 1; side += 2) k.box(head, side < 0 ? -3.25f : 1.25f, -2.5f, -5.25f, 2, 1, 3, brow);
-        // The row of teeth along the bottom of the face, and the mouth behind it.
-        k.box(head, -2.5f, 0.5f, -5, 5, 1, 2, teeth);
-        k.box(head, -1.5f, 0.5f, -4.5f, 3, 2, 5, mouth);
-        // Four mandibles hinged under the back of the head, running forward and down beneath the face: the outer
-        // pair along the cheeks, the inner pair lower and closer together.
+        HeadKit.Mat skin = new HeadKit.Mat(c(0x5A5A5A)).noise(0.03f);
+        HeadKit.Mat teeth = new HeadKit.Mat(c(0xCACACA), 0.02f, COLUMNS, c(0x9C9C9C));
+        HeadKit.Mat ridge = new HeadKit.Mat(c(0xC4C4C4), 0.02f, ROWS, c(0x8E8E8E));
+        HeadKit.Mat tusk = new HeadKit.Mat(c(0xE6E6E2)).noise(0.02f);
+        HeadKit.Mat mouth = new HeadKit.Mat(c(0x3A2424), 0.08f, COLUMNS, c(0x241616));
+        // A small root inside the shoulders, so the head always reaches the body.
+        k.box(k.head, -3, -2, -2, 6, 2, 3, skin);
+        // The neck leans 41 degrees forward; it also reaches 4 pixels down into the shoulders.
+        var neck = k.part(k.head, "neck", 0, 0, -1, 41, 0, 0);
+        k.box(neck, -4, -14, -4.5f, 8, 18, 9, skin);
+        // The head sits on the neck's top end, tipped 14 degrees nose-down (41 - 27).
+        var head = k.part(neck, "skull", 0, -14, 0, -27, 0, 0);
+        HeadKit.Cube skull = k.box(head, -8, -6, -15, 16, 10, 17, skin);
+        var eye = pal('e', 0x8E6C22, 'k', 0x161616, 'd', 0x3A3A3A);
+        // Face: dark brows over the eyes at the outer corners, dark sockets just inside them.
+        k.decal(skull, FRONT, 0, 4, eye, "dd............dd", "dd............dd", "eedd........ddee", "eedd........ddee");
+        // Sides (left: the front is column 0; right: the front is the last column): brow, then pupil, iris, socket.
+        k.decal(skull, LEFT, 0, 4, eye, "dddddddd", "dddddddd", "kkeedd", "kkeedd");
+        k.decal(skull, RIGHT, 9, 4, eye, "dddddddd", "dddddddd", "..ddeekk", "..ddeekk");
+        // The row of teeth along the bottom of the face.
+        k.box(head, -8, 4, -15, 16, 2, 4, teeth);
+        // Mouth tissue between each pair of mandibles and the neck.
+        // (thin and tucked behind the upper mandibles, so it only shows from the front).
+        for (int side = -1; side <= 1; side += 2) k.box(head, side < 0 ? -5.5f : 4.5f, 6, -13.5f, 1, 6, 2, mouth);
         for (int side = -1; side <= 1; side += 2) {
-            for (int inner = 0; inner <= 1; inner++) {
-                float x = side * (inner == 0 ? 2.4f : 1.3f);
-                var m = k.part(head, "mandible_" + (side < 0 ? "r" : "l") + inner, x, 0.5f, 1.5f, inner == 0 ? 20 : 30, side * (inner == 0 ? -6 : -3), 0);
-                float in = side < 0 ? 0.25f : -0.25f;
-                k.box(m, -0.5f, 0, -6, 1, 1, 6, skin);
-                k.box(m, -0.5f + in, -0.25f, -5, 1, 1, 4, teeth);
-                k.box(m, -0.5f, 0.75f, -6.5f, 1, 1, 1, tusk);
-            }
+            float outerX = side < 0 ? -9 : 7, innerX = side < 0 ? -7 : 5;
+            // Upper mandible: hangs straight down just behind the teeth, tusk at its inner tip.
+            k.box(head, outerX, 5, -14, 2, 5, 3, skin);
+            k.box(head, innerX, 6, -14, 2, 4, 3, ridge);
+            k.box(head, innerX, 9, -14.5f, 2, 2, 2, tusk);
+            // Lower mandible: from under the middle of the head, 44 degrees forward of straight down.
+            var lower = k.part(head, "mandible_" + (side < 0 ? "r" : "l"), side * 7, 3.5f, -5.3f, -44, 0, 0);
+            k.box(lower, side < 0 ? -2 : 0, 0, -1.5f, 2, 12, 3, skin);
+            k.box(lower, side < 0 ? 0 : -2, 0, -1.5f, 2, 12, 3, ridge);
         }
     }
 

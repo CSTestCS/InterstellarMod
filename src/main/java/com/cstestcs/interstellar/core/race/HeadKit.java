@@ -28,7 +28,8 @@ final class HeadKit {
         }
     }
 
-    enum Pattern { PLAIN, SPOTS, STRIPES, SCALES, FUR, PIXELS, PLATES, GLOW }
+    /** ROWS and COLUMNS alternate colour and accent every pixel (rows of teeth, ridged tooth edges). */
+    enum Pattern { PLAIN, SPOTS, STRIPES, SCALES, FUR, PIXELS, PLATES, GLOW, ROWS, COLUMNS }
 
     /** A cube and where its faces are in the texture. */
     record Cube(int u, int v, int w, int h, int d) {
@@ -131,6 +132,8 @@ final class HeadKit {
                         case PIXELS -> pick(m.color, m.accent, hash(x * 31 + y * 17));
                         case PLATES -> lx == 0 || ly == 0 ? Image.shade(m.color, 0.7f) : m.color;
                         case GLOW -> (lx + ly) % 2 == 0 ? m.color : m.accent;
+                        case ROWS -> ly % 2 == 0 ? m.color : m.accent;
+                        case COLUMNS -> lx % 2 == 0 ? m.color : m.accent;
                     };
                     float shade = f == SkinLayout.Face.TOP ? 1.06f : f == SkinLayout.Face.BOTTOM ? 0.8f : 1f;
                     tex.set(x, y, Image.shade(col, shade * (1 - m.noise / 2 + rng.nextFloat() * m.noise)));
