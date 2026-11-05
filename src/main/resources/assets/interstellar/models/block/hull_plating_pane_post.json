@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_glass_pane_post",
+  "textures": {
+    "edge": "interstellar:block/hull_plating_pane_top",
+    "pane": "interstellar:block/hull_plating"
+  }
+}

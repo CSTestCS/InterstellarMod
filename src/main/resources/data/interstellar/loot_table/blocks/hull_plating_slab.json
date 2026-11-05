@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "interstellar:hull_plating_slab",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "add": false,
+              "count": 2.0,
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "interstellar:hull_plating_slab",
+                  "properties": {
+                    "type": "double"
+                  }
+                }
+              ]
+            },
+            {
+              "function": "minecraft:explosion_decay"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "interstellar:blocks/hull_plating_slab"
+}

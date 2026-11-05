@@ -2,6 +2,7 @@ package com.cstestcs.interstellar.client.race;
 
 import com.cstestcs.interstellar.Interstellar;
 import com.cstestcs.interstellar.core.model.JavaModelInterpreter;
+import com.cstestcs.interstellar.core.model.HelmetFit;
 import com.cstestcs.interstellar.core.model.ModelDef;
 import com.cstestcs.interstellar.core.race.RaceDefinition;
 import com.cstestcs.interstellar.core.race.RaceDetails;
@@ -45,6 +46,8 @@ public final class ClientRaces {
         public final List<Identifier> skins = new ArrayList<>();
         public final List<Identifier> headSkins = new ArrayList<>();
         public @Nullable ModelPart head;
+        /** Carries a worn helmet from the standard head onto this race's skull (see {@link HelmetFit}). */
+        public org.joml.@Nullable Matrix4f helmetFit;
         public @Nullable ModelPart tail;
 
         Race(RaceDefinition def) {
@@ -115,7 +118,13 @@ public final class ClientRaces {
             if (source != null) {
                 for (String s : source.skins) race.skins.add(texture(source.raceId, s, files.get(s)));
                 for (String s : source.headSkins) race.headSkins.add(texture(source.raceId, s, files.get(s)));
-                if (source.headModelFile != null) race.head = bakeHead(source.headModelFile, files.get(source.headModelFile));
+                if (source.headModelFile != null) {
+                    ModelDef headDef = readHead(source.headModelFile, files.get(source.headModelFile));
+                    if (headDef != null) {
+                        race.head = toLayer(headDef, true).bakeRoot();
+                        race.helmetFit = HelmetFit.compute(headDef);
+                    }
+                }
             }
             race.skins.removeIf(java.util.Objects::isNull);
             race.headSkins.removeIf(java.util.Objects::isNull);
@@ -139,10 +148,11 @@ public final class ClientRaces {
         }
     }
 
-    private static @Nullable ModelPart bakeHead(String file, byte[] data) {
+    private static @Nullable ModelDef readHead(String file, byte[] data) {
         try {
             ModelDef def = JavaModelInterpreter.interpret(new String(data, StandardCharsets.UTF_8));
-            return toLayer(def, true).bakeRoot();
+            toLayer(def, true).bakeRoot(); // fails here, not while drawing, if the model cannot be baked
+            return def;
         } catch (JavaModelInterpreter.ModelParseException | RuntimeException e) {
             Interstellar.LOGGER.warn("Head model {} could not be read: {}", file, e.getMessage());
             return null;

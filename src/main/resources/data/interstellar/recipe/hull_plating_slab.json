@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "HHH"
+  ],
+  "key": {
+    "H": "interstellar:hull_plating"
+  },
+  "result": {
+    "id": "interstellar:hull_plating_slab",
+    "count": 6
+  }
+}

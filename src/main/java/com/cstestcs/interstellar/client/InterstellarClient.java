@@ -73,6 +73,8 @@ public final class InterstellarClient {
         modBus.addListener(GunItemModels::registerSpecialRenderers);
         modBus.addListener(com.cstestcs.interstellar.client.space.SpaceClient::registerSky);
         modBus.addListener(OreTint::register);
+        modBus.addListener(com.cstestcs.interstellar.client.ship.PlatedModel::wrap);
+        modBus.addListener(com.cstestcs.interstellar.client.ship.PlatedModel::registerTints);
         modBus.addListener(com.cstestcs.interstellar.client.gun.GunModelPack::onAddPackFinders);
         NeoForge.EVENT_BUS.addListener(com.cstestcs.interstellar.client.space.SpaceClient::submitGlow);
 

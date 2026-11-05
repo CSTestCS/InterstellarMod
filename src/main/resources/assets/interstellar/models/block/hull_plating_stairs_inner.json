@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "interstellar:block/hull_plating",
+    "side": "interstellar:block/hull_plating",
+    "top": "interstellar:block/hull_plating"
+  }
+}

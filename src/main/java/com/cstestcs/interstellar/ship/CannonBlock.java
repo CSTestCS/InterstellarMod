@@ -25,6 +25,14 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import com.cstestcs.interstellar.ship.plating.Platable;
+import com.cstestcs.interstellar.ship.plating.Plating;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.MapColor;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Spacecraft cannon. Points the way it is placed (any of six directions) and fires whatever is loaded into it: a gun
@@ -33,9 +41,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * as its firepower, from a thin rod for arrows up to a full block for TNT and big guns. Empty cannons do not fire.
  * <p>
  * Right-click with a weapon or ammunition to load it; shift-right-click with an empty hand to take it out. Placed in
- * the world (not built into a ship), a redstone pulse fires it once.
+ * the world (not built into a ship), a redstone pulse fires it once. Like hull plating it can be plated with any full
+ * block (see {@link Plating}); weapons and ammunition always load instead (TNT is ammunition, not plating).
  */
-public class CannonBlock extends Block implements EntityBlock {
+public class CannonBlock extends Block implements EntityBlock, Platable {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final IntegerProperty SIZE = IntegerProperty.create("size", 0, 3);
     public static final net.minecraft.world.level.block.state.properties.BooleanProperty TRIGGERED = BlockStateProperties.TRIGGERED;
@@ -127,7 +136,10 @@ public class CannonBlock extends Block implements EntityBlock {
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (stack.isEmpty() || !ShipWeapons.canLoad(stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (stack.isEmpty() || !ShipWeapons.canLoad(stack)) {
+            InteractionResult r = Plating.use(stack, state, level, pos, player, hit);
+            return r != null ? r : InteractionResult.TRY_WITH_EMPTY_HAND;
+        }
         if (!(level.getBlockEntity(pos) instanceof CannonBlockEntity cannon)) return InteractionResult.PASS;
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         ItemStack loaded = cannon.weapon();
@@ -161,5 +173,33 @@ public class CannonBlock extends Block implements EntityBlock {
             if (!player.getInventory().add(out)) net.minecraft.world.Containers.dropItemStack(level, player.getX(), player.getY(), player.getZ(), out);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    // ---- plating (see Plating)
+
+    @Override
+    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+        BlockState plating = Plating.get(level, pos);
+        return plating != null ? Plating.destroyProgress(plating, player, level, pos) : super.getDestroyProgress(state, player, level, pos);
+    }
+
+    @Override
+    public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
+        return Plating.explosionResistance(level, pos, explosion, super.getExplosionResistance(state, level, pos, explosion));
+    }
+
+    @Override
+    public boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player) {
+        return Plating.canHarvest(level, pos, player, super.canHarvestBlock(state, level, pos, player));
+    }
+
+    @Override
+    public SoundType getSoundType(BlockState state, LevelReader level, BlockPos pos, @Nullable Entity entity) {
+        return Plating.sound(level, pos, entity, super.getSoundType(state, level, pos, entity));
+    }
+
+    @Override
+    public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
+        return Plating.mapColor(level, pos, super.getMapColor(state, level, pos, defaultColor));
     }
 }

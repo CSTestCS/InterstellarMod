@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "interstellar:hull_plating"
+  ],
+  "result": {
+    "id": "interstellar:hull_plating_button",
+    "count": 1
+  }
+}

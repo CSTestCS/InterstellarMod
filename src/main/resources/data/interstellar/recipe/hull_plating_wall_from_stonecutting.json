@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": "interstellar:hull_plating",
+  "result": {
+    "id": "interstellar:hull_plating_wall",
+    "count": 1
+  }
+}

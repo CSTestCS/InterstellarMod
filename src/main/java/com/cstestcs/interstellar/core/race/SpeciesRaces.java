@@ -327,13 +327,13 @@ public final class SpeciesRaces {
     static List<Sub> subs() {
         return List.of(
                 new Sub("sangheili_major", "sangheili", "Sangheili Major", 30, 1.3, 2.8, 1.6, 4, null,
-                        new Body(c(0x4A4444), c(0x5C5552), c(0x3A3434), PLAIN, c(0x4A4444), 0, 0, false).armored(c(0xA8282A), c(0xE8807A)), c(0xA8282A)),
+                        new Body(c(0x4A4444), c(0x5C5552), c(0x3A3434), PLAIN, c(0x4A4444), 0, 0, false).armored(c(0xA8282A), c(0xE8807A)), null),
                 new Sub("sangheili_ultra", "sangheili", "Sangheili Ultra", 12, 1.32, 3.2, 1.8, 5, null,
-                        new Body(c(0x4A4444), c(0x5C5552), c(0x3A3434), PLAIN, c(0x4A4444), 0, 0, false).armored(c(0xE0E0E4), c(0x9AA0B0)), c(0xE0E0E4)),
+                        new Body(c(0x4A4444), c(0x5C5552), c(0x3A3434), PLAIN, c(0x4A4444), 0, 0, false).armored(c(0xE0E0E4), c(0x9AA0B0)), null),
                 new Sub("sangheili_zealot", "sangheili", "Sangheili Zealot", 6, 1.35, 3.6, 2.0, 5, "weapon:energy_sword, weapon:energy_sword, weapon:fuel_rod_cannon",
-                        new Body(c(0x4A4444), c(0x5C5552), c(0x3A3434), PLAIN, c(0x4A4444), 0, 0, false).armored(c(0xD8A830), c(0xFFE080)), c(0xD8A830)),
+                        new Body(c(0x4A4444), c(0x5C5552), c(0x3A3434), PLAIN, c(0x4A4444), 0, 0, false).armored(c(0xD8A830), c(0xFFE080)), null),
                 new Sub("jiralhanae_chieftain", "jiralhanae", "Jiralhanae Chieftain", 10, 1.55, 4.0, 2.0, 5, "weapon:gravity_hammer, weapon:gravity_hammer, weapon:fuel_rod_cannon",
-                        Body.fur(c(0x6A665F), c(0x7A766E), c(0x3A3632), FUR, c(0x504C46)).armored(c(0xC8A040), c(0xF0D070)), c(0xC8A040)),
+                        Body.fur(c(0x6A665F), c(0x7A766E), c(0x3A3632), FUR, c(0x504C46)).armored(c(0xC8A040), c(0xF0D070)), null),
                 new Sub("unggoy_major", "unggoy", "Unggoy Major", 25, 0.78, 1.3, 1.0, 2, null,
                         Body.fur(c(0x6C5A6E), c(0x857085), c(0x4A3A4C), SCALES, c(0x5C4A5E)).armored(c(0xB0282A), c(0xE06060)).withTank(), c(0xB0282A)),
                 new Sub("unggoy_heavy", "unggoy", "Unggoy Heavy", 12, 0.8, 1.6, 1.1, 3, "weapon:fuel_rod_cannon, weapon:plasma_launcher",
@@ -353,50 +353,44 @@ public final class SpeciesRaces {
     // ---------------------------------------------------------------- Halo heads
 
     /**
-     * Sangheili: a long neck leaning forward out of the shoulders, carrying a long, low, flat head whose cranium
-     * sweeps back. The four mandibles hang under the front half of the head, the eyes sit on its sides right above
-     * them, and the dark mouth opens between the mandibles.
+     * Sangheili: a big, boxy head carried forward on a thick neck that slopes down and back into the shoulders. The
+     * head tips slightly nose-down; the eyes sit at the outer corners of the face under dark brow ridges, a row of
+     * teeth runs along the bottom of the face, and four mandibles hang under it around the dark mouth.
      */
     private static void elite(HeadKit k, Integer armor) {
-        HeadKit.Mat skin = new HeadKit.Mat(c(0x4E4846)).with(SCALES, c(0x423C3A));
-        HeadKit.Mat dark = new HeadKit.Mat(c(0x1E1818));
-        HeadKit.Mat tooth = new HeadKit.Mat(c(0xE8E0C8));
-        HeadKit.Mat eye = new HeadKit.Mat(c(0xFF9A1A), 0.05f, PLAIN, c(0xFF9A1A));
-        // Lower neck rising from the body (reaches the neck pivot, so the head never floats), upper neck leaning forward.
-        k.box(k.head, -1.5f, -5, -1.5f, 3, 5, 3, skin);
-        var neck = k.part(k.head, "neck", 0, -5, 0, 28, 0, 0);
-        k.box(neck, -1.25f, -5, -1.25f, 3, 5, 3, skin);
-        // The head sits on the top of the leaning neck: long, low and flat, reaching well forward.
-        var head = k.part(neck, "skull", 0, -5, 0, -28, 0, 0);
-        HeadKit.Cube skull = k.box(head, -3, -3, -7, 6, 3, 10, skin);
-        k.box(head, -2.5f, -4, -3, 5, 1, 6, skin);           // low forehead ridge
-        var crown = k.part(head, "crown", 0, -3, 2, -18, 0, 0); // cranium sweeping back and up
-        k.box(crown, -2, -2, 0, 4, 2, 5, skin);
-        k.box(head, -2, 0, -6, 4, 1, 5, dark);                 // the mouth between the mandibles
-        k.fill(skull, BOTTOM, 1, 1, 4, 5, c(0x2A2222));
-        // Eyes on the sides at the front, right above the mandibles.
-        k.box(head, -3.2f, -2, -6, 1, 1, 1, eye);
-        k.box(head, 2.2f, -2, -6, 1, 1, 1, eye);
-        // Four mandibles hanging under the front half of the head, splayed, teeth on the inside.
+        HeadKit.Mat skin = new HeadKit.Mat(c(0x5C5A58)).noise(0.05f);
+        HeadKit.Mat brow = new HeadKit.Mat(c(0x3C3A3A)).noise(0.04f);
+        HeadKit.Mat teeth = new HeadKit.Mat(c(0xDCDCD8), 0.03f, GLOW, c(0xA4A4A2));
+        HeadKit.Mat tusk = new HeadKit.Mat(c(0xECECE6)).noise(0.03f);
+        HeadKit.Mat mouth = new HeadKit.Mat(c(0x3E2626), 0.1f, STRIPES, c(0x2A1A1A));
+        // Root of the neck, sunk into the shoulders (reaches the neck pivot so the head never floats).
+        k.box(k.head, -2.5f, -2, -1, 5, 2, 4, skin);
+        // The neck leans forward out of the shoulders; the head sits on its top end.
+        var neck = k.part(k.head, "neck", 0, 0, 1, 40, 0, 0);
+        k.box(neck, -2.5f, -8, -2, 5, 8, 4, skin);
+        var head = k.part(neck, "skull", 0, -8, 0, -26, 0, 0);
+        HeadKit.Cube skull = k.box(head, -4, -4, -6, 8, 5, 9, skin);
+        // Eyes at the outer corners of the face, seen from the front and the sides.
+        var eye = pal('e', 0xB08A2A, 'k', 0x262424);
+        k.decal(skull, FRONT, 0, 3, eye, "ek....ke");
+        k.decal(skull, LEFT, 0, 3, eye, "ke");
+        k.decal(skull, RIGHT, 7, 3, eye, "ek");
+        // Brow ridges jutting over the eyes and back along the sides.
+        for (int side = -1; side <= 1; side += 2) k.box(head, side < 0 ? -4.25f : 2.25f, -2, -6.25f, 2, 1, 3, brow);
+        // The row of teeth along the bottom of the face.
+        k.box(head, -3.5f, 1, -6, 7, 1, 3, teeth);
+        // The mouth between the mandibles.
+        k.box(head, -2, 1, -5.5f, 4, 2, 4, mouth);
+        // Four mandibles: a front and a rear pair, hanging down and a little forward, teeth on their inner edges.
         for (int side = -1; side <= 1; side += 2) {
-            for (int lower = 0; lower <= 1; lower++) {
-                var m = k.part(head, "mandible_" + (side < 0 ? "r" : "l") + lower, side * (lower == 0 ? 2.2f : 1.4f), 0, lower == 0 ? -6.5f : -5.5f,
-                        lower == 0 ? 25 : 55, side * -14, side * (lower == 0 ? -10 : -4));
-                HeadKit.Cube cb = k.box(m, -0.75f, 0, -1, 2, 5, 1, skin);
-                k.fill(cb, FRONT, 0, 4, 2, 1, c(0x2A2020));
-                k.box(m, side < 0 ? 0.6f : -0.6f, 1, -1.5f, 1, 1, 1, tooth);
-                k.box(m, side < 0 ? 0.6f : -0.6f, 3, -1.5f, 1, 1, 1, tooth);
+            for (int rear = 0; rear <= 1; rear++) {
+                var m = k.part(head, "mandible_" + (side < 0 ? "r" : "l") + rear, side * 3, 1.5f, rear == 0 ? -5 : -2,
+                        rear == 0 ? -22 : -32, 0, side * (rear == 0 ? -8 : -12));
+                float outer = side < 0 ? -1 : 0, inner = side < 0 ? 0 : -1;
+                k.box(m, outer, 0, -1, 1, 4, 2, skin);
+                k.box(m, inner, 0, -1, 1, 3, 1, teeth);
+                k.box(m, inner, 3, -1.25f, 1, 1, 1, tusk);
             }
-        }
-        if (armor != null) {
-            // Ranked Sangheili wear a crested helmet in their armour colour, low over the long head.
-            HeadKit.Mat helm = new HeadKit.Mat(armor, 0.05f, PLATES, armor);
-            // It hugs the skull: a shell over the top that stops short of the eyes, cheek guards behind them, a
-            // cover over the swept-back cranium and a low crest down the middle.
-            k.box(head, -3.5f, -4.4f, -5, 7, 1, 8, helm);
-            for (int side = -1; side <= 1; side += 2) k.box(head, side < 0 ? -3.5f : 2.5f, -3.4f, -4.5f, 1, 2, 6, helm);
-            k.box(crown, -2.5f, -2.5f, 0, 5, 1, 5, helm);
-            k.box(head, -0.5f, -5.4f, -4.5f, 1, 1, 7, helm);
         }
     }
 
@@ -413,14 +407,6 @@ public final class SpeciesRaces {
         k.box(k.head, 2.5f, -2.5f, -6.5f, 1, 3, 1, tusk);
         k.box(k.head, -4.5f, -8.5f, -1, 9, 7, 6, fur.noise(0.2f)); // mane
         k.box(k.head, -3, -9.5f, -3, 6, 2, 6, fur.noise(0.2f));
-        if (armor != null) {
-            // Chieftain's headdress.
-            HeadKit.Mat gold = new HeadKit.Mat(armor, 0.05f, PLATES, armor);
-            k.box(k.head, -4.5f, -9.5f, -4.5f, 9, 2, 4, gold);
-            k.box(k.head, -1, -12.5f, -4, 2, 3, 2, gold);
-            k.box(k.head, -5.5f, -11, -2, 1, 4, 2, gold);
-            k.box(k.head, 4.5f, -11, -2, 1, 4, 2, gold);
-        }
         k.fill(brow, FRONT, 0, 1, 9, 1, c(0x4A443E));
     }
 
@@ -436,7 +422,6 @@ public final class SpeciesRaces {
         k.box(k.head, -4.5f, -3.5f, -3.5f, 1, 1, 5, tube);
         k.box(k.head, 3.5f, -3.5f, -3.5f, 1, 1, 5, tube);
         k.box(k.head, -1, -2, -5, 2, 1, 1, tube);
-        if (armor != null) k.box(k.head, -3.5f, -7.5f, -3.5f, 7, 1, 3, new HeadKit.Mat(armor, 0.05f, PLATES, armor));
     }
 
     private static void jackal(HeadKit k, Integer armor) {

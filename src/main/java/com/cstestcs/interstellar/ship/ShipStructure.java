@@ -27,6 +27,8 @@ import net.minecraft.world.phys.AABB;
  * orientation the ship had when it was assembled ({@link #baseYaw}).
  */
 public final class ShipStructure {
+    /** Client-side render data derived from the entries (filled and kept by the renderer). */
+    public transient @org.jspecify.annotations.Nullable Object renderCache;
     public record Entry(BlockPos pos, BlockState state, Optional<CompoundTag> blockEntity) {
         public static final Codec<Entry> CODEC = RecordCodecBuilder.create(i -> i.group(
                 BlockPos.CODEC.fieldOf("pos").forGetter(Entry::pos),
@@ -128,14 +130,14 @@ public final class ShipStructure {
         return new ShipStructure(out, baseYaw);
     }
 
-    /** Copies the scanned blocks without touching the world (for saving a design). Block entity contents are dropped. */
+    /** Copies the scanned blocks without touching the world (for saving a design). Block entity contents are dropped, except plating. */
     public static ShipStructure copy(ServerLevel level, BlockPos origin, List<long[]> blocks, float baseYaw) {
         List<Entry> out = new ArrayList<>();
         for (long[] b : blocks) {
             BlockPos world = new BlockPos((int) b[0], (int) b[1], (int) b[2]);
             BlockState state = level.getBlockState(world);
             if (state.getBlock() instanceof LandingGearBlock) state = state.setValue(LandingGearBlock.EXTENDED, false);
-            out.add(new Entry(world.subtract(origin), state, Optional.empty()));
+            out.add(new Entry(world.subtract(origin), state, Optional.ofNullable(com.cstestcs.interstellar.ship.plating.Plating.tagOf(level.getBlockEntity(world)))));
         }
         return new ShipStructure(out, baseYaw);
     }

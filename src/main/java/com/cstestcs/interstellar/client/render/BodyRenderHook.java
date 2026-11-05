@@ -54,11 +54,44 @@ public final class BodyRenderHook {
             return false;
         }
         if (model instanceof com.cstestcs.interstellar.client.race.RaceModels.RaceBiped) return false;
+        if (model instanceof HumanoidModel<?> h && h.head.visible && info.hasRaceHead() && info.race.helmetFit != null) {
+            drawFittedHelmet(h, info, poseStack, vc, light, overlay, color);
+            return true;
+        }
         if (info.drawsBody() && model instanceof HumanoidModel<?> h && InterstellarConfig.CLIENT.deformArmor.get()) {
             BodyDraw.deformed(h, info.body, poseStack, vc, light, overlay, color);
             return true;
         }
         return false;
+    }
+
+    /**
+     * A humanoid layer that covers the head (a helmet, a modded hat...) on a race with its own head model: the rest
+     * of the layer is drawn as usual (bent onto a custom body if there is one), and the head piece is carried onto
+     * the race's skull, moved, turned and stretched to its shape, so any helmet fits any alien head.
+     */
+    private static void drawFittedHelmet(HumanoidModel<?> h, RenderInfo info, PoseStack poseStack, VertexConsumer vc, int light, int overlay, int color) {
+        ModelPart head = h.head;
+        head.visible = false;
+        if (info.drawsBody() && InterstellarConfig.CLIENT.deformArmor.get()) BodyDraw.deformed(h, info.body, poseStack, vc, light, overlay, color);
+        else h.root().render(poseStack, vc, light, overlay, color);
+        head.visible = true;
+        poseStack.pushPose();
+        if (info.replacesBody()) RaceLayerAccess.ageScale(poseStack, info);
+        if (info.body != null && info.drawsBody()) {
+            poseStack.mulPose(info.body.headTransform());
+        } else {
+            h.root().translateAndRotate(poseStack);
+            head.translateAndRotate(poseStack);
+        }
+        float s = info.race.def.headScale();
+        if (s != 1f) poseStack.scale(s, s, s);
+        poseStack.mulPose(info.race.helmetFit);
+        net.minecraft.client.model.geom.PartPose pose = head.storePose();
+        head.loadPose(net.minecraft.client.model.geom.PartPose.ZERO);
+        head.render(poseStack, vc, light, overlay, color);
+        head.loadPose(pose);
+        poseStack.popPose();
     }
 
     /**

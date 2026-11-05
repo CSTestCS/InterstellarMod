@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    "IHI",
+    "IHI"
+  ],
+  "key": {
+    "H": "interstellar:hull_plating",
+    "I": "minecraft:iron_ingot"
+  },
+  "result": {
+    "id": "interstellar:hull_plating_fence_gate",
+    "count": 1
+  }
+}

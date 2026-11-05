@@ -135,12 +135,18 @@ public final class StarshipLibrary {
         };
     }
 
-    /** A copy of a design with every hull plating block replaced (alien ships use their world's metal or stone). */
+    /**
+     * A copy of a design with every hull plating block plated with {@code hull} (alien ships wear their world's metal or
+     * stone). A material that cannot be plating (not a full, solid block) replaces the hull plating instead.
+     */
     public static ShipStructure withHull(ShipStructure design, BlockState hull) {
         List<ShipStructure.Entry> out = new ArrayList<>(design.entries.size());
         Block plating = ModBlocks.HULL_PLATING.get();
+        CompoundTag tag = com.cstestcs.interstellar.ship.plating.Plating.canPlateWith(hull) ? com.cstestcs.interstellar.ship.plating.Plating.tag(hull) : null;
         for (ShipStructure.Entry e : design.entries) {
-            out.add(e.state().is(plating) ? new ShipStructure.Entry(e.pos(), hull, Optional.empty()) : e);
+            if (!e.state().is(plating)) out.add(e);
+            else if (tag != null) out.add(new ShipStructure.Entry(e.pos(), e.state(), Optional.of(tag.copy())));
+            else out.add(new ShipStructure.Entry(e.pos(), hull, Optional.empty()));
         }
         return new ShipStructure(out, design.baseYaw);
     }

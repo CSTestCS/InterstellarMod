@@ -7,6 +7,17 @@ import com.cstestcs.interstellar.ship.ControlPanelBlock;
 import com.cstestcs.interstellar.ship.LandingGearBlock;
 import com.cstestcs.interstellar.ship.PassengerSeatBlock;
 import com.cstestcs.interstellar.ship.ShipPartBlock;
+import com.cstestcs.interstellar.ship.plating.HullButton;
+import com.cstestcs.interstellar.ship.plating.HullDoor;
+import com.cstestcs.interstellar.ship.plating.HullFence;
+import com.cstestcs.interstellar.ship.plating.HullFenceGate;
+import com.cstestcs.interstellar.ship.plating.HullPane;
+import com.cstestcs.interstellar.ship.plating.HullPlatingBlock;
+import com.cstestcs.interstellar.ship.plating.HullSlab;
+import com.cstestcs.interstellar.ship.plating.HullStairs;
+import com.cstestcs.interstellar.ship.plating.HullTrapDoor;
+import com.cstestcs.interstellar.ship.plating.HullWall;
+import com.cstestcs.interstellar.ship.plating.PlatedBlockEntity;
 import com.cstestcs.interstellar.space.AtmosphereBlock;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
@@ -14,6 +25,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -39,7 +51,21 @@ public final class ModBlocks {
             com.cstestcs.interstellar.ship.WheelBlock::new, p -> metal(p).noOcclusion().sound(SoundType.WOOL).strength(2.0f, 6.0f));
     /** Ground land vehicles are assembled and parked on; never part of the vehicle itself. */
     public static final DeferredBlock<Block> VEHICLE_PAD = BLOCKS.registerSimpleBlock("vehicle_pad", ModBlocks::metal);
-    public static final DeferredBlock<Block> HULL_PLATING = BLOCKS.registerSimpleBlock("hull_plating", ModBlocks::metal);
+    public static final DeferredBlock<HullPlatingBlock> HULL_PLATING = BLOCKS.registerBlock("hull_plating", HullPlatingBlock::new, ModBlocks::metal);
+    // Hull plating shapes (platable, and placeable on their sides; see ship.plating)
+    public static final DeferredBlock<HullStairs> HULL_STAIRS = BLOCKS.registerBlock("hull_plating_stairs", HullStairs::new, ModBlocks::metal);
+    public static final DeferredBlock<HullSlab> HULL_SLAB = BLOCKS.registerBlock("hull_plating_slab", HullSlab::new, ModBlocks::metal);
+    public static final DeferredBlock<HullWall> HULL_WALL = BLOCKS.registerBlock("hull_plating_wall", HullWall::new, ModBlocks::metal);
+    public static final DeferredBlock<HullFence> HULL_FENCE = BLOCKS.registerBlock("hull_plating_fence", HullFence::new, ModBlocks::metal);
+    public static final DeferredBlock<HullFenceGate> HULL_FENCE_GATE = BLOCKS.registerBlock("hull_plating_fence_gate", HullFenceGate::new,
+            p -> metal(p).forceSolidOn());
+    public static final DeferredBlock<HullDoor> HULL_DOOR = BLOCKS.registerBlock("hull_plating_door", HullDoor::new,
+            p -> metal(p).noOcclusion().pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<HullTrapDoor> HULL_TRAPDOOR = BLOCKS.registerBlock("hull_plating_trapdoor", HullTrapDoor::new,
+            p -> metal(p).noOcclusion().isValidSpawn((s, l, pos, t) -> false));
+    public static final DeferredBlock<HullButton> HULL_BUTTON = BLOCKS.registerBlock("hull_plating_button", HullButton::new,
+            p -> p.mapColor(MapColor.METAL).noCollision().strength(0.5f).sound(SoundType.METAL).pushReaction(PushReaction.DESTROY));
+    public static final DeferredBlock<HullPane> HULL_PANE = BLOCKS.registerBlock("hull_plating_pane", HullPane::new, p -> metal(p).noOcclusion());
     public static final DeferredBlock<GunsmithTableBlock> GUNSMITH_TABLE = BLOCKS.registerBlock("gunsmith_table", GunsmithTableBlock::new, p -> metal(p).noOcclusion());
     /** Invisible glowing shell around every planet in space. */
     public static final DeferredBlock<AtmosphereBlock> ATMOSPHERE = BLOCKS.registerBlock("atmosphere", AtmosphereBlock::new,
@@ -51,6 +77,13 @@ public final class ModBlocks {
     public static final java.util.function.Supplier<net.minecraft.world.level.block.entity.BlockEntityType<com.cstestcs.interstellar.ship.CannonBlockEntity>> CANNON_ENTITY =
             BLOCK_ENTITIES.register("ship_cannon", () -> new net.minecraft.world.level.block.entity.BlockEntityType<>(
                     com.cstestcs.interstellar.ship.CannonBlockEntity::new, SHIP_CANNON.get()));
+
+    /** Plating of every platable block except the cannon (whose own block entity also holds its plating). */
+    public static final java.util.function.Supplier<net.minecraft.world.level.block.entity.BlockEntityType<PlatedBlockEntity>> PLATED_ENTITY =
+            BLOCK_ENTITIES.register("plated", () -> new net.minecraft.world.level.block.entity.BlockEntityType<>(PlatedBlockEntity::new,
+                    java.util.Set.of(LANDING_GEAR.get(), CONTROL_PANEL.get(), SHIP_GENERATOR.get(), LIFE_SUPPORT.get(), SHIP_THRUSTER.get(),
+                            PASSENGER_SEAT.get(), HULL_PLATING.get(), HULL_STAIRS.get(), HULL_SLAB.get(), HULL_WALL.get(), HULL_FENCE.get(),
+                            HULL_FENCE_GATE.get(), HULL_DOOR.get(), HULL_TRAPDOOR.get(), HULL_BUTTON.get(), HULL_PANE.get())));
 
     /** Alien resources: ores that generate in each foreign world's base stone (tinted to match it), and storage blocks. */
     public static final java.util.List<String> ORE_MATERIALS = java.util.List.of("plasma_core", "nether_cinder", "void_shard", "crystal_lattice",

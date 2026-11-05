@@ -230,6 +230,8 @@ def blocks():
 STORAGE = ["alien_alloy", "plasma_core", "nether_cinder", "void_shard", "crystal_lattice", "bio_gel", "cryo_crystal", "solar_cell", "hydro_pearl",
            "tech_chip", "sonic_resonator"]
 ORES = STORAGE[1:]
+HULL_SHAPES = {"stairs": "Stairs", "slab": "Slab", "wall": "Wall", "fence": "Fence", "fence_gate": "Fence Gate", "door": "Door",
+               "trapdoor": "Trapdoor", "button": "Button", "pane": "Pane"}
 
 
 def cube(d_from, d_to, faces):
@@ -243,8 +245,8 @@ def extra_blocks():
         lo, hi = (16 - t) / 2, 16 - (16 - t) / 2
         els = [cube([lo, lo, 0], [hi, hi, 16], {"north": {"texture": "#front"}, "south": {"texture": "#back"},
                                                  **{d: {"texture": "#side"} for d in ("east", "west", "up", "down")}})]
-        if size < 3:
-            # mounting plate at the back
+        if 0 < size < 3:
+            # mounting plate at the back (not on the thin rod, so it can sit on fence posts)
             els.append(cube([2, 2, 14], [14, 14, 16], {d: {"texture": "#back"} for d in ("north", "south", "east", "west", "up", "down")}))
         write_json(f"{A}/models/block/ship_cannon_{size}.json", {"parent": "minecraft:block/block", "textures": {
             "particle": f"{NS}:block/ship_side", "front": f"{NS}:block/ship_cannon_front", "side": f"{NS}:block/ship_side", "back": f"{NS}:block/ship_top"},
@@ -575,6 +577,7 @@ def entity():
 def data():
     blocks_ = ["landing_gear", "control_panel", "ship_generator", "life_support", "ship_thruster", "ship_cannon", "passenger_seat", "hull_plating", "gunsmith_table"]
     blocks_ += ["wheel", "vehicle_pad"] + [f"{m}_block" for m in STORAGE] + [f"{m}_ore" for m in ORES]
+    blocks_ += [f"hull_plating_{s}" for s in HULL_SHAPES]  # their models etc. come from tools/gen_hull_shapes.py
     write_json(f"{D}/minecraft/tags/block/mineable/pickaxe.json", {"replace": False, "values": [f"{NS}:{b}" for b in blocks_]})
     write_json(f"{D}/minecraft/tags/block/needs_iron_tool.json", {"replace": False, "values": [f"{NS}:{m}_ore" for m in ORES]})
     write_json(f"{D}/{NS}/tags/block/ship/wheels.json", {"values": [f"{NS}:wheel"]})
@@ -709,6 +712,7 @@ def lang():
         "block.interstellar.ship_generator": "Ship Generator", "block.interstellar.life_support": "Life Support",
         "block.interstellar.ship_thruster": "Thruster", "block.interstellar.ship_cannon": "Ship Cannon",
         "block.interstellar.passenger_seat": "Passenger Seat", "block.interstellar.hull_plating": "Hull Plating",
+        **{f"block.interstellar.hull_plating_{k}": f"Hull Plating {v}" for k, v in HULL_SHAPES.items()},
         "block.interstellar.gunsmith_table": "Gunsmith Table", "block.interstellar.atmosphere": "Atmosphere",
         "item.interstellar.gun": "Gun", "item.interstellar.magazine": "Magazine", "item.interstellar.magazine.kind": "%s Magazine",
         "item.interstellar.alien_spawn_egg": "Alien Spawn Egg",

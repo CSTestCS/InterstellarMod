@@ -58,7 +58,20 @@ public class SpacecraftRenderer extends EntityRenderer<SpacecraftEntity, Spacecr
         poseStack.rotateDegrees(Axis.YP, -state.yaw);
         poseStack.rotateDegrees(Axis.XP, state.pitch); // Vec3.xRot(a) == JOML rotateX(-a)
         poseStack.rotateDegrees(Axis.YP, state.structure.baseYaw);
+        ShipStructure structure = state.structure;
+        if (!(structure.renderCache instanceof net.neoforged.neoforge.model.data.ModelData[] data) || data.length != structure.entries.size()) {
+            // Plated blocks carry their plating in their block entity data: decoded once per structure.
+            data = new net.neoforged.neoforge.model.data.ModelData[structure.entries.size()];
+            for (int i = 0; i < data.length; i++) {
+                net.minecraft.world.level.block.state.BlockState plating = com.cstestcs.interstellar.ship.plating.Plating.fromTag(structure.entries.get(i).blockEntity().orElse(null));
+                data[i] = plating == null ? net.neoforged.neoforge.model.data.ModelData.EMPTY
+                        : net.neoforged.neoforge.model.data.ModelData.of(com.cstestcs.interstellar.ship.plating.Plating.PROPERTY, plating);
+            }
+            structure.renderCache = data;
+        }
+        int index = 0;
         for (ShipStructure.Entry e : state.structure.entries) {
+            net.neoforged.neoforge.model.data.ModelData modelData = data[index++];
             poseStack.pushPose();
             poseStack.translate(e.pos().getX() - 0.5, e.pos().getY(), e.pos().getZ() - 0.5);
             MovingBlockRenderState block = new MovingBlockRenderState();
@@ -66,6 +79,7 @@ public class SpacecraftRenderer extends EntityRenderer<SpacecraftEntity, Spacecr
             block.blockPos = state.origin.offset(e.pos());
             block.lightEngine = state.level.getLightEngine();
             block.biome = state.level.getBiome(block.blockPos);
+            block.modelData = modelData;
             collector.submitMovingBlock(poseStack, block, 0);
             poseStack.popPose();
         }

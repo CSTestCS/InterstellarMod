@@ -10,8 +10,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-/** Holds the weapon or ammunition loaded into a {@link CannonBlock}; the barrel size follows it. */
-public class CannonBlockEntity extends BlockEntity {
+/** Holds the weapon or ammunition loaded into a {@link CannonBlock} (the barrel size follows it), and its plating. */
+public class CannonBlockEntity extends com.cstestcs.interstellar.ship.plating.PlatedBlockEntity {
     public static final String WEAPON_KEY = "weapon";
     private ItemStack weapon = ItemStack.EMPTY;
 

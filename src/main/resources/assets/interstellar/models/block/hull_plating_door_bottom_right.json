@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_bottom_right",
+  "textures": {
+    "bottom": "interstellar:block/hull_plating_door_bottom",
+    "top": "interstellar:block/hull_plating_door_top"
+  }
+}

@@ -1,0 +1,146 @@
+package com.cstestcs.interstellar.ship.plating;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jspecify.annotations.Nullable;
+
+/**
+ * Hull plating trapdoor (opens by hand). Sneak while placing to stand it on its side (see {@link Tilt}).
+ */
+public class HullTrapDoor extends TrapDoorBlock implements EntityBlock, Platable {
+
+    public HullTrapDoor(Properties properties) {
+        super(HullShapes.HULL, properties);
+        registerDefaultState(defaultBlockState().setValue(Tilt.TILT, Direction.UP));
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        Direction tilt = Tilt.forPlacement(ctx);
+        if (tilt == Direction.UP) return super.getStateForPlacement(ctx);
+        boolean powered = ctx.getLevel().hasNeighborSignal(ctx.getClickedPos());
+        return defaultBlockState().setValue(Tilt.TILT, tilt).setValue(FACING, Tilt.lookingLocal(ctx, tilt).getOpposite()).setValue(HALF, Half.BOTTOM)
+                .setValue(OPEN, powered).setValue(POWERED, powered).setValue(WATERLOGGED, ctx.getLevel().getFluidState(ctx.getClickedPos()).is(Fluids.WATER));
+    }
+
+    @Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        InteractionResult r = Plating.use(stack, state, level, pos, player, hit);
+        return r != null ? r : super.useItemOn(stack, state, level, pos, player, hand, hit);
+    }
+
+
+    // ---- lying on its side (see Tilt): the upright shape, turned
+
+    private static BlockState upright(BlockState state) {
+        return state.setValue(Tilt.TILT, Direction.UP);
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Tilt.tilted(state) ? Tilt.shape(super.getShape(upright(state), level, pos, context), Tilt.of(state)) : super.getShape(state, level, pos, context);
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Tilt.tilted(state) ? Tilt.shape(super.getCollisionShape(upright(state), level, pos, context), Tilt.of(state))
+                : super.getCollisionShape(state, level, pos, context);
+    }
+
+    @Override
+    protected VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Tilt.tilted(state) ? Tilt.shape(super.getVisualShape(upright(state), level, pos, context), Tilt.of(state))
+                : super.getVisualShape(state, level, pos, context);
+    }
+
+    @Override
+    protected VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return Tilt.tilted(state) ? Tilt.shape(super.getInteractionShape(upright(state), level, pos), Tilt.of(state)) : super.getInteractionShape(state, level, pos);
+    }
+
+    @Override
+    protected VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
+        return Tilt.tilted(state) ? Tilt.shape(super.getBlockSupportShape(upright(state), level, pos), Tilt.of(state)) : super.getBlockSupportShape(state, level, pos);
+    }
+
+    @Override
+    protected VoxelShape getOcclusionShape(BlockState state) {
+        return Tilt.tilted(state) ? Tilt.shape(super.getOcclusionShape(upright(state)), Tilt.of(state)) : super.getOcclusionShape(state);
+    }
+
+    @Override
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return Tilt.rotate(super.rotate(state, rotation), rotation);
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return Tilt.mirror(super.mirror(state, mirror), mirror);
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(Tilt.TILT);
+    }
+
+    // ---- plating (see Plating)
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new PlatedBlockEntity(pos, state);
+    }
+
+    @Override
+    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+        BlockState plating = Plating.get(level, pos);
+        return plating != null ? Plating.destroyProgress(plating, player, level, pos) : super.getDestroyProgress(state, player, level, pos);
+    }
+
+    @Override
+    public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion) {
+        return Plating.explosionResistance(level, pos, explosion, super.getExplosionResistance(state, level, pos, explosion));
+    }
+
+    @Override
+    public boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player) {
+        return Plating.canHarvest(level, pos, player, super.canHarvestBlock(state, level, pos, player));
+    }
+
+    @Override
+    public SoundType getSoundType(BlockState state, LevelReader level, BlockPos pos, @Nullable Entity entity) {
+        return Plating.sound(level, pos, entity, super.getSoundType(state, level, pos, entity));
+    }
+
+    @Override
+    public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
+        return Plating.mapColor(level, pos, super.getMapColor(state, level, pos, defaultColor));
+    }
+}
