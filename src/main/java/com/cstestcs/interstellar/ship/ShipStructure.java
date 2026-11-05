@@ -191,6 +191,9 @@ public final class ShipStructure {
         for (Entry e : entries) {
             buf.writeBlockPos(e.pos());
             buf.writeVarInt(Block.getId(e.state()));
+            // Clients only need the plating out of the block entity data (0 = none), to draw plated blocks.
+            BlockState plating = com.cstestcs.interstellar.ship.plating.Plating.fromTag(e.blockEntity().orElse(null));
+            buf.writeVarInt(plating == null ? 0 : Block.getId(plating) + 1);
         }
     }
 
@@ -198,7 +201,14 @@ public final class ShipStructure {
         float yaw = buf.readFloat();
         int n = buf.readVarInt();
         List<Entry> list = new ArrayList<>(n);
-        for (int i = 0; i < n; i++) list.add(new Entry(buf.readBlockPos(), Block.stateById(buf.readVarInt()), Optional.empty()));
+        for (int i = 0; i < n; i++) {
+            BlockPos pos = buf.readBlockPos();
+            BlockState state = Block.stateById(buf.readVarInt());
+            int plating = buf.readVarInt();
+            Optional<CompoundTag> be = plating == 0 ? Optional.empty()
+                    : Optional.ofNullable(com.cstestcs.interstellar.ship.plating.Plating.tag(Block.stateById(plating - 1)));
+            list.add(new Entry(pos, state, be));
+        }
         return new ShipStructure(list, yaw);
     }
 
